@@ -1,5 +1,5 @@
-import { useRef, useState, useEffect } from 'react';
-import cn from '@/lib/utils';
+import { useRef, useState, useEffect } from "react";
+import cn from "@/lib/utils";
 
 export interface SliderMark {
   value: number;
@@ -55,12 +55,16 @@ export function SliderWithMarks({
   }, [isDragging, showTooltip]);
 
   return (
-    <div className={cn('flex flex-col gap-4', className)}>
+    <div className={cn("flex flex-col gap-4", className)}>
       {label && (
         <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-shadow-100">{label}</label>
+          <label className="text-sm font-semibold text-shadow-100">
+            {label}
+          </label>
           {showValue && (
-            <span className="text-sm font-semibold text-aurora-200">{currentMark ? currentMark.label : value}</span>
+            <span className="text-sm font-semibold text-aurora-200">
+              {currentMark ? currentMark.label : value}
+            </span>
           )}
         </div>
       )}
@@ -87,17 +91,19 @@ export function SliderWithMarks({
               onClick={() => !disabled && onChange(mark.value)}
               disabled={disabled}
               className={cn(
-                'absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-all',
-                'flex h-4 w-4 items-center justify-center rounded-full border-2',
+                "absolute top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transition-all",
+                "flex h-4 w-4 items-center justify-center rounded-full border-2",
                 isActive
-                  ? 'border-aurora-300 bg-aurora-400 scale-125 shadow-lg shadow-aurora-500/50'
-                  : 'border-midnight-600 bg-midnight-800 hover:border-aurora-400/50 hover:bg-midnight-700',
-                disabled && 'cursor-not-allowed opacity-50'
+                  ? "border-aurora-300 bg-aurora-400 scale-125 shadow-lg shadow-aurora-500/50"
+                  : "border-midnight-600 bg-midnight-800 hover:border-aurora-400/50 hover:bg-midnight-700",
+                disabled && "cursor-not-allowed opacity-50",
               )}
               style={{ left: `${markPercentage}%` }}
               title={mark.description || mark.label}
             >
-              {isActive && <div className="h-2 w-2 rounded-full bg-aurora-100" />}
+              {isActive && (
+                <div className="h-2 w-2 rounded-full bg-aurora-100" />
+              )}
             </button>
           );
         })}
@@ -117,19 +123,19 @@ export function SliderWithMarks({
           onTouchEnd={() => setIsDragging(false)}
           disabled={disabled}
           className={cn(
-            'relative z-20 h-8 w-full cursor-pointer appearance-none bg-transparent',
-            '[&::-webkit-slider-thumb]:appearance-none',
-            '[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6',
-            '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2',
-            '[&::-webkit-slider-thumb]:border-aurora-300 [&::-webkit-slider-thumb]:bg-aurora-400',
-            '[&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-aurora-500/50',
-            '[&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-110',
-            '[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6',
-            '[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2',
-            '[&::-moz-range-thumb]:border-aurora-300 [&::-moz-range-thumb]:bg-aurora-400',
-            '[&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:shadow-aurora-500/50',
-            '[&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:hover:scale-110',
-            disabled && 'cursor-not-allowed opacity-50'
+            "relative z-20 h-8 w-full cursor-pointer appearance-none bg-transparent",
+            "[&::-webkit-slider-thumb]:appearance-none",
+            "[&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6",
+            "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2",
+            "[&::-webkit-slider-thumb]:border-aurora-300 [&::-webkit-slider-thumb]:bg-aurora-400",
+            "[&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-aurora-500/50",
+            "[&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:hover:scale-110",
+            "[&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6",
+            "[&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2",
+            "[&::-moz-range-thumb]:border-aurora-300 [&::-moz-range-thumb]:bg-aurora-400",
+            "[&::-moz-range-thumb]:shadow-lg [&::-moz-range-thumb]:shadow-aurora-500/50",
+            "[&::-moz-range-thumb]:transition-all [&::-moz-range-thumb]:hover:scale-110",
+            disabled && "cursor-not-allowed opacity-50",
           )}
         />
 
@@ -140,7 +146,9 @@ export function SliderWithMarks({
             style={{ left: `${percentage}%` }}
           >
             <div className="mb-2 max-w-xs rounded-lg border border-aurora-400/40 bg-midnight-900/95 px-3 py-2 text-center text-xs text-shadow-200 shadow-lg backdrop-blur">
-              <p className="font-semibold text-aurora-200">{currentMark.label}</p>
+              <p className="font-semibold text-aurora-200">
+                {currentMark.label}
+              </p>
               <p className="mt-1">{currentMark.description}</p>
             </div>
           </div>
@@ -157,13 +165,22 @@ export function SliderWithMarks({
               onClick={() => !disabled && onChange(mark.value)}
               disabled={disabled}
               className={cn(
-                'flex flex-col items-center transition-colors',
-                value === mark.value ? 'text-aurora-200 font-semibold' : 'text-shadow-500',
-                disabled ? 'cursor-not-allowed' : 'hover:text-shadow-300 cursor-pointer'
+                "flex flex-col items-center transition-colors",
+                value === mark.value
+                  ? "text-aurora-200 font-semibold"
+                  : "text-shadow-500",
+                disabled
+                  ? "cursor-not-allowed"
+                  : "hover:text-shadow-300 cursor-pointer",
               )}
               style={{
                 width: `${100 / marks.length}%`,
-                textAlign: index === 0 ? 'left' : index === marks.length - 1 ? 'right' : 'center',
+                textAlign:
+                  index === 0
+                    ? "left"
+                    : index === marks.length - 1
+                      ? "right"
+                      : "center",
               }}
             >
               <span className="whitespace-nowrap">{mark.label}</span>

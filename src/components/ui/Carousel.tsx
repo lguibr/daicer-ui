@@ -1,6 +1,15 @@
-import { Children, useEffect, useId, useMemo, useState, useCallback, type ReactElement, type ReactNode } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import cn from '../../lib/utils';
+import {
+  Children,
+  useEffect,
+  useId,
+  useMemo,
+  useState,
+  useCallback,
+  type ReactElement,
+  type ReactNode,
+} from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import cn from "../../lib/utils";
 
 interface CarouselProps {
   children: ReactNode;
@@ -20,7 +29,7 @@ interface CarouselProps {
 type ValidSlide = ReactElement<Record<string, unknown>>;
 
 function isReactElement(node: ReactNode): node is ValidSlide {
-  return typeof node === 'object' && node !== null && 'props' in node;
+  return typeof node === "object" && node !== null && "props" in node;
 }
 
 export function Carousel({
@@ -45,7 +54,7 @@ export function Carousel({
   const slideCount = slides.length;
   const sanitizeIndex = useCallback(
     (index: number | undefined) => {
-      if (typeof index !== 'number' || Number.isNaN(index)) {
+      if (typeof index !== "number" || Number.isNaN(index)) {
         return 0;
       }
       const normalized = Math.max(0, Math.floor(index));
@@ -57,13 +66,15 @@ export function Carousel({
       }
       return normalized;
     },
-    [slideCount]
+    [slideCount],
   );
-  const [currentIndex, setCurrentIndex] = useState(() => sanitizeIndex(initialIndex));
+  const [currentIndex, setCurrentIndex] = useState(() =>
+    sanitizeIndex(initialIndex),
+  );
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (typeof initialIndex === 'number') {
+    if (typeof initialIndex === "number") {
       setTimeout(() => setCurrentIndex(sanitizeIndex(initialIndex)), 0);
     }
   }, [initialIndex, slideCount, sanitizeIndex]);
@@ -121,7 +132,7 @@ export function Carousel({
     <section
       aria-label={ariaLabel}
       aria-roledescription="carousel"
-      className={cn('relative w-full', className)}
+      className={cn("relative w-full", className)}
       id={regionId}
       onFocus={() => setIsPaused(true)}
       onMouseEnter={() => setIsPaused(true)}
@@ -129,9 +140,12 @@ export function Carousel({
       onBlur={() => setIsPaused(false)}
       role="group"
     >
-      <div className={cn('overflow-hidden', frameClassName)}>
+      <div className={cn("overflow-hidden", frameClassName)}>
         <div
-          className={cn('flex transition-transform duration-700 ease-out', trackClassName)}
+          className={cn(
+            "flex transition-transform duration-700 ease-out",
+            trackClassName,
+          )}
           style={{ transform: `translateX(-${safeIndex * 100}%)` }}
         >
           {slides.map((slide, index) => (
@@ -139,7 +153,10 @@ export function Carousel({
               aria-hidden={safeIndex !== index}
               aria-roledescription="slide"
               aria-label={`${index + 1} of ${slideCount}`}
-              className={cn('flex w-full flex-shrink-0 flex-col', slideClassName)}
+              className={cn(
+                "flex w-full flex-shrink-0 flex-col",
+                slideClassName,
+              )}
               key={`carousel-slide-${index.toString()}`}
               role="group"
             >
@@ -158,7 +175,10 @@ export function Carousel({
             aria-controls={regionId}
             aria-label="Previous slide"
           >
-            <ChevronLeft className="h-5 w-5 transition group-hover:-translate-x-0.5" aria-hidden="true" />
+            <ChevronLeft
+              className="h-5 w-5 transition group-hover:-translate-x-0.5"
+              aria-hidden="true"
+            />
           </button>
           <button
             type="button"
@@ -167,7 +187,10 @@ export function Carousel({
             aria-controls={regionId}
             aria-label="Next slide"
           >
-            <ChevronRight className="h-5 w-5 transition group-hover:translate-x-0.5" aria-hidden="true" />
+            <ChevronRight
+              className="h-5 w-5 transition group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
           </button>
         </>
       )}
@@ -181,10 +204,10 @@ export function Carousel({
                 type="button"
                 key={`carousel-indicator-${index.toString()}`}
                 className={cn(
-                  'h-2.5 rounded-full transition-all duration-500',
+                  "h-2.5 rounded-full transition-all duration-500",
                   isActive
-                    ? 'w-10 bg-gradient-to-r from-aurora-400 via-accent to-nebula-400 shadow-[0_0_18px_rgba(94,234,212,0.35)]'
-                    : 'w-2.5 bg-aurora-400/30 hover:bg-aurora-400/60'
+                    ? "w-10 bg-gradient-to-r from-aurora-400 via-accent to-nebula-400 shadow-[0_0_18px_rgba(94,234,212,0.35)]"
+                    : "w-2.5 bg-aurora-400/30 hover:bg-aurora-400/60",
                 )}
                 aria-label={`Go to slide ${index + 1}`}
                 aria-controls={regionId}
@@ -203,15 +226,35 @@ interface CarouselHeaderProps {
   eyebrow?: string;
   title: string;
   description?: string;
-  alignment?: 'left' | 'center';
+  alignment?: "left" | "center";
 }
 
-export function CarouselHeader({ eyebrow, title, description, alignment = 'center' }: CarouselHeaderProps) {
+export function CarouselHeader({
+  eyebrow,
+  title,
+  description,
+  alignment = "center",
+}: CarouselHeaderProps) {
   return (
-    <div className={cn('space-y-5 max-w-3xl', alignment === 'center' ? 'mx-auto text-center' : 'text-left')}>
-      {eyebrow && <p className="text-[0.62rem] uppercase tracking-[0.48em] text-aurora-200/70">{eyebrow}</p>}
-      <h2 className="font-display text-3xl tracking-[0.26em] text-aurora-100 sm:text-4xl">{title}</h2>
-      {description && <p className="text-base leading-relaxed text-shadow-100/95">{description}</p>}
+    <div
+      className={cn(
+        "space-y-5 max-w-3xl",
+        alignment === "center" ? "mx-auto text-center" : "text-left",
+      )}
+    >
+      {eyebrow && (
+        <p className="text-[0.62rem] uppercase tracking-[0.48em] text-aurora-200/70">
+          {eyebrow}
+        </p>
+      )}
+      <h2 className="font-display text-3xl tracking-[0.26em] text-aurora-100 sm:text-4xl">
+        {title}
+      </h2>
+      {description && (
+        <p className="text-base leading-relaxed text-shadow-100/95">
+          {description}
+        </p>
+      )}
     </div>
   );
 }

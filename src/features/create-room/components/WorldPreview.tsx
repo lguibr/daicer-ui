@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useChunkLoader } from '@/hooks/useChunkLoader';
-import { MapRenderer } from '../../debug/components/MapRenderer';
-import { MapRenderer3D } from '../../debug/components/MapRenderer3D';
-import type { WorldConfig, Coordinates } from '../../debug/utils/types';
+import { useState, useEffect, useMemo, useRef } from "react";
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useChunkLoader } from "@/hooks/useChunkLoader";
+import { MapRenderer } from "../../debug/components/MapRenderer";
+import { MapRenderer3D } from "../../debug/components/MapRenderer3D";
+import type { WorldConfig, Coordinates } from "../../debug/utils/types";
 
 interface WorldPreviewProps {
   config: WorldConfig;
@@ -19,7 +19,11 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Camera
-  const [cameraPosition, setCameraPosition] = useState<Coordinates>({ x: 0, y: 0, z: 0 });
+  const [cameraPosition, setCameraPosition] = useState<Coordinates>({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
   const [zoom, setZoom] = useState<number>(0.5);
   const [viewZ, setViewZ] = useState<number>(0);
   const [is3D, setIs3D] = useState<boolean>(true);
@@ -54,14 +58,14 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
         return getChunk(x, y);
       },
     }),
-    [getChunk]
+    [getChunk],
   );
 
   return (
     <div
       className={cn(
-        'relative w-full h-full bg-black rounded-xl overflow-hidden border border-midnight-700 shadow-inner group',
-        className
+        "relative w-full h-full bg-black rounded-xl overflow-hidden border border-midnight-700 shadow-inner group",
+        className,
       )}
       ref={mapContainerRef}
     >
@@ -69,7 +73,9 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
       {isLoading && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-midnight-950/60 backdrop-blur-sm animate-in fade-in duration-300 pointer-events-none">
           <Loader2 className="w-8 h-8 text-aurora-500 animate-spin mb-2" />
-          <p className="text-xs font-bold text-shadow-200 uppercase tracking-widest">Generating Preview</p>
+          <p className="text-xs font-bold text-shadow-200 uppercase tracking-widest">
+            Generating Preview
+          </p>
         </div>
       )}
 
@@ -84,7 +90,9 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
             >
               +
             </button>
-            <span className="text-[9px] font-mono text-aurora-400">{Math.round(zoom * 100)}%</span>
+            <span className="text-[9px] font-mono text-aurora-400">
+              {Math.round(zoom * 100)}%
+            </span>
             <button
               type="button"
               onClick={() => setZoom((z) => Math.max(0.1, z - 0.1))}
@@ -100,17 +108,19 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 transition-opacity opacity-0 group-hover:opacity-100 duration-300 flex flex-col items-center gap-2">
         {/* Layer Z */}
         <div className="bg-midnight-900/80 backdrop-blur border border-midnight-700 rounded-lg px-2 py-1 flex items-center gap-1 shadow-xl">
-          <span className="text-[10px] text-shadow-400 uppercase tracking-wider mr-2">Layer</span>
+          <span className="text-[10px] text-shadow-400 uppercase tracking-wider mr-2">
+            Layer
+          </span>
           {[-1, 0, 1].map((z) => (
             <button
               type="button"
               key={z}
               onClick={() => setViewZ(z)}
               className={cn(
-                'w-6 h-6 rounded flex items-center justify-center font-mono text-[10px] transition-all',
+                "w-6 h-6 rounded flex items-center justify-center font-mono text-[10px] transition-all",
                 viewZ === z
-                  ? 'bg-aurora-500 text-midnight-950 font-bold shadow-lg shadow-aurora-500/20'
-                  : 'text-shadow-500 hover:text-shadow-100 hover:bg-midnight-800'
+                  ? "bg-aurora-500 text-midnight-950 font-bold shadow-lg shadow-aurora-500/20"
+                  : "text-shadow-500 hover:text-shadow-100 hover:bg-midnight-800",
               )}
             >
               {z}
@@ -125,7 +135,7 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
             onClick={() => setIs3D(!is3D)}
             className="text-[10px] font-bold text-shadow-400 text-aurora-300 hover:text-white uppercase"
           >
-            {is3D ? 'View 2D' : 'View 3D'}
+            {is3D ? "View 2D" : "View 3D"}
           </button>
         </div>
       </div>
@@ -161,7 +171,9 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
           onTileClick={() => {}}
           onTileDoubleClick={() => {}}
           onTileHover={() => {}}
-          onZoom={(delta) => setZoom((z) => Math.max(0.1, Math.min(3, z - delta * 0.1)))}
+          onZoom={(delta) =>
+            setZoom((z) => Math.max(0.1, Math.min(3, z - delta * 0.1)))
+          }
           onPan={(dx, dy) => {
             const TILE_SIZE = 32 * zoom;
             setCameraPosition((prev) => ({

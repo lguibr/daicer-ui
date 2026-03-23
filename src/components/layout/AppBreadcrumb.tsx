@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { Home, ChevronRight } from 'lucide-react';
+import React from "react";
+import { useLocation, Link } from "react-router-dom";
+import { Home, ChevronRight } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +8,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { useI18n } from '@/i18n';
+} from "@/components/ui/breadcrumb";
+import { useI18n } from "@/i18n";
 
 interface BreadcrumbSegment {
   label: string;
@@ -26,38 +26,40 @@ export default function AppBreadcrumb() {
 
   // Route label mappings
   const routeLabels: Record<string, string> = {
-    room: t('navbar.links.rooms'),
-    rooms: t('navbar.links.rooms'),
-    game: t('navbar.links.game'),
-    explore: t('navbar.links.explore'),
-    rules: t('navbar.links.explore'),
-    assets: t('navbar.links.assets'),
-    '2d': '2D Assets',
-    '3d': '3D Assets',
-    maps: 'Maps',
-    'character-sheet': 'Character Sheets',
-    create: 'New Campaign',
-    tactical: 'Tactical Combat',
-    'test-setup': 'Debug Setup',
+    room: t("navbar.links.rooms"),
+    rooms: t("navbar.links.rooms"),
+    game: t("navbar.links.game"),
+    explore: t("navbar.links.explore"),
+    rules: t("navbar.links.explore"),
+    assets: t("navbar.links.assets"),
+    "2d": "2D Assets",
+    "3d": "3D Assets",
+    maps: "Maps",
+    "character-sheet": "Character Sheets",
+    create: "New Campaign",
+    tactical: "Tactical Combat",
+    "test-setup": "Debug Setup",
   };
 
-  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const pathSegments = location.pathname.split("/").filter(Boolean);
 
-  if (pathSegments.length === 0 || location.pathname === '/') {
+  if (pathSegments.length === 0 || location.pathname === "/") {
     return null;
   }
 
-  const breadcrumbs: BreadcrumbSegment[] = pathSegments.map((segment, index) => {
-    const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
-    // Try to format nicely if not in map (e.g. "magic-items" -> "Magic Items")
-    const fallbackLabel = segment
-      .split('-')
-      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-      .join(' ');
+  const breadcrumbs: BreadcrumbSegment[] = pathSegments.map(
+    (segment, index) => {
+      const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
+      // Try to format nicely if not in map (e.g. "magic-items" -> "Magic Items")
+      const fallbackLabel = segment
+        .split("-")
+        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+        .join(" ");
 
-    const label = routeLabels[segment] || fallbackLabel;
-    return { label, path };
-  });
+      const label = routeLabels[segment] || fallbackLabel;
+      return { label, path };
+    },
+  );
 
   return (
     <div className="sticky top-0 z-40">

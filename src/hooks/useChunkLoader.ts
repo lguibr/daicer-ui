@@ -1,14 +1,17 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { useApolloClient } from '@apollo/client/react';
-import { gql } from '@apollo/client';
-import type { Chunk, WorldConfig } from '../features/debug/utils/types';
+import { useState, useRef, useCallback, useEffect } from "react";
+import { useApolloClient } from "@apollo/client/react";
+import { gql } from "@apollo/client";
+import type { Chunk, WorldConfig } from "../features/debug/utils/types";
 
 interface UseChunkLoaderProps {
   config: WorldConfig;
 }
 
 const VOXEL_PREVIEW_QUERY = gql`
-  query VoxelPreview($chunks: [ChunkRequestInput]!, $config: WorldConfigInput!) {
+  query VoxelPreview(
+    $chunks: [ChunkRequestInput]!
+    $config: WorldConfigInput!
+  ) {
     voxelPreview(chunks: $chunks, config: $config) {
       x
       y
@@ -32,7 +35,7 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
   // Clear cache when critical config changes
   const configKey = JSON.stringify(config);
   useEffect(() => {
-    console.log('[useChunkLoader] Config changed!', configKey);
+    console.log("[useChunkLoader] Config changed!", configKey);
     generationId.current += 1; // Increment generation ID
     setChunkCache({});
     setLoadingChunks(new Set());
@@ -57,12 +60,15 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
     batchTimeout.current = null;
 
     const currentGen = generationId.current; // Capture current generation ID
-    console.log(`[useChunkLoader] Processing batch for Gen ${currentGen}. chunks: ${queuedIds.join(', ')}`);
+    console.log(
+      `[useChunkLoader] Processing batch for Gen ${currentGen}. chunks: ${queuedIds.join(", ")}`,
+    );
 
     const chunksToFetch = queuedIds
       .map((id) => {
-        const [x, y] = id.split(',').map(Number);
-        if (x === undefined || y === undefined || isNaN(x) || isNaN(y)) return null;
+        const [x, y] = id.split(",").map(Number);
+        if (x === undefined || y === undefined || isNaN(x) || isNaN(y))
+          return null;
         return { x, y };
       })
       .filter((c): c is { x: number; y: number } => c !== null);
@@ -84,19 +90,24 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
           chunks: chunksToFetch,
           config,
         },
-        fetchPolicy: 'network-only',
+        fetchPolicy: "network-only",
       });
 
       // Check if generation ID has changed during fetch
       if (generationId.current !== currentGen) {
-        console.warn('useChunkLoader: Discarding stale chunks from Gen', currentGen, 'Current:', generationId.current);
+        console.warn(
+          "useChunkLoader: Discarding stale chunks from Gen",
+          currentGen,
+          "Current:",
+          generationId.current,
+        );
         return;
       }
 
       const results = data?.voxelPreview;
       console.log(
         `[useChunkLoader] Gen ${currentGen} received ${results?.length} chunks. Sample tile:`,
-        results?.[0]?.tiles?.[0]
+        results?.[0]?.tiles?.[0],
       );
 
       if (Array.isArray(results)) {
@@ -106,7 +117,11 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
             const req = chunksToFetch[index];
             if (req) {
               const id = getChunkId(req.x, req.y);
-              console.info('useChunkLoader: Caching chunk', id, chunk ? 'FOUND' : 'NULL');
+              console.info(
+                "useChunkLoader: Caching chunk",
+                id,
+                chunk ? "FOUND" : "NULL",
+              );
               next[id] = chunk;
             }
           });
@@ -114,7 +129,7 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
         });
       }
     } catch (e) {
-      console.error('Batch Chunk Fetch Failed:', e);
+      console.error("Batch Chunk Fetch Failed:", e);
     } finally {
       // Only update loading state if we correspond to current generation
       if (generationId.current === currentGen) {
@@ -158,7 +173,7 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
     // fetchChunk captures processBatch.
     // So if config changes -> component re-renders -> processBatch recreated (capturing NEW config) -> fetchChunk recreated -> good.
     // With Debounce, this happens less often.
-    [getChunkId, processBatch]
+    [getChunkId, processBatch],
   );
 
   const getChunk = useCallback(
@@ -174,7 +189,7 @@ export function useChunkLoader({ config }: UseChunkLoaderProps) {
       }
       return null;
     },
-    [chunkCache, fetchChunk, getChunkId, loadingChunks]
+    [chunkCache, fetchChunk, getChunkId, loadingChunks],
   );
 
   return {

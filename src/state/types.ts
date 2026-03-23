@@ -1,4 +1,11 @@
-import { GamePhase, WorldSettings, Player, Message, Creature, Language } from '@/types/contracts';
+import {
+  GamePhase,
+  WorldSettings,
+  Player,
+  Message,
+  Creature,
+  Language,
+} from "@/types/contracts";
 
 export interface AppState {
   language: Language;

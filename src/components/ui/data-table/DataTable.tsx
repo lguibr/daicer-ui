@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import { useState } from 'react';
-import type { ColumnDef, ColumnFiltersState, SortingState, VisibilityState } from '@tanstack/react-table';
+import type { ReactNode } from "react";
+import { useState } from "react";
+import type {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 import {
   flexRender,
   getCoreRowModel,
@@ -10,12 +15,19 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
-import { useI18n } from '../../../i18n';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../table';
-import { DataTablePagination } from './DataTablePagination';
-import { DataTableToolbar } from './DataTableToolbar';
+import { useI18n } from "../../../i18n";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../table";
+import { DataTablePagination } from "./DataTablePagination";
+import { DataTableToolbar } from "./DataTableToolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,7 +73,11 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} filterColumnId={filterColumnId} placeholderKey={filterPlaceholderKey}>
+      <DataTableToolbar
+        table={table}
+        filterColumnId={filterColumnId}
+        placeholderKey={filterPlaceholderKey}
+      >
         {toolbarSlot}
       </DataTableToolbar>
       <div className="overflow-hidden rounded-lg border border-border/60 bg-card">
@@ -72,7 +88,12 @@ export function DataTable<TData, TValue>({
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -83,11 +104,16 @@ export function DataTable<TData, TValue>({
                 rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() ? 'selected' : undefined}
+                    data-state={row.getIsSelected() ? "selected" : undefined}
                     className="bg-background/60"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
@@ -98,7 +124,7 @@ export function DataTable<TData, TValue>({
                     className="h-24 text-center text-sm text-muted-foreground"
                     data-testid="dataTable-empty"
                   >
-                    {t('ui.dataTable.noResults')}
+                    {t("ui.dataTable.noResults")}
                   </TableCell>
                 </TableRow>
               )}

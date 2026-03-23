@@ -3,16 +3,16 @@
  * Shows appropriate navbar for ALL pages
  */
 
-import type { ReactNode } from 'react';
-import type { Room, Player } from '@/types/contracts';
-import cn from '@/lib/utils';
-import BaseLayout from './BaseLayout';
-import Navbar from './Navbar';
-import PublicNavbar from './PublicNavbar';
-import AppBreadcrumb from './AppBreadcrumb';
-import RoomInfoBar from './RoomInfoBar';
-import LanguageSelector from '../ui/LanguageSelector';
-import useAuth from '../../hooks/useAuth';
+import type { ReactNode } from "react";
+import type { Room, Player } from "@/types/contracts";
+import cn from "@/lib/utils";
+import BaseLayout from "./BaseLayout";
+import Navbar from "./Navbar";
+import PublicNavbar from "./PublicNavbar";
+import AppBreadcrumb from "./AppBreadcrumb";
+import RoomInfoBar from "./RoomInfoBar";
+import LanguageSelector from "../ui/LanguageSelector";
+import useAuth from "../../hooks/useAuth";
 
 interface DynamicLayoutProps {
   children: ReactNode;
@@ -46,7 +46,10 @@ export default function DynamicLayout({
   const { user } = useAuth();
 
   return (
-    <BaseLayout tone={user ? 'private' : 'public'} contentClassName={cn('relative flex min-h-dvh flex-col', className)}>
+    <BaseLayout
+      tone={user ? "private" : "public"}
+      contentClassName={cn("relative flex min-h-dvh flex-col", className)}
+    >
       {/* Language selector for pages with navbar disabled */}
       {!showNavbar && showLanguageSelector && (
         <div className="absolute right-6 top-6 z-20">
@@ -58,7 +61,11 @@ export default function DynamicLayout({
       {showNavbar &&
         (user ? (
           <>
-            <Navbar room={room} playerCount={playerCount} showRoomInfo={showRoomInfo} />
+            <Navbar
+              room={room}
+              playerCount={playerCount}
+              showRoomInfo={showRoomInfo}
+            />
             <AppBreadcrumb />
           </>
         ) : (
@@ -66,10 +73,12 @@ export default function DynamicLayout({
         ))}
 
       {/* Room info bar (only for authenticated users with room data) */}
-      {showRoomInfo && room && players && user && <RoomInfoBar room={room} players={players} />}
+      {showRoomInfo && room && players && user && (
+        <RoomInfoBar room={room} players={players} />
+      )}
 
       {/* Main content */}
-      <main className={cn('flex-1', mainClassName)}>{children}</main>
+      <main className={cn("flex-1", mainClassName)}>{children}</main>
     </BaseLayout>
   );
 }

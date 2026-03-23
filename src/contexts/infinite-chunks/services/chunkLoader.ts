@@ -4,13 +4,13 @@
  * NO WebSocket - simple REST API only
  */
 
-import type { ChunkDTO } from '@/types/contracts';
+import type { ChunkDTO } from "@/types/contracts";
 
 // import { gql } from '@apollo/client';
-import { apolloClient } from '../../../lib/apollo';
-import type { TerrainChunk, InfiniteChunksConfig } from '../types';
-import { useTerrainStore } from '../../../stores/useTerrainStore';
-import { GENERATE_TERRAIN_CHUNK_MUTATION } from '../../../graphql/mutations';
+import { apolloClient } from "../../../lib/apollo";
+import type { TerrainChunk, InfiniteChunksConfig } from "../types";
+import { useTerrainStore } from "../../../stores/useTerrainStore";
+import { GENERATE_TERRAIN_CHUNK_MUTATION } from "../../../graphql/mutations";
 
 export const getChunkKey = (x: number, y: number) => `${x},${y}`;
 
@@ -22,7 +22,7 @@ const CHUNK_BOUNDS = 8192; // ±8192 chunks = ~32k tiles radius with 4x4 chunks
 export async function loadChunk(
   chunkX: number,
   chunkY: number,
-  config: InfiniteChunksConfig
+  config: InfiniteChunksConfig,
   // chunkGenerator, // Removed
   // placementMap // Removed
 ): Promise<TerrainChunk> {
@@ -31,18 +31,24 @@ export async function loadChunk(
   const worldY = chunkY * chunkSize;
 
   try {
-    console.info(`[ChunkLoader] Loading chunk ${chunkX},${chunkY} (mode: ${mode})`);
+    console.info(
+      `[ChunkLoader] Loading chunk ${chunkX},${chunkY} (mode: ${mode})`,
+    );
 
     // GRAPHQL API FETCH (game mode)
     // We use standard Strapi GraphQL mutation for chunk generation/fetching
     // "generator" mode is strictly forbidden now to force backend parity.
-    if (mode === 'generator') {
-      console.warn('[ChunkLoader] Generator mode is deprecated/removed. Falling back to backend.');
+    if (mode === "generator") {
+      console.warn(
+        "[ChunkLoader] Generator mode is deprecated/removed. Falling back to backend.",
+      );
     }
 
     // GRAPHQL API FETCH (game mode)
     // We use standard Strapi GraphQL mutation for chunk generation/fetching
-    const response = await apolloClient.mutate<{ generateTerrainChunk: ChunkDTO }>({
+    const response = await apolloClient.mutate<{
+      generateTerrainChunk: ChunkDTO;
+    }>({
       mutation: GENERATE_TERRAIN_CHUNK_MUTATION,
       variables: {
         roomId,
@@ -52,14 +58,14 @@ export async function loadChunk(
       },
       context: {
         headers: {
-          Authorization: config.token ? `Bearer ${config.token}` : '',
+          Authorization: config.token ? `Bearer ${config.token}` : "",
         },
       },
-      fetchPolicy: 'no-cache', // Ensure we always get fresh data if needed, or rely on apollo cache?
+      fetchPolicy: "no-cache", // Ensure we always get fresh data if needed, or rely on apollo cache?
     });
 
     const chunkData = response.data?.generateTerrainChunk as ChunkDTO;
-    if (!chunkData) throw new Error('No data returned from GraphQL');
+    if (!chunkData) throw new Error("No data returned from GraphQL");
 
     // SIDE EFFECT: Update the global Zustand store for new components
     useTerrainStore.getState().setChunk(chunkX, chunkY, chunkData);
@@ -95,12 +101,12 @@ export async function loadChunk(
               x: worldX + x,
               y: worldY + y,
               z: 0,
-              biome: 'plains',
-              blockType: 'grass',
+              biome: "plains",
+              blockType: "grass",
               lightLevel: 15,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any;
-          })
+          }),
       );
 
     // Create biomes 2D array (legacy)
@@ -129,7 +135,10 @@ export async function loadChunk(
 
     return chunk;
   } catch (error) {
-    console.error(`[ChunkLoader] Error loading chunk ${chunkX},${chunkY}:`, error);
+    console.error(
+      `[ChunkLoader] Error loading chunk ${chunkX},${chunkY}:`,
+      error,
+    );
     throw error;
   }
 }
@@ -144,12 +153,16 @@ export function getChunksToLoad(
   chunkSize: number,
   loadRadius: number,
   loadedChunks: Set<string>,
-  loadingChunks: Set<string>
+  loadingChunks: Set<string>,
 ): Array<{ chunkX: number; chunkY: number; distance: number }> {
   const playerChunkX = Math.floor(playerX / chunkSize);
   const playerChunkY = Math.floor(playerY / chunkSize);
 
-  const chunksToLoad: Array<{ chunkX: number; chunkY: number; distance: number }> = [];
+  const chunksToLoad: Array<{
+    chunkX: number;
+    chunkY: number;
+    distance: number;
+  }> = [];
 
   // Check chunks in a circular pattern around player
   for (let dy = -loadRadius; dy <= loadRadius; dy++) {

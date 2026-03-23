@@ -3,12 +3,23 @@
  * Reusable UI components for character creation wizard
  */
 
-import { useEffect } from 'react';
-import { Bird, Feather, Flame, Gem, Leaf, Shield, Sparkles, Swords, Users, Wand2 } from 'lucide-react';
-import clsx from 'clsx';
-import { useFormWizard } from '../../ui/FormWizard';
-import { DiceLoader } from '../../ui/dice-loader';
-import type { CharacterSheetAsset } from './characterSheetAsset';
+import { useEffect } from "react";
+import {
+  Bird,
+  Feather,
+  Flame,
+  Gem,
+  Leaf,
+  Shield,
+  Sparkles,
+  Swords,
+  Users,
+  Wand2,
+} from "lucide-react";
+import clsx from "clsx";
+import { useFormWizard } from "../../ui/FormWizard";
+import { DiceLoader } from "../../ui/dice-loader";
+import type { CharacterSheetAsset } from "./characterSheetAsset";
 
 interface StepValidationGateProps {
   valid: boolean;
@@ -32,25 +43,27 @@ type RaceOption = {
 
 export function resolveRaceIcon(name: string) {
   const normalized = name.toLowerCase();
-  if (normalized.includes('elf')) return Leaf;
-  if (normalized.includes('dwarf')) return Gem;
-  if (normalized.includes('dragon')) return Flame;
-  if (normalized.includes('orc')) return Swords;
-  if (normalized.includes('halfling')) return Feather;
-  if (normalized.includes('gnome')) return Sparkles;
-  if (normalized.includes('tiefling')) return Flame;
-  if (normalized.includes('aarakocra') || normalized.includes('bird')) return Bird;
-  if (normalized.includes('human')) return Users;
-  if (normalized.includes('goliath') || normalized.includes('giant')) return Shield;
+  if (normalized.includes("elf")) return Leaf;
+  if (normalized.includes("dwarf")) return Gem;
+  if (normalized.includes("dragon")) return Flame;
+  if (normalized.includes("orc")) return Swords;
+  if (normalized.includes("halfling")) return Feather;
+  if (normalized.includes("gnome")) return Sparkles;
+  if (normalized.includes("tiefling")) return Flame;
+  if (normalized.includes("aarakocra") || normalized.includes("bird"))
+    return Bird;
+  if (normalized.includes("human")) return Users;
+  if (normalized.includes("goliath") || normalized.includes("giant"))
+    return Shield;
   return Wand2;
 }
 
 function stripMarkdown(text: string): string {
-  if (!text) return '';
+  if (!text) return "";
   return text
-    .replace(/[#*_~`]/g, '') // remove common symbols
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // links
-    .replace(/<[^>]+>/g, '') // html tags
+    .replace(/[#*_~`]/g, "") // remove common symbols
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // links
+    .replace(/<[^>]+>/g, "") // html tags
     .trim();
 }
 
@@ -61,7 +74,12 @@ interface RaceSelectionGridProps {
   loading: boolean;
 }
 
-export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: RaceSelectionGridProps) {
+export function RaceSelectionGrid({
+  options,
+  selectedRace,
+  onSelect,
+  loading,
+}: RaceSelectionGridProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center rounded-xl border border-midnight-600 bg-midnight-700/60 p-6">
@@ -72,7 +90,9 @@ export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: 
 
   if (options.length === 0) {
     return (
-      <p className="text-sm text-shadow-500">No races available yet. Configure the ruleset to unlock racial options.</p>
+      <p className="text-sm text-shadow-500">
+        No races available yet. Configure the ruleset to unlock racial options.
+      </p>
     );
   }
 
@@ -83,12 +103,12 @@ export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: 
         const isSelected = race.name === selectedRace;
         const gradientIndex = index % 6;
         const gradientPalettes = [
-          'from-aurora-500/10 via-aurora-400/5 to-midnight-900/80',
-          'from-nebula-500/10 via-nebula-400/5 to-midnight-900/80',
-          'from-amber-500/10 via-amber-400/5 to-midnight-900/80',
-          'from-emerald-500/10 via-emerald-400/5 to-midnight-900/80',
-          'from-indigo-500/10 via-indigo-400/5 to-midnight-900/80',
-          'from-rose-500/10 via-rose-400/5 to-midnight-900/80',
+          "from-aurora-500/10 via-aurora-400/5 to-midnight-900/80",
+          "from-nebula-500/10 via-nebula-400/5 to-midnight-900/80",
+          "from-amber-500/10 via-amber-400/5 to-midnight-900/80",
+          "from-emerald-500/10 via-emerald-400/5 to-midnight-900/80",
+          "from-indigo-500/10 via-indigo-400/5 to-midnight-900/80",
+          "from-rose-500/10 via-rose-400/5 to-midnight-900/80",
         ];
 
         return (
@@ -97,17 +117,20 @@ export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: 
             type="button"
             onClick={() => onSelect(race.name)}
             className={clsx(
-              'group relative overflow-hidden rounded-2xl border px-5 py-6 text-left transition-all duration-200',
-              'border-midnight-600 bg-midnight-800/80 hover:border-aurora-400/60 hover:bg-midnight-700/90',
-              isSelected && 'border-aurora-400/80 bg-gradient-to-br shadow-[0_12px_28px_rgba(29,143,242,0.25)]',
-              isSelected && gradientPalettes[gradientIndex]
+              "group relative overflow-hidden rounded-2xl border px-5 py-6 text-left transition-all duration-200",
+              "border-midnight-600 bg-midnight-800/80 hover:border-aurora-400/60 hover:bg-midnight-700/90",
+              isSelected &&
+                "border-aurora-400/80 bg-gradient-to-br shadow-[0_12px_28px_rgba(29,143,242,0.25)]",
+              isSelected && gradientPalettes[gradientIndex],
             )}
           >
             <div className="flex items-start gap-4">
               <div
                 className={clsx(
-                  'flex h-12 w-12 items-center justify-center rounded-2xl border-2 transition-all',
-                  isSelected ? 'border-white/70 bg-white/10 text-white' : 'border-aurora-400/30 text-aurora-200'
+                  "flex h-12 w-12 items-center justify-center rounded-2xl border-2 transition-all",
+                  isSelected
+                    ? "border-white/70 bg-white/10 text-white"
+                    : "border-aurora-400/30 text-aurora-200",
                 )}
               >
                 <Icon className="h-6 w-6" aria-hidden="true" />
@@ -119,7 +142,9 @@ export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: 
                   </p>
                   {(race.size || race.speed) && (
                     <p className="text-xs font-medium uppercase tracking-[0.35em] text-shadow-400">
-                      {[race.size, race.speed ? `${race.speed} ft` : undefined].filter(Boolean).join(' • ')}
+                      {[race.size, race.speed ? `${race.speed} ft` : undefined]
+                        .filter(Boolean)
+                        .join(" • ")}
                     </p>
                   )}
                 </div>
@@ -141,16 +166,22 @@ export function RaceSelectionGrid({ options, selectedRace, onSelect, loading }: 
 }
 
 export function formatAlignmentOption(name: string) {
-  const [ethics, morality] = name.split(' ');
-  return `${ethics?.charAt(0)}${morality ? `-${morality?.charAt(0)}` : ''}`.toUpperCase();
+  const [ethics, morality] = name.split(" ");
+  return `${ethics?.charAt(0)}${morality ? `-${morality?.charAt(0)}` : ""}`.toUpperCase();
 }
 
-export function CharacterAssetPreview({ asset }: { asset: CharacterSheetAsset }) {
+export function CharacterAssetPreview({
+  asset,
+}: {
+  asset: CharacterSheetAsset;
+}) {
   return (
     <div className="rounded-3xl border border-aurora-400/20 bg-midnight-900/70 p-6 shadow-[0_18px_40px_rgba(7,5,10,0.55)]">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="space-y-3">
-          <h3 className="text-2xl font-bold text-shadow-50">{asset.summary.name}</h3>
+          <h3 className="text-2xl font-bold text-shadow-50">
+            {asset.summary.name}
+          </h3>
           <p className="text-sm text-shadow-300">
             {asset.summary.race} {asset.summary.characterClass}
           </p>

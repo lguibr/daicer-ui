@@ -13,9 +13,13 @@ import type {
   HistoricalPeriod,
   WorldCondition,
   CharacterSheet,
-} from '@/types/contracts';
-import { apolloClient } from '../lib/apollo';
-import type { AvatarGenerationPayload, AvatarPreviewImage, AvatarPreviewResponse } from '../types/assets';
+} from "@/types/contracts";
+import { apolloClient } from "../lib/apollo";
+import type {
+  AvatarGenerationPayload,
+  AvatarPreviewImage,
+  AvatarPreviewResponse,
+} from "../types/assets";
 import {
   CREATE_ROOM_MUTATION,
   JOIN_ROOM_MUTATION,
@@ -29,7 +33,7 @@ import {
   SUBMIT_ACTION_MUTATION,
   EXECUTE_TOOL_MUTATION,
   PROCESS_TURN_MUTATION,
-} from '../graphql/mutations';
+} from "../graphql/mutations";
 import {
   GET_ROOM_QUERY,
   LIST_ROOMS_QUERY,
@@ -37,8 +41,8 @@ import {
   LIST_MONSTERS_QUERY,
   LIST_SPELLS_QUERY,
   LIST_CHARACTERS_QUERY,
-} from '../graphql/queries';
-import { useFragment } from '../gql/fragment-masking';
+} from "../graphql/queries";
+import { useFragment } from "../gql/fragment-masking";
 import {
   CreateRoomMutation,
   JoinRoomMutation,
@@ -54,7 +58,7 @@ import {
   ExecuteToolMutation,
   ProcessTurnMutationVariables,
   ExecuteToolMutationVariables,
-} from '../gql/graphql';
+} from "../gql/graphql";
 
 /**
  * Join room by code
@@ -66,7 +70,7 @@ export async function joinRoom(code: string): Promise<Room> {
     mutation: JOIN_ROOM_MUTATION,
     variables: { code },
   });
-  if (!data?.joinRoom) throw new Error('Failed to join room');
+  if (!data?.joinRoom) throw new Error("Failed to join room");
   return data.joinRoom as unknown as Room;
 }
 
@@ -80,10 +84,14 @@ export async function getRoomState(roomId: string): Promise<Room> {
     query: GET_ROOM_QUERY,
     variables: {
       filters: {
-        or: [{ documentId: { eq: roomId } }, { roomId: { eq: roomId } }, { code: { eq: roomId } }],
+        or: [
+          { documentId: { eq: roomId } },
+          { roomId: { eq: roomId } },
+          { code: { eq: roomId } },
+        ],
       },
     },
-    fetchPolicy: 'network-only', // Ensure fresh data
+    fetchPolicy: "network-only", // Ensure fresh data
   });
 
   const roomResponse = data?.rooms?.[0];
@@ -100,7 +108,7 @@ export async function getRoomState(roomId: string): Promise<Room> {
 
     // Debug log for player actions
     console.info(
-      '[api.ts] getRoomState RAW Players:',
+      "[api.ts] getRoomState RAW Players:",
       JSON.stringify(
         playersList
           .filter((p) => !!p)
@@ -111,8 +119,8 @@ export async function getRoomState(roomId: string): Promise<Room> {
             userId: p!.user?.documentId,
           })),
         null,
-        2
-      )
+        2,
+      ),
     );
 
     const mappedPlayers = playersList
@@ -125,7 +133,7 @@ export async function getRoomState(roomId: string): Promise<Room> {
           p?.user?.documentId ||
           (p?.user as unknown as { id?: string })?.id ||
           p?.id ||
-          '',
+          "",
       }));
 
     mappedRoom = {
@@ -136,13 +144,13 @@ export async function getRoomState(roomId: string): Promise<Room> {
       entities: (room.entity_sheets || []).map((s: any) => ({
         id: s.documentId,
         name: s.name,
-        type: s.type || 'monster',
+        type: s.type || "monster",
         position: s.position || { x: 0, y: 0, z: 0 },
         speed: s.stats?.walkSpeed || s.speed || 30,
         currentHp: s.currentHp,
         maxHp: s.maxHp,
         visionRadius: 10, // Default
-        color: s.type === 'player' ? '#4ade80' : '#f87171',
+        color: s.type === "player" ? "#4ade80" : "#f87171",
         exploredTiles: new Set<string>(),
       })),
     } as unknown as Room;
@@ -158,7 +166,7 @@ export async function getRoomState(roomId: string): Promise<Room> {
 export async function listRooms(): Promise<RoomMembership[]> {
   const { data } = await apolloClient.query<ListRoomsQuery>({
     query: LIST_ROOMS_QUERY,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
   return (data?.rooms || []) as unknown as RoomMembership[];
 }
@@ -169,7 +177,10 @@ export async function listRooms(): Promise<RoomMembership[]> {
  * @param settings - World settings
  * @returns Updated room
  */
-export async function updateRoomSettings(roomId: string, settings: WorldSettings): Promise<Room> {
+export async function updateRoomSettings(
+  roomId: string,
+  settings: WorldSettings,
+): Promise<Room> {
   // Use documentId if possible, but we might only have roomId.
   // We first need to find the documentId for the room to update it via standard mutation
   // OR we use a custom mutation if we made one.
@@ -177,7 +188,7 @@ export async function updateRoomSettings(roomId: string, settings: WorldSettings
 
   // Fetch room first to get documentId
   const room = await getRoomState(roomId);
-  if (!room || !room.documentId) throw new Error('Room not found');
+  if (!room || !room.documentId) throw new Error("Room not found");
 
   const { data } = await apolloClient.mutate<UpdateRoomMutation>({
     mutation: UPDATE_ROOM_MUTATION,
@@ -186,7 +197,7 @@ export async function updateRoomSettings(roomId: string, settings: WorldSettings
       data: { settings },
     },
   });
-  if (!data?.updateRoom) throw new Error('Failed to update room');
+  if (!data?.updateRoom) throw new Error("Failed to update room");
   return data.updateRoom as unknown as Room;
 }
 
@@ -199,13 +210,16 @@ export async function leaveRoom(_roomId: string): Promise<void> {
   // Leaving as no-op or TODO since 'leaveRoom' was deleting membership.
   // Membership in Strapi might be a relation removal.
   // For now, removing this functionality or marking TODO as it wasn't in my immediate backend plan.
-  console.warn('leaveRoom not fully implemented in GraphQL migration yet');
+  console.warn("leaveRoom not fully implemented in GraphQL migration yet");
 }
 
 /**
  * Create new room
  */
-export async function createRoom(options?: { settings?: WorldSettings; structures?: unknown[] }): Promise<Room> {
+export async function createRoom(options?: {
+  settings?: WorldSettings;
+  structures?: unknown[];
+}): Promise<Room> {
   // Map settings to new fields while keeping legacy settings JSON for compatibility
   const settings = options?.settings;
   const payload = {
@@ -239,11 +253,14 @@ export async function createRoom(options?: { settings?: WorldSettings; structure
     mutation: CREATE_ROOM_MUTATION,
     variables: { data: payload },
   });
-  if (!data?.createRoom) throw new Error('Failed to create room');
+  if (!data?.createRoom) throw new Error("Failed to create room");
   return data.createRoom as unknown as Room;
 }
 
-export async function generateWorld(roomId: string, language: string): Promise<Room> {
+export async function generateWorld(
+  roomId: string,
+  language: string,
+): Promise<Room> {
   const { data } = await apolloClient.mutate<GenerateWorldMutation>({
     mutation: GENERATE_WORLD_MUTATION,
     variables: { roomId, language },
@@ -278,22 +295,29 @@ export async function generateWorld(roomId: string, language: string): Promise<R
  * @param character - Character data
  * @returns Created player
  */
-export type CreateCharacterPayload = Partial<Player['character']> & {
+export type CreateCharacterPayload = Partial<Player["character"]> & {
   documentId?: string;
   avatarPreview?: AvatarPreviewResponse;
 };
 
-export async function addCharacter(roomId: string, character: CreateCharacterPayload): Promise<Player> {
+export async function addCharacter(
+  roomId: string,
+  character: CreateCharacterPayload,
+): Promise<Player> {
   const { data } = await apolloClient.mutate<AddCharacterMutation>({
     mutation: ADD_CHARACTER_MUTATION,
     variables: { roomId, character },
   });
   const result = (
-    data as unknown as { addCharacter: { player: { user?: { documentId: string; id: string } | string } & Player } }
+    data as unknown as {
+      addCharacter: {
+        player: { user?: { documentId: string; id: string } | string } & Player;
+      };
+    }
   ).addCharacter;
 
   if (!result || !result.player) {
-    throw new Error('Invalid response from addCharacter');
+    throw new Error("Invalid response from addCharacter");
   }
 
   // Backend returns { character, player }
@@ -302,7 +326,10 @@ export async function addCharacter(roomId: string, character: CreateCharacterPay
 
   const rawPlayer = result.player;
   const rawUser = rawPlayer.user;
-  const userId = typeof rawUser === 'object' && rawUser !== null ? rawUser.documentId || rawUser.id : rawUser;
+  const userId =
+    typeof rawUser === "object" && rawUser !== null
+      ? rawUser.documentId || rawUser.id
+      : rawUser;
 
   const mappedPlayer: Player = {
     ...rawPlayer,
@@ -317,7 +344,11 @@ export async function addCharacter(roomId: string, character: CreateCharacterPay
  * @param language - Language code
  * @returns Opening message
  */
-export async function startGame(roomId: string, language: string, streamId?: string): Promise<Message> {
+export async function startGame(
+  roomId: string,
+  language: string,
+  streamId?: string,
+): Promise<Message> {
   const { data } = await apolloClient.mutate<StartGameMutation>({
     mutation: START_GAME_MUTATION,
     variables: { roomId, language, streamId },
@@ -327,13 +358,14 @@ export async function startGame(roomId: string, language: string, streamId?: str
 
 export async function generateAvatarPortrait(
   payload: AvatarGenerationPayload,
-  referenceImage?: string | null
+  referenceImage?: string | null,
 ): Promise<AvatarPreviewImage> {
   const { data } = await apolloClient.mutate<GenerateAvatarPortraitMutation>({
     mutation: GENERATE_PORTRAIT_MUTATION,
     variables: { payload, referenceImage },
   });
-  return (data as unknown as { generateAvatarPortrait: AvatarPreviewImage }).generateAvatarPortrait;
+  return (data as unknown as { generateAvatarPortrait: AvatarPreviewImage })
+    .generateAvatarPortrait;
 }
 
 // TODO: Implement other avatar parts (Upper/Full) with GraphQL if needed, or keeping them stubbed
@@ -342,26 +374,28 @@ export async function generateAvatarPortrait(
 export async function generateAvatarUpperBody(
   payload: AvatarGenerationPayload,
   portrait: AvatarPreviewImage,
-  referenceImage?: string | null
+  referenceImage?: string | null,
 ): Promise<AvatarPreviewImage> {
   const { data } = await apolloClient.mutate<GenerateAvatarPortraitMutation>({
     mutation: GENERATE_UPPER_BODY_MUTATION,
     variables: { payload, portrait, referenceImage },
   });
-  return (data as unknown as { generateAvatarUpperBody: AvatarPreviewImage }).generateAvatarUpperBody;
+  return (data as unknown as { generateAvatarUpperBody: AvatarPreviewImage })
+    .generateAvatarUpperBody;
 }
 
 export async function generateAvatarFullBody(
   payload: AvatarGenerationPayload,
   portrait: AvatarPreviewImage,
   upperBody: AvatarPreviewImage,
-  referenceImage?: string | null
+  referenceImage?: string | null,
 ): Promise<AvatarPreviewImage> {
   const { data } = await apolloClient.mutate<GenerateAvatarPortraitMutation>({
     mutation: GENERATE_FULL_BODY_MUTATION,
     variables: { payload, portrait, upperBody, referenceImage },
   });
-  return (data as unknown as { generateAvatarFullBody: AvatarPreviewImage }).generateAvatarFullBody;
+  return (data as unknown as { generateAvatarFullBody: AvatarPreviewImage })
+    .generateAvatarFullBody;
 }
 
 /**
@@ -379,7 +413,7 @@ interface DMStorySettings {
 export async function invokeDMStoryGraph(_input: {
   roomId: string;
   streamId?: string;
-  language?: 'en' | 'es' | 'pt-BR';
+  language?: "en" | "es" | "pt-BR";
   settings: DMStorySettings;
 }): Promise<{
   roomId: string;
@@ -388,7 +422,7 @@ export async function invokeDMStoryGraph(_input: {
   historyPeriods: HistoricalPeriod[];
 }> {
   // TODO: Migrate to GraphQL
-  throw new Error('Not implemented in GraphQL yet');
+  throw new Error("Not implemented in GraphQL yet");
 }
 
 /**
@@ -414,7 +448,7 @@ export async function invokeWorldConfigGraph(_input: {
   terrainMap?: unknown;
 }> {
   // TODO: Migrate to GraphQL
-  throw new Error('Not implemented in GraphQL yet');
+  throw new Error("Not implemented in GraphQL yet");
 }
 
 export async function invokeCharacterSetupGraph(
@@ -425,14 +459,14 @@ export async function invokeCharacterSetupGraph(
     worldHistory: string;
     worldDescription: string;
     spawnPoint?: { x: number; y: number; z: number };
-  }
+  },
 ): Promise<{
   playerId: string;
   openingNarrative: string;
   character: CharacterSheet;
 }> {
   // TODO: Migrate to GraphQL
-  throw new Error('Not implemented in GraphQL yet');
+  throw new Error("Not implemented in GraphQL yet");
 }
 
 /**
@@ -441,8 +475,13 @@ export async function invokeCharacterSetupGraph(
  * @param action - Action text
  * @returns Success status
  */
-export async function submitAction(roomId: string, action: string): Promise<{ success: boolean; allReady: boolean }> {
-  const { data } = await apolloClient.mutate<{ submitAction: { success: boolean; allReady: boolean } }>({
+export async function submitAction(
+  roomId: string,
+  action: string,
+): Promise<{ success: boolean; allReady: boolean }> {
+  const { data } = await apolloClient.mutate<{
+    submitAction: { success: boolean; allReady: boolean };
+  }>({
     mutation: SUBMIT_ACTION_MUTATION,
     variables: { roomId, action },
   });
@@ -456,11 +495,14 @@ export async function submitAction(roomId: string, action: string): Promise<{ su
  * @param command - Command text
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function sendGodModeCommand(roomId: string, command: string): Promise<any> {
+export async function sendGodModeCommand(
+  roomId: string,
+  command: string,
+): Promise<any> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await apolloClient.mutate<{ submitAction: any }>({
     mutation: SUBMIT_ACTION_MUTATION,
-    variables: { roomId, action: command, mode: 'debug' },
+    variables: { roomId, action: command, mode: "debug" },
   });
 
   return data?.submitAction;
@@ -472,20 +514,24 @@ export async function sendGodModeCommand(roomId: string, command: string): Promi
  * @returns List of entities
  */
 export async function searchEntities(
-  query: string
-): Promise<{ id: string; name: string; type: 'monster' | 'character' }[]> {
+  query: string,
+): Promise<{ id: string; name: string; type: "monster" | "character" }[]> {
   try {
     const { data } = await apolloClient.query<{
-      searchEntities: { id: string; name: string; type: 'monster' | 'character' }[];
+      searchEntities: {
+        id: string;
+        name: string;
+        type: "monster" | "character";
+      }[];
     }>({
       query: SEARCH_ENTITIES_QUERY,
       variables: { query },
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
     });
 
     return data?.searchEntities || [];
   } catch (err) {
-    console.error('Search entities failed:', err);
+    console.error("Search entities failed:", err);
     return [];
   }
 }
@@ -495,10 +541,16 @@ export async function searchEntities(
  * @param roomId - Room ID
  * @param language - Language code
  */
-export async function processTurn(roomId: string, language = 'en'): Promise<void> {
+export async function processTurn(
+  roomId: string,
+  language = "en",
+): Promise<void> {
   console.info(`[api.ts] Processing turn for room ${roomId} (GraphQL)`);
 
-  const { data } = await apolloClient.mutate<ProcessTurnMutation, ProcessTurnMutationVariables>({
+  const { data } = await apolloClient.mutate<
+    ProcessTurnMutation,
+    ProcessTurnMutationVariables
+  >({
     mutation: PROCESS_TURN_MUTATION,
     variables: { roomId, language },
   });
@@ -521,17 +573,22 @@ export async function processTurn(roomId: string, language = 'en'): Promise<void
  */
 export async function executeEngineAction(
   roomId: string,
-  actions: unknown[]
+  actions: unknown[],
 ): Promise<{ success: boolean; turnId: string }> {
-  console.warn('[api.ts] executeEngineAction is deprecated. Use executeTool or submitAction.');
+  console.warn(
+    "[api.ts] executeEngineAction is deprecated. Use executeTool or submitAction.",
+  );
   // Fallback to executeTool with serialized actions
   const command = `EXECUTE_JSON:${JSON.stringify(actions)}`;
-  const { data } = await apolloClient.mutate<ExecuteToolMutation, ExecuteToolMutationVariables>({
+  const { data } = await apolloClient.mutate<
+    ExecuteToolMutation,
+    ExecuteToolMutationVariables
+  >({
     mutation: EXECUTE_TOOL_MUTATION,
     variables: { roomId, command },
   });
 
-  return { success: !!data?.executeTool, turnId: 'unknown' };
+  return { success: !!data?.executeTool, turnId: "unknown" };
 }
 
 /**
@@ -541,13 +598,17 @@ export async function executeEngineAction(
  */
 export async function executeDirectTool(
   roomId: string,
-  command: string
+  command: string,
 ): Promise<{ success: boolean; message: string }> {
   console.info(`[api.ts] executeDirectTool CALLED. Command: ${command}`);
 
   if (!EXECUTE_TOOL_MUTATION) {
-    console.error('[api.ts] CRITICAL: EXECUTE_TOOL_MUTATION is undefined! Check mutations.ts export.');
-    throw new Error('Frontend misconfiguration: EXECUTE_TOOL_MUTATION is missing.');
+    console.error(
+      "[api.ts] CRITICAL: EXECUTE_TOOL_MUTATION is undefined! Check mutations.ts export.",
+    );
+    throw new Error(
+      "Frontend misconfiguration: EXECUTE_TOOL_MUTATION is missing.",
+    );
   }
 
   try {
@@ -556,10 +617,11 @@ export async function executeDirectTool(
       variables: { roomId, command },
     });
 
-    console.info('[api.ts] executeDirectTool SUCCESS. Result:', data);
-    return (data as { executeTool: { success: boolean; message: string } }).executeTool;
+    console.info("[api.ts] executeDirectTool SUCCESS. Result:", data);
+    return (data as { executeTool: { success: boolean; message: string } })
+      .executeTool;
   } catch (error) {
-    console.error('[api.ts] executeDirectTool FAILED:', error);
+    console.error("[api.ts] executeDirectTool FAILED:", error);
     throw error;
   }
 }
@@ -568,7 +630,7 @@ export async function executeDirectTool(
  * Search monsters by name
  */
 export async function searchMonsters(
-  query: string
+  query: string,
 ): Promise<{ id: string; name: string; type: string; description: string }[]> {
   try {
     const { data } = await apolloClient.query({
@@ -578,18 +640,18 @@ export async function searchMonsters(
           name: { containsi: query },
         },
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return ((data as any)?.monsters || []).map((m: any) => ({
       id: m.documentId,
       name: m.name,
-      type: 'monster',
+      type: "monster",
       description: `CR ${m.challenge_rating} ${m.size} ${m.type}`,
     }));
   } catch (err) {
-    console.error('Search monsters failed:', err);
+    console.error("Search monsters failed:", err);
     return [];
   }
 }
@@ -598,7 +660,7 @@ export async function searchMonsters(
  * Search spells by name
  */
 export async function searchSpells(
-  query: string
+  query: string,
 ): Promise<{ id: string; name: string; type: string; description: string }[]> {
   try {
     const { data } = await apolloClient.query({
@@ -608,18 +670,18 @@ export async function searchSpells(
           name: { containsi: query },
         },
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return ((data as any)?.spells || []).map((s: any) => ({
       id: s.documentId,
       name: s.name,
-      type: 'spell',
+      type: "spell",
       description: `Level ${s.level} ${s.school?.name}`,
     }));
   } catch (err) {
-    console.error('Search spells failed:', err);
+    console.error("Search spells failed:", err);
     return [];
   }
 }
@@ -628,7 +690,7 @@ export async function searchSpells(
  * Search characters by name
  */
 export async function searchCharacters(
-  query: string
+  query: string,
 ): Promise<{ id: string; name: string; type: string; description: string }[]> {
   try {
     const { data } = await apolloClient.query({
@@ -638,18 +700,18 @@ export async function searchCharacters(
           name: { containsi: query },
         },
       },
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return ((data as any)?.characters || []).map((c: any) => ({
       id: c.documentId,
       name: c.name,
-      type: 'character',
-      description: `Lvl 1 ${c.race?.name || 'Unknown'} ${c.class?.name || 'Unknown'}`,
+      type: "character",
+      description: `Lvl 1 ${c.race?.name || "Unknown"} ${c.class?.name || "Unknown"}`,
     }));
   } catch (err) {
-    console.error('Search characters failed:', err);
+    console.error("Search characters failed:", err);
     return [];
   }
 }
@@ -660,23 +722,26 @@ export async function searchCharacters(
  * @param timestamp
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function replayHistory(roomId: string, timestamp: number): Promise<any> {
-  const token = localStorage.getItem('strapi_jwt');
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+export async function replayHistory(
+  roomId: string,
+  timestamp: number,
+): Promise<any> {
+  const token = localStorage.getItem("strapi_jwt");
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
 
   console.info(`[api.ts] Replaying history for room ${roomId} to ${timestamp}`);
 
   const response = await fetch(`${API_URL}/api/game/history/replay`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ roomId, timestamp }),
   });
 
   if (!response.ok) {
-    throw new Error('Failed to replay history');
+    throw new Error("Failed to replay history");
   }
 
   return response.json();

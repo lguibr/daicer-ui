@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { replayHistory } from '@/services/api';
-import { useTimeFrame } from '../../../contexts/TimeFrameContext';
+import React, { useState } from "react";
+import { replayHistory } from "@/services/api";
+import { useTimeFrame } from "../../../contexts/TimeFrameContext";
 
 interface TimeControlsProps {
   roomId?: string; // Passed down or retrieved from context if available?
@@ -10,12 +10,22 @@ interface TimeControlsProps {
 }
 
 export function TimeControls({ roomId }: TimeControlsProps) {
-  const { history, currentTimeFrame, jumpToFrame, goLive, isLive, injectState, isReplay } = useTimeFrame();
-  const [replayTime, setReplayTime] = useState<string>('');
+  const {
+    history,
+    currentTimeFrame,
+    jumpToFrame,
+    goLive,
+    isLive,
+    injectState,
+    isReplay,
+  } = useTimeFrame();
+  const [replayTime, setReplayTime] = useState<string>("");
   const [isReplaying, setIsReplaying] = useState(false);
 
   if (!history || history.length === 0) {
-    return <div className="text-white/50 text-xs p-2">No History Available</div>;
+    return (
+      <div className="text-white/50 text-xs p-2">No History Available</div>
+    );
   }
 
   // Determine current index (Snapshots)
@@ -26,7 +36,9 @@ export function TimeControls({ roomId }: TimeControlsProps) {
       : currentTimeFrame
         ? history.findIndex(
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (f) => (f as any).documentId === (currentTimeFrame as any).documentId || f.id === currentTimeFrame.id
+            (f) =>
+              (f as any).documentId === (currentTimeFrame as any).documentId ||
+              f.id === currentTimeFrame.id,
           )
         : history.length - 1;
 
@@ -48,7 +60,7 @@ export function TimeControls({ roomId }: TimeControlsProps) {
     const timestamp = parseInt(replayTime, 10); // Or parse date string
     if (isNaN(timestamp)) {
       // eslint-disable-next-line no-alert
-      alert('Invalid Timestamp');
+      alert("Invalid Timestamp");
       return;
     }
 
@@ -57,8 +69,8 @@ export function TimeControls({ roomId }: TimeControlsProps) {
       const state = await replayHistory(roomId, timestamp);
       // Transform backend State to TimeFrame format
       const adHocFrame = {
-        id: 'replay-adhoc',
-        documentId: 'replay-adhoc',
+        id: "replay-adhoc",
+        documentId: "replay-adhoc",
         turnNumber: -1, // Indicates interpolated
         timestamp,
         gameState: state,
@@ -68,7 +80,7 @@ export function TimeControls({ roomId }: TimeControlsProps) {
     } catch (e) {
       console.error(e);
       // eslint-disable-next-line no-alert
-      alert('Replay Failed');
+      alert("Replay Failed");
     } finally {
       setIsReplaying(false);
     }
@@ -77,7 +89,11 @@ export function TimeControls({ roomId }: TimeControlsProps) {
   return (
     <div className="flex items-center gap-4 bg-gray-900 border-t border-white/10 p-3 h-14">
       <div className="text-xs font-mono text-cyan-400 w-24">
-        {isLive ? 'LIVE' : isReplay ? 'REPLAY' : `HIST: T${currentTimeFrame?.turnNumber || 0}`}
+        {isLive
+          ? "LIVE"
+          : isReplay
+            ? "REPLAY"
+            : `HIST: T${currentTimeFrame?.turnNumber || 0}`}
       </div>
 
       <div className="flex-1 flex items-center gap-2">
@@ -89,7 +105,7 @@ export function TimeControls({ roomId }: TimeControlsProps) {
           value={currentIndex === -1 ? 0 : Math.max(0, currentIndex)} // If replaying, maybe disable slider or show phantom position?
           onChange={handleScrub}
           disabled={isReplay}
-          className={`flex-1 accent-cyan-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer ${isReplay ? 'opacity-50' : ''}`}
+          className={`flex-1 accent-cyan-500 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer ${isReplay ? "opacity-50" : ""}`}
         />
         <span className="text-xs text-white/50">NOW ({total})</span>
       </div>
@@ -109,7 +125,7 @@ export function TimeControls({ roomId }: TimeControlsProps) {
           disabled={!roomId || isReplaying}
           className="px-2 py-1 text-xs bg-purple-900 text-purple-200 rounded hover:bg-purple-800 disabled:opacity-50"
         >
-          {isReplaying ? '...' : 'SEEK'}
+          {isReplaying ? "..." : "SEEK"}
         </button>
       </div>
 
@@ -117,7 +133,7 @@ export function TimeControls({ roomId }: TimeControlsProps) {
         type="button"
         onClick={goLive}
         disabled={isLive}
-        className={`px-3 py-1 text-xs rounded border border-cyan-500/50 ${isLive ? 'bg-cyan-500/20 text-cyan-200' : 'bg-transparent text-cyan-500 hover:bg-cyan-900'}`}
+        className={`px-3 py-1 text-xs rounded border border-cyan-500/50 ${isLive ? "bg-cyan-500/20 text-cyan-200" : "bg-transparent text-cyan-500 hover:bg-cyan-900"}`}
       >
         GO LIVE
       </button>

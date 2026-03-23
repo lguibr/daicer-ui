@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Plus, User, Shield, Info, ArrowRight } from 'lucide-react';
-import { useQuery, useMutation } from '@apollo/client/react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
-import CharacterCreation from '@/components/room/CharacterCreation';
-import { LIST_CHARACTERS_QUERY } from '@/graphql/queries';
-import { CREATE_ENTITY_SHEET_MUTATION } from '@/graphql/mutations';
-import { addCharacter } from '@/services/api';
-import { ListCharactersQuery } from '../../../gql/graphql';
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Plus, User, Shield, Info, ArrowRight } from "lucide-react";
+import { useQuery, useMutation } from "@apollo/client/react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import CharacterCreation from "@/components/room/CharacterCreation";
+import { LIST_CHARACTERS_QUERY } from "@/graphql/queries";
+import { CREATE_ENTITY_SHEET_MUTATION } from "@/graphql/mutations";
+import { addCharacter } from "@/services/api";
+import { ListCharactersQuery } from "../../../gql/graphql";
 
 export default function CharacterSelectionPage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -19,7 +19,9 @@ export default function CharacterSelectionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(null);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<string | null>(
+    null,
+  );
 
   // Fetch Characters from Strapi
   const {
@@ -27,7 +29,7 @@ export default function CharacterSelectionPage() {
     loading: querying,
     refetch,
   } = useQuery<ListCharactersQuery>(LIST_CHARACTERS_QUERY, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   const [createEntitySheet] = useMutation(CREATE_ENTITY_SHEET_MUTATION);
@@ -44,8 +46,10 @@ export default function CharacterSelectionPage() {
     setLoading(true);
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const character = characters.find((c: any) => c?.documentId === selectedCharacterId);
-      if (!character) throw new Error('Character not found');
+      const character = characters.find(
+        (c: any) => c?.documentId === selectedCharacterId,
+      );
+      if (!character) throw new Error("Character not found");
 
       // Instantiate Character in Room
       // we map the Strapi character to the payload expected by addCharacter
@@ -57,9 +61,14 @@ export default function CharacterSelectionPage() {
       await addCharacter(roomId, {
         documentId: character.documentId, // Pass the existing character ID
         name: character.name,
-        backstory: character.backstory || '',
-        race: { name: typeof character.race === 'object' ? character.race?.name || '' : character.race || '' },
-        class: { name: character.classes?.[0]?.class?.name || '' },
+        backstory: character.backstory || "",
+        race: {
+          name:
+            typeof character.race === "object"
+              ? character.race?.name || ""
+              : character.race || "",
+        },
+        class: { name: character.classes?.[0]?.class?.name || "" },
         // We might want to pass more fields if available in the query, or fetch full details first.
         // For now we assume the backend can handle partial or we might need to fetch full details.
         // Wait, LIST_CHARACTERS_QUERY only has basic info.
@@ -82,7 +91,7 @@ export default function CharacterSelectionPage() {
       navigate(`/play/${roomId}`); // roomId param should now be the code if we navigated here via code
     } catch (err) {
       console.error(err);
-      setError(err instanceof Error ? err.message : 'Failed to join game');
+      setError(err instanceof Error ? err.message : "Failed to join game");
       setLoading(false);
     }
   };
@@ -118,7 +127,7 @@ export default function CharacterSelectionPage() {
       })) as { data: any };
 
       if (!res?.createEntitySheet?.documentId) {
-        throw new Error('Failed to create character sheet');
+        throw new Error("Failed to create character sheet");
       }
 
       // 2. Refresh List
@@ -128,7 +137,7 @@ export default function CharacterSelectionPage() {
       setSelectedCharacterId(res.createEntitySheet.documentId);
       setShowCreateModal(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save character');
+      setError(err instanceof Error ? err.message : "Failed to save character");
     } finally {
       setLoading(false);
     }
@@ -138,9 +147,12 @@ export default function CharacterSelectionPage() {
     <div className="min-h-screen bg-midnight-950 flex flex-col font-sans text-shadow-100">
       <main className="flex-1 container mx-auto p-6 flex flex-col gap-8 max-w-6xl">
         <header className="space-y-4 text-center">
-          <h1 className="text-4xl font-display uppercase tracking-widest text-aurora-300">Choose Your Hero</h1>
+          <h1 className="text-4xl font-display uppercase tracking-widest text-aurora-300">
+            Choose Your Hero
+          </h1>
           <p className="text-shadow-300 max-w-2xl mx-auto">
-            Select an existing character from your library or forge a new legend to enter this adventure.
+            Select an existing character from your library or forge a new legend
+            to enter this adventure.
           </p>
         </header>
 
@@ -175,8 +187,8 @@ export default function CharacterSelectionPage() {
                         relative overflow-hidden cursor-pointer transition-all duration-200
                         ${
                           selectedCharacterId === char.documentId
-                            ? 'ring-2 ring-aurora-500 bg-midnight-800/80 transform scale-[1.02]'
-                            : 'border-midnight-700 bg-midnight-900/40 hover:bg-midnight-800/40 hover:border-aurora-500/30'
+                            ? "ring-2 ring-aurora-500 bg-midnight-800/80 transform scale-[1.02]"
+                            : "border-midnight-700 bg-midnight-900/40 hover:bg-midnight-800/40 hover:border-aurora-500/30"
                         }
                     `}
                 onClick={() => handleCharacterSelect(char.documentId)}
@@ -196,9 +208,12 @@ export default function CharacterSelectionPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-midnight-950 via-transparent to-transparent" />
 
                   <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="font-bold text-lg text-white truncate">{char.name}</h3>
+                    <h3 className="font-bold text-lg text-white truncate">
+                      {char.name}
+                    </h3>
                     <p className="text-xs text-aurora-300 truncate">
-                      {char.race?.name || 'Unknown Race'} {char.classes?.[0]?.class?.name || 'Unknown Class'}
+                      {char.race?.name || "Unknown Race"}{" "}
+                      {char.classes?.[0]?.class?.name || "Unknown Class"}
                     </p>
                   </div>
                 </div>
@@ -211,7 +226,11 @@ export default function CharacterSelectionPage() {
         <div className="sticky bottom-6 mt-auto bg-midnight-950/90 backdrop-blur border border-midnight-800 p-4 rounded-2xl flex justify-between items-center shadow-2xl">
           <div className="flex items-center gap-2 text-sm text-shadow-400">
             <Info className="w-4 h-4" />
-            <span>Selected: {characters.find((c) => c?.documentId === selectedCharacterId)?.name || 'None'}</span>
+            <span>
+              Selected:{" "}
+              {characters.find((c) => c?.documentId === selectedCharacterId)
+                ?.name || "None"}
+            </span>
           </div>
 
           <Button
@@ -231,7 +250,9 @@ export default function CharacterSelectionPage() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-midnight-950 w-full max-w-7xl h-[90vh] rounded-2xl border border-midnight-800 shadow-2xl overflow-hidden flex flex-col">
             <div className="p-4 border-b border-midnight-800 flex justify-between items-center bg-midnight-900/50">
-              <h2 className="text-xl font-bold text-aurora-300">Character Creation</h2>
+              <h2 className="text-xl font-bold text-aurora-300">
+                Character Creation
+              </h2>
               <Button variant="ghost" onClick={() => setShowCreateModal(false)}>
                 Close
               </Button>

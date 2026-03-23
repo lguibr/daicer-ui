@@ -1,4 +1,4 @@
-import { Coordinates, ZLevel } from './types';
+import { Coordinates, ZLevel } from "./types";
 
 interface TileNode {
   x: number;
@@ -20,8 +20,12 @@ export interface PathStep extends Coordinates {
 export const findPath = (
   start: Coordinates,
   end: Coordinates,
-  getTile: (x: number, y: number, z: number) => { isWalkable: boolean; cost?: number } | null,
-  maxIterations = 1000
+  getTile: (
+    x: number,
+    y: number,
+    z: number,
+  ) => { isWalkable: boolean; cost?: number } | null,
+  maxIterations = 1000,
 ): PathStep[] | null => {
   // If start and end are the same, return empty path
   if (start.x === end.x && start.y === end.y && start.z === end.z) {
@@ -31,7 +35,8 @@ export const findPath = (
   const openList: TileNode[] = [];
   const closedList: Set<string> = new Set();
 
-  const heuristic = (a: Coordinates, b: Coordinates) => Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+  const heuristic = (a: Coordinates, b: Coordinates) =>
+    Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
 
   const startNode: TileNode = {
     ...start,
@@ -99,7 +104,9 @@ export const findPath = (
       const terrainCost = tile.cost || 0;
       const gScore = current.g + stepCost + terrainCost;
 
-      const existing = openList.find((n) => n.x === nx && n.y === ny && n.z === nz);
+      const existing = openList.find(
+        (n) => n.x === nx && n.y === ny && n.z === nz,
+      );
       if (existing && existing.g <= gScore) continue;
 
       const neighbor: TileNode = {

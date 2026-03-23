@@ -1,8 +1,8 @@
-import Textarea from '../../ui/textarea';
-import Input from '../../ui/input';
-import Label from '../../ui/label';
-import { SliderWithMarks } from '../../ui/SliderWithMarks';
-import { useI18n } from '../../../i18n';
+import Textarea from "../../ui/textarea";
+import Input from "../../ui/input";
+import Label from "../../ui/label";
+import { SliderWithMarks } from "../../ui/SliderWithMarks";
+import { useI18n } from "../../../i18n";
 import {
   EYE_COLOR_OPTIONS,
   SKIN_TONE_OPTIONS,
@@ -10,9 +10,9 @@ import {
   DEFAULT_APPEARANCE_AGE,
   DEFAULT_APPEARANCE_HEIGHT,
   DEFAULT_APPEARANCE_WEIGHT,
-} from './constants';
-import { parseAppearanceNumber } from './validation';
-import { OptionPill } from './OptionPill';
+} from "./constants";
+import { parseAppearanceNumber } from "./validation";
+import { OptionPill } from "./OptionPill";
 
 interface AppearanceSectionProps {
   name: string;
@@ -30,34 +30,48 @@ interface AppearanceSectionProps {
   onAppearanceChange: (field: string, value: string) => void;
 }
 
-const GENDER_OPTIONS = ['Male', 'Female', 'Non-binary', 'Other'];
+const GENDER_OPTIONS = ["Male", "Female", "Non-binary", "Other"];
 
-export function AppearanceSection({ name, onNameChange, appearance, onAppearanceChange }: AppearanceSectionProps) {
+export function AppearanceSection({
+  name,
+  onNameChange,
+  appearance,
+  onAppearanceChange,
+}: AppearanceSectionProps) {
   const { t } = useI18n();
 
-  const ageValue = parseAppearanceNumber(appearance.age, DEFAULT_APPEARANCE_AGE);
-  const heightValue = parseAppearanceNumber(appearance.height, DEFAULT_APPEARANCE_HEIGHT);
-  const weightValue = parseAppearanceNumber(appearance.weight, DEFAULT_APPEARANCE_WEIGHT);
+  const ageValue = parseAppearanceNumber(
+    appearance.age,
+    DEFAULT_APPEARANCE_AGE,
+  );
+  const heightValue = parseAppearanceNumber(
+    appearance.height,
+    DEFAULT_APPEARANCE_HEIGHT,
+  );
+  const weightValue = parseAppearanceNumber(
+    appearance.weight,
+    DEFAULT_APPEARANCE_WEIGHT,
+  );
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-4">
         <div className="rounded-lg border border-midnight-600 bg-midnight-800/70 p-4 space-y-2">
           <Label className="text-xs uppercase tracking-wider text-aurora-300">
-            {t('characterCreation.steps.identity.name')}
+            {t("characterCreation.steps.identity.name")}
           </Label>
           <Input
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
-            placeholder={t('characterCreation.steps.identity.namePlaceholder')}
+            placeholder={t("characterCreation.steps.identity.namePlaceholder")}
             className="h-9"
           />
         </div>
         <div className="rounded-lg border border-midnight-600 bg-midnight-800/70 p-4">
           <SliderWithMarks
-            label={t('characterCreation.appearance.age')}
+            label={t("characterCreation.appearance.age")}
             value={ageValue}
-            onChange={(value) => onAppearanceChange('age', String(value))}
+            onChange={(value) => onAppearanceChange("age", String(value))}
             min={10}
             max={120}
             step={1}
@@ -67,9 +81,9 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
         </div>
         <div className="rounded-lg border border-midnight-600 bg-midnight-800/70 p-4">
           <SliderWithMarks
-            label={`${t('characterCreation.appearance.height')} (ft)`}
+            label={`${t("characterCreation.appearance.height")} (ft)`}
             value={heightValue}
-            onChange={(value) => onAppearanceChange('height', String(value))}
+            onChange={(value) => onAppearanceChange("height", String(value))}
             min={3.0}
             max={9.0}
             step={0.1}
@@ -79,9 +93,9 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
         </div>
         <div className="rounded-lg border border-midnight-600 bg-midnight-800/70 p-4">
           <SliderWithMarks
-            label={`${t('characterCreation.appearance.weight')} (lbs)`}
+            label={`${t("characterCreation.appearance.weight")} (lbs)`}
             value={weightValue}
-            onChange={(value) => onAppearanceChange('weight', String(value))}
+            onChange={(value) => onAppearanceChange("weight", String(value))}
             min={40}
             max={400} // Increased range for larger races
             step={1}
@@ -93,21 +107,23 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-3">
-          <span className="text-xs font-semibold uppercase tracking-[0.35em] text-shadow-400">Gender</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.35em] text-shadow-400">
+            Gender
+          </span>
           <div className="flex flex-wrap gap-2">
             {GENDER_OPTIONS.map((option) => (
               <OptionPill
                 key={option}
                 label={option}
                 selected={appearance.gender === option}
-                onSelect={() => onAppearanceChange('gender', option)}
+                onSelect={() => onAppearanceChange("gender", option)}
               />
             ))}
           </div>
         </div>
         <div className="space-y-3">
           <span className="text-xs font-semibold uppercase tracking-[0.35em] text-shadow-400">
-            {t('characterCreation.appearance.eyes')}
+            {t("characterCreation.appearance.eyes")}
           </span>
           <div className="flex flex-wrap gap-2">
             {EYE_COLOR_OPTIONS.map((option) => (
@@ -115,14 +131,14 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
                 key={option}
                 label={option}
                 selected={appearance.eyes === option}
-                onSelect={() => onAppearanceChange('eyes', option)}
+                onSelect={() => onAppearanceChange("eyes", option)}
               />
             ))}
           </div>
         </div>
         <div className="space-y-3">
           <span className="text-xs font-semibold uppercase tracking-[0.35em] text-shadow-400">
-            {t('characterCreation.appearance.skin')}
+            {t("characterCreation.appearance.skin")}
           </span>
           <div className="flex flex-wrap gap-2">
             {SKIN_TONE_OPTIONS.map((option) => (
@@ -130,14 +146,14 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
                 key={option}
                 label={option}
                 selected={appearance.skin === option}
-                onSelect={() => onAppearanceChange('skin', option)}
+                onSelect={() => onAppearanceChange("skin", option)}
               />
             ))}
           </div>
         </div>
         <div className="space-y-3">
           <span className="text-xs font-semibold uppercase tracking-[0.35em] text-shadow-400">
-            {t('characterCreation.appearance.hair')}
+            {t("characterCreation.appearance.hair")}
           </span>
           <div className="flex flex-wrap gap-2">
             {HAIR_STYLE_OPTIONS.map((option) => (
@@ -145,7 +161,7 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
                 key={option}
                 label={option}
                 selected={appearance.hair === option}
-                onSelect={() => onAppearanceChange('hair', option)}
+                onSelect={() => onAppearanceChange("hair", option)}
               />
             ))}
           </div>
@@ -154,8 +170,10 @@ export function AppearanceSection({ name, onNameChange, appearance, onAppearance
 
       <Textarea
         value={appearance.description}
-        onChange={(event) => onAppearanceChange('description', event.target.value)}
-        placeholder={t('characterCreation.appearance.descriptionPlaceholder')}
+        onChange={(event) =>
+          onAppearanceChange("description", event.target.value)
+        }
+        placeholder={t("characterCreation.appearance.descriptionPlaceholder")}
         rows={3}
         className="text-sm resize-none"
       />

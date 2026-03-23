@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from "react";
 
-import clsx from 'clsx';
-import { useChunkLoader } from '@/hooks/useChunkLoader';
-import { GET_WORLD_TIME_QUERY } from '@/graphql/queries';
-import { useQuery } from '@apollo/client/react';
-import { MapRenderer } from './MapRenderer';
-import { MapRenderer3D } from './MapRenderer3D';
-import { DebugEntity, Coordinates, WorldConfig } from '../utils/types';
+import clsx from "clsx";
+import { useChunkLoader } from "@/hooks/useChunkLoader";
+import { GET_WORLD_TIME_QUERY } from "@/graphql/queries";
+import { useQuery } from "@apollo/client/react";
+import { MapRenderer } from "./MapRenderer";
+import { MapRenderer3D } from "./MapRenderer3D";
+import { DebugEntity, Coordinates, WorldConfig } from "../utils/types";
 
 interface GameDebugMapProps {
   roomId: string;
@@ -32,7 +32,11 @@ export function GameDebugMap({
   onPathPlanned,
   onTileHover,
 }: GameDebugMapProps) {
-  const [cameraPosition, setCameraPosition] = useState<Coordinates>({ x: 0, y: 0, z: 0 });
+  const [cameraPosition, setCameraPosition] = useState<Coordinates>({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
   const [viewZ, setViewZ] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
   const [is3D, setIs3D] = useState<boolean>(false); // Default to 2D per user request
@@ -41,7 +45,7 @@ export function GameDebugMap({
   // Visibility State
   const [godMode, setGodMode] = useState(false);
   const [nightVision, setNightVision] = useState(false);
-  const [forceTime, setForceTime] = useState<'auto' | 'day' | 'night'>('auto');
+  const [forceTime, setForceTime] = useState<"auto" | "day" | "night">("auto");
 
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +53,7 @@ export function GameDebugMap({
   const { data: timeData } = useQuery(GET_WORLD_TIME_QUERY, {
     variables: { roomId },
     pollInterval: 5000, // Poll every 5s
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,8 +61,8 @@ export function GameDebugMap({
 
   // Derived Light Level
   const lightLevel = useMemo(() => {
-    if (forceTime === 'day') return 1.0;
-    if (forceTime === 'night') return nightVision ? 1.0 : 0.2;
+    if (forceTime === "day") return 1.0;
+    if (forceTime === "night") return nightVision ? 1.0 : 0.2;
     if (!worldTime) return 1.0; // Default to day if no data
 
     // Auto
@@ -96,11 +100,17 @@ export function GameDebugMap({
   const getChunkId = (cx: number, cy: number) => `${cx},${cy}`;
 
   // Local Exploration State (Client-side Fog of War)
-  const [localExplored, setLocalExplored] = useState<Record<string, Set<string>>>({});
+  const [localExplored, setLocalExplored] = useState<
+    Record<string, Set<string>>
+  >({});
 
   // Active Entity Visibility (Derived) & Exploration Update
   const { visibleTiles, currentExplored } = useMemo(() => {
-    if (!activeEntity) return { visibleTiles: new Set<string>(), currentExplored: new Set<string>() };
+    if (!activeEntity)
+      return {
+        visibleTiles: new Set<string>(),
+        currentExplored: new Set<string>(),
+      };
 
     const visible = new Set<string>();
     const r = activeEntity.visionRadius || 10;
@@ -142,7 +152,7 @@ export function GameDebugMap({
     () => ({
       getChunk: (x: number, y: number) => getChunk(x, y),
     }),
-    [getChunk]
+    [getChunk],
   );
 
   const getTileAt = (x: number, y: number, z: number) => {
@@ -174,10 +184,10 @@ export function GameDebugMap({
   const handleTileDoubleClick = (target: Coordinates) => {
     if (!activeEntity || !activeEntityId) return;
 
-    import('../utils/pathfinding').then(({ findPath, calculatePathLength }) => {
+    import("../utils/pathfinding").then(({ findPath, calculatePathLength }) => {
       const path = findPath(activeEntity.position, target, getTileCallback);
       if (!path) {
-        console.warn('Cannot move there');
+        console.warn("Cannot move there");
         return;
       }
 
@@ -200,14 +210,21 @@ export function GameDebugMap({
   };
 
   return (
-    <div className="flex-1 min-w-0 relative bg-black flex flex-col" ref={mapRef}>
+    <div
+      className="flex-1 min-w-0 relative bg-black flex flex-col"
+      ref={mapRef}
+    >
       {/* Top Bar Overlays */}
       <div className="absolute top-4 left-4 right-4 flex justify-between z-20 pointer-events-none">
         {/* Left: Turn Info (Placeholder if needed, or just connection status) */}
         <div className="pointer-events-auto bg-midnight-900/90 backdrop-blur border border-midnight-700 rounded-lg p-2 shadow-xl flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${connected ? 'bg-emerald-500' : 'bg-red-500 animate-pulse'}`} />
-            <span className="text-[10px] font-mono text-shadow-300">{roomId}</span>
+            <div
+              className={`w-2 h-2 rounded-full ${connected ? "bg-emerald-500" : "bg-red-500 animate-pulse"}`}
+            />
+            <span className="text-[10px] font-mono text-shadow-300">
+              {roomId}
+            </span>
           </div>
         </div>
 
@@ -221,7 +238,9 @@ export function GameDebugMap({
             >
               +
             </button>
-            <span className="text-[9px] font-mono text-shadow-300">{Math.round(zoom * 100)}%</span>
+            <span className="text-[9px] font-mono text-shadow-300">
+              {Math.round(zoom * 100)}%
+            </span>
             <button
               type="button"
               className="h-6 w-6 flex items-center justify-center text-shadow-300 hover:text-white"
@@ -236,17 +255,19 @@ export function GameDebugMap({
       {/* Layer Control (Bottom Center) */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-auto flex items-center">
         <div className="bg-midnight-900/90 backdrop-blur border border-midnight-700 rounded-full px-4 py-2 shadow-xl flex items-center gap-2">
-          <span className="text-[10px] text-shadow-400 uppercase mr-2 font-bold">Z-Link</span>
+          <span className="text-[10px] text-shadow-400 uppercase mr-2 font-bold">
+            Z-Link
+          </span>
           {[-1, 0, 1].map((z) => (
             <button
               type="button"
               key={z}
               onClick={() => setViewZ(z)}
               className={clsx(
-                'w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs transition-all',
+                "w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs transition-all",
                 viewZ === z
-                  ? 'bg-aurora-500 text-midnight-950 font-bold shadow-lg shadow-aurora-500/50 scale-110'
-                  : 'text-shadow-400 hover:bg-midnight-800 hover:text-aurora-200'
+                  ? "bg-aurora-500 text-midnight-950 font-bold shadow-lg shadow-aurora-500/50 scale-110"
+                  : "text-shadow-400 hover:bg-midnight-800 hover:text-aurora-200",
               )}
             >
               {z}
@@ -260,8 +281,10 @@ export function GameDebugMap({
             type="button"
             onClick={() => setGodMode(!godMode)}
             className={clsx(
-              'text-xs font-bold uppercase transition-colors px-2 py-1 rounded',
-              godMode ? 'bg-amber-500 text-black' : 'text-amber-500 hover:bg-white/10'
+              "text-xs font-bold uppercase transition-colors px-2 py-1 rounded",
+              godMode
+                ? "bg-amber-500 text-black"
+                : "text-amber-500 hover:bg-white/10",
             )}
           >
             GOD
@@ -271,8 +294,10 @@ export function GameDebugMap({
             type="button"
             onClick={() => setNightVision(!nightVision)}
             className={clsx(
-              'text-xs font-bold uppercase transition-colors px-2 py-1 rounded',
-              nightVision ? 'bg-emerald-500 text-black' : 'text-emerald-500 hover:bg-white/10'
+              "text-xs font-bold uppercase transition-colors px-2 py-1 rounded",
+              nightVision
+                ? "bg-emerald-500 text-black"
+                : "text-emerald-500 hover:bg-white/10",
             )}
           >
             NV
@@ -280,12 +305,20 @@ export function GameDebugMap({
           <div className="w-px h-4 bg-white/20 mx-1" />
           <button
             type="button"
-            onClick={() => setForceTime((prev) => (prev === 'auto' ? 'day' : prev === 'day' ? 'night' : 'auto'))}
+            onClick={() =>
+              setForceTime((prev) =>
+                prev === "auto" ? "day" : prev === "day" ? "night" : "auto",
+              )
+            }
             className="text-xs font-bold uppercase text-blue-300 hover:text-white min-w-[40px]"
           >
             {forceTime}
           </button>
-          {worldTime && <span className="text-[10px] font-mono text-white/60 ml-1">{worldTime.formatted}</span>}
+          {worldTime && (
+            <span className="text-[10px] font-mono text-white/60 ml-1">
+              {worldTime.formatted}
+            </span>
+          )}
         </div>
 
         {/* Simple 2D/3D Toggle */}
@@ -295,7 +328,7 @@ export function GameDebugMap({
             onClick={() => setIs3D(!is3D)}
             className="text-xs font-bold text-shadow-400 text-aurora-300 hover:text-white uppercase"
           >
-            {is3D ? 'View 2D' : 'View 3D'}
+            {is3D ? "View 2D" : "View 3D"}
           </button>
         </div>
       </div>
@@ -339,19 +372,28 @@ export function GameDebugMap({
             onTileHover={onTileHover}
             onZoom={(delta, mouseX, mouseY) => {
               const SCALE_FACTOR = 0.1;
-              const newZoom = Math.max(0.1, Math.min(5, zoom - delta * SCALE_FACTOR));
+              const newZoom = Math.max(
+                0.1,
+                Math.min(5, zoom - delta * SCALE_FACTOR),
+              );
 
               // Mouse-centered zoom logic
               const TILE_SIZE = 32 * zoom;
-              const wx = cameraPosition.x + (mouseX - mapSize.w / 2) / TILE_SIZE;
-              const wy = cameraPosition.y + (mouseY - mapSize.h / 2) / TILE_SIZE;
+              const wx =
+                cameraPosition.x + (mouseX - mapSize.w / 2) / TILE_SIZE;
+              const wy =
+                cameraPosition.y + (mouseY - mapSize.h / 2) / TILE_SIZE;
 
               const NEW_TILE_SIZE = 32 * newZoom;
               const newCenterX = wx - (mouseX - mapSize.w / 2) / NEW_TILE_SIZE;
               const newCenterY = wy - (mouseY - mapSize.h / 2) / NEW_TILE_SIZE;
 
               setZoom(newZoom);
-              setCameraPosition({ ...cameraPosition, x: newCenterX, y: newCenterY });
+              setCameraPosition({
+                ...cameraPosition,
+                x: newCenterX,
+                y: newCenterY,
+              });
             }}
             onPan={(dx, dy) => {
               const TILE_SIZE = 32 * zoom;

@@ -3,10 +3,16 @@
  * Displays individual equipment items with stats and purchase/equip actions
  */
 
-import { ShoppingCart, Swords, Shield, Backpack } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { useI18n } from '../../i18n';
+import { ShoppingCart, Swords, Shield, Backpack } from "lucide-react";
+import { Button } from "../ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { useI18n } from "../../i18n";
 
 export interface EquipmentItemData {
   id: string; // Document ID
@@ -59,12 +65,18 @@ function convertToGold(quantity: number, unit: string): number {
 
 // Stabilize Icon usage
 function ItemIcon({ cat, className }: { cat: string; className?: string }) {
-  if (cat === 'Weapon') return <Swords className={className} />;
-  if (cat === 'Armor') return <Shield className={className} />;
+  if (cat === "Weapon") return <Swords className={className} />;
+  if (cat === "Armor") return <Shield className={className} />;
   return <Backpack className={className} />;
 }
 
-export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled }: EquipmentItemCardProps) {
+export function EquipmentItemCard({
+  item,
+  onBuy,
+  onEquip,
+  currentGold,
+  disabled,
+}: EquipmentItemCardProps) {
   const { t, localize } = useI18n();
   // Stabilize Icon usage
   const costInGold = convertToGold(item.cost.quantity, item.cost.unit);
@@ -76,24 +88,30 @@ export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled 
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
             <ItemIcon cat={item.equipmentCategory} />
-            <CardTitle className="text-lg">{localize(item, 'name')}</CardTitle>
+            <CardTitle className="text-lg">{localize(item, "name")}</CardTitle>
           </div>
           <div className="flex items-center gap-1 text-sm font-medium text-amber-500">
             <span>{costInGold}</span>
             <span className="text-xs">gp</span>
           </div>
         </div>
-        <CardDescription className="text-xs">{t(`equipment.categories.${item.equipmentCategory}`)}</CardDescription>
+        <CardDescription className="text-xs">
+          {t(`equipment.categories.${item.equipmentCategory}`)}
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
-            <div className="text-xs text-muted-foreground">{t('equipment.shop.weight')}</div>
+            <div className="text-xs text-muted-foreground">
+              {t("equipment.shop.weight")}
+            </div>
             <div className="font-medium">{item.weight} lb</div>
           </div>
           {item.damage && (
             <div>
-              <div className="text-xs text-muted-foreground">{t('equipment.shop.damage')}</div>
+              <div className="text-xs text-muted-foreground">
+                {t("equipment.shop.damage")}
+              </div>
               <div className="font-medium">
                 {item.damage.damageDice} {item.damage.damageType}
               </div>
@@ -101,9 +119,14 @@ export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled 
           )}
           {item.armorClass && (
             <div>
-              <div className="text-xs text-muted-foreground">{t('equipment.shop.armorClass')}</div>
+              <div className="text-xs text-muted-foreground">
+                {t("equipment.shop.armorClass")}
+              </div>
               <div className="font-medium">
-                {typeof item.armorClass === 'number' ? item.armorClass : item.armorClass.base} AC
+                {typeof item.armorClass === "number"
+                  ? item.armorClass
+                  : item.armorClass.base}{" "}
+                AC
               </div>
             </div>
           )}
@@ -111,10 +134,15 @@ export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled 
 
         {item.properties && item.properties.length > 0 && (
           <div>
-            <div className="mb-1 text-xs text-muted-foreground">{t('equipment.shop.properties')}</div>
+            <div className="mb-1 text-xs text-muted-foreground">
+              {t("equipment.shop.properties")}
+            </div>
             <div className="flex flex-wrap gap-1">
               {item.properties.map((prop) => (
-                <span key={prop} className="rounded-md bg-primary/10 px-2 py-0.5 text-xs">
+                <span
+                  key={prop}
+                  className="rounded-md bg-primary/10 px-2 py-0.5 text-xs"
+                >
                   {prop}
                 </span>
               ))}
@@ -124,7 +152,7 @@ export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled 
 
         {(item.description || (item.desc && item.desc.length > 0)) && (
           <p className="line-clamp-2 text-xs text-muted-foreground">
-            {localize(item, 'description') || item.desc?.[0]}
+            {localize(item, "description") || item.desc?.[0]}
           </p>
         )}
 
@@ -134,16 +162,23 @@ export function EquipmentItemCard({ item, onBuy, onEquip, currentGold, disabled 
             disabled={!canAfford || disabled}
             className="w-full"
             size="sm"
-            variant={canAfford ? 'default' : 'outline'}
+            variant={canAfford ? "default" : "outline"}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            {canAfford ? t('equipment.shop.buy') : t('equipment.shop.insufficientGold')}
+            {canAfford
+              ? t("equipment.shop.buy")
+              : t("equipment.shop.insufficientGold")}
           </Button>
         )}
 
         {onEquip && (
-          <Button onClick={() => onEquip(item.index)} disabled={disabled} className="w-full" size="sm">
-            {t('equipment.shop.equip')}
+          <Button
+            onClick={() => onEquip(item.index)}
+            disabled={disabled}
+            className="w-full"
+            size="sm"
+          >
+            {t("equipment.shop.equip")}
           </Button>
         )}
       </CardContent>

@@ -1,18 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
-import { useQuery } from '@apollo/client/react';
-import { Loader2, Search, SlidersHorizontal, Image as ImageIcon } from 'lucide-react';
-import cn from '@/lib/utils';
-import { gildedTokens } from '@/theme/gildedTokens';
-import Input from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { EXPLORER_GET_CLASSES, EXPLORER_GET_DAMAGE_TYPES } from '@/models/rules/queries';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useState } from "react";
+import { useQuery } from "@apollo/client/react";
+import {
+  Loader2,
+  Search,
+  SlidersHorizontal,
+  Image as ImageIcon,
+} from "lucide-react";
+import cn from "@/lib/utils";
+import { gildedTokens } from "@/theme/gildedTokens";
+import Input from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  EXPLORER_GET_CLASSES,
+  EXPLORER_GET_DAMAGE_TYPES,
+} from "@/models/rules/queries";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const CATEGORY_CONFIG: Record<string, { query: any; dataKey: string }> = {
-  classes: { query: EXPLORER_GET_CLASSES, dataKey: 'classes_connection' },
-  'damage-types': { query: EXPLORER_GET_DAMAGE_TYPES, dataKey: 'damageTypes_connection' },
+  classes: { query: EXPLORER_GET_CLASSES, dataKey: "classes_connection" },
+  "damage-types": {
+    query: EXPLORER_GET_DAMAGE_TYPES,
+    dataKey: "damageTypes_connection",
+  },
 };
 
 interface RulesResourceListProps {
@@ -20,7 +41,7 @@ interface RulesResourceListProps {
 }
 
 export function RulesResourceList({ category }: RulesResourceListProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
 
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -30,7 +51,11 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
   // Heuristic for search filter based on typical fields
   const filters: Record<string, any> = {};
   if (searchTerm) {
-    if (category === 'monsters' || category === 'classes' || category === 'races') {
+    if (
+      category === "monsters" ||
+      category === "classes" ||
+      category === "races"
+    ) {
       filters.name = { containsi: searchTerm };
     } else {
       // Generic name search
@@ -47,7 +72,10 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
   });
 
   if (!config) return <div className="text-red-400">Invalid Category</div>;
-  if (error) return <div className="text-red-400">Error loading data: {error.message}</div>;
+  if (error)
+    return (
+      <div className="text-red-400">Error loading data: {error.message}</div>
+    );
 
   const connection = data?.[config.dataKey as keyof typeof data] as any;
   const items = connection?.nodes || [];
@@ -56,12 +84,14 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className={cn(gildedTokens.glassPanel, 'flex gap-4 items-center p-4')}>
+      <div
+        className={cn(gildedTokens.glassPanel, "flex gap-4 items-center p-4")}
+      >
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-aurora-500/50" />
           <Input
             placeholder={`Search ${category}...`}
-            className={cn(gildedTokens.monoInput, 'pl-9')}
+            className={cn(gildedTokens.monoInput, "pl-9")}
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -91,7 +121,7 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
               key={item.documentId || item.id}
               className={cn(
                 gildedTokens.glassPanelInteractive,
-                'group flex flex-col h-full overflow-hidden border-midnight-600/40 p-0'
+                "group flex flex-col h-full overflow-hidden border-midnight-600/40 p-0",
               )}
               onClick={() => setSelectedItem(item)}
             >
@@ -115,15 +145,37 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
                   {item.name}
                 </CardTitle>
                 <CardDescription className="line-clamp-2 text-sm font-sans text-shadow-300 text-aurora-100/70">
-                  {item.description || item.subclass_flavor || item.note || 'No description available.'}
+                  {item.description ||
+                    item.subclass_flavor ||
+                    item.note ||
+                    "No description available."}
                   {/* Render specific fields based on category if needed */}
-                  {category === 'monsters' && (
+                  {category === "monsters" && (
                     <div className="mt-3 flex gap-2 flex-wrap">
-                      <span className={cn(gildedTokens.inlineBadge, 'text-[10px] py-0.5 px-2')}>
+                      <span
+                        className={cn(
+                          gildedTokens.inlineBadge,
+                          "text-[10px] py-0.5 px-2",
+                        )}
+                      >
                         CR {item.challenge_rating}
                       </span>
-                      <span className={cn(gildedTokens.inlineBadge, 'text-[10px] py-0.5 px-2')}>{item.size}</span>
-                      <span className={cn(gildedTokens.inlineBadge, 'text-[10px] py-0.5 px-2')}>{item.type}</span>
+                      <span
+                        className={cn(
+                          gildedTokens.inlineBadge,
+                          "text-[10px] py-0.5 px-2",
+                        )}
+                      >
+                        {item.size}
+                      </span>
+                      <span
+                        className={cn(
+                          gildedTokens.inlineBadge,
+                          "text-[10px] py-0.5 px-2",
+                        )}
+                      >
+                        {item.type}
+                      </span>
                     </div>
                   )}
                 </CardDescription>
@@ -136,28 +188,41 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
       {/* Pagination Controls */}
       {!loading && pagination && pagination.pageCount > 1 && (
         <div className="flex justify-center gap-2 mt-8">
-          <Button variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+          <Button
+            variant="outline"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => p - 1)}
+          >
             Previous
           </Button>
           <span className="flex items-center text-sm text-slate-400 px-4">
             Page {page} of {pagination.pageCount}
           </span>
-          <Button variant="outline" disabled={page >= pagination.pageCount} onClick={() => setPage((p) => p + 1)}>
+          <Button
+            variant="outline"
+            disabled={page >= pagination.pageCount}
+            onClick={() => setPage((p) => p + 1)}
+          >
             Next
           </Button>
         </div>
       )}
 
       {/* Detail Dialog */}
-      <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+      <Dialog
+        open={!!selectedItem}
+        onOpenChange={(open) => !open && setSelectedItem(null)}
+      >
         <DialogContent
           className={cn(
             gildedTokens.card,
-            'max-w-4xl max-h-[90vh] overflow-y-auto bg-midnight-950/95 backdrop-blur-xl border-aurora-500/30 text-aurora-100'
+            "max-w-4xl max-h-[90vh] overflow-y-auto bg-midnight-950/95 backdrop-blur-xl border-aurora-500/30 text-aurora-100",
           )}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl font-display text-gradient-gold">{selectedItem?.name}</DialogTitle>
+            <DialogTitle className="text-3xl font-display text-gradient-gold">
+              {selectedItem?.name}
+            </DialogTitle>
           </DialogHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
@@ -165,7 +230,11 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
             <div className="space-y-6">
               <div className="rounded-lg overflow-hidden border border-aurora-500/20 shadow-2xl relative aspect-square bg-midnight-900">
                 {selectedItem?.image?.url ? (
-                  <img src={selectedItem.image.url} alt={selectedItem.name} className="w-full h-full object-cover" />
+                  <img
+                    src={selectedItem.image.url}
+                    alt={selectedItem.name}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-midnight-800">
                     <ImageIcon className="h-24 w-24 opacity-20" />
@@ -180,27 +249,32 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
                   Object.entries(selectedItem).map(([key, value]) => {
                     if (
                       [
-                        '__typename',
-                        'documentId',
-                        'id',
-                        'name',
-                        'description',
-                        'image',
-                        'note',
-                        'subclass_flavor',
+                        "__typename",
+                        "documentId",
+                        "id",
+                        "name",
+                        "description",
+                        "image",
+                        "note",
+                        "subclass_flavor",
                       ].includes(key)
                     )
                       return null;
-                    if (typeof value === 'object') return null;
+                    if (typeof value === "object") return null;
                     return (
                       <div
                         key={key}
-                        className={cn(gildedTokens.glassPanel, 'p-3 rounded-xl border-midnight-600/50 flex flex-col')}
+                        className={cn(
+                          gildedTokens.glassPanel,
+                          "p-3 rounded-xl border-midnight-600/50 flex flex-col",
+                        )}
                       >
                         <span className="text-[10px] uppercase tracking-widest text-aurora-400/70 block mb-1">
-                          {key.replace(/_/g, ' ')}
+                          {key.replace(/_/g, " ")}
                         </span>
-                        <span className="font-medium text-aurora-100 font-mono text-sm">{String(value)}</span>
+                        <span className="font-medium text-aurora-100 font-mono text-sm">
+                          {String(value)}
+                        </span>
                       </div>
                     );
                   })}
@@ -210,7 +284,9 @@ export function RulesResourceList({ category }: RulesResourceListProps) {
             {/* Right Column: Description */}
             <div className="prose prose-invert max-w-none prose-headings:font-display prose-headings:text-aurora-200 prose-p:text-shadow-300 prose-p:font-sans prose-strong:text-aurora-300">
               <div className="text-aurora-100/90 whitespace-pre-wrap leading-relaxed text-lg">
-                {selectedItem?.description || selectedItem?.note || selectedItem?.subclass_flavor}
+                {selectedItem?.description ||
+                  selectedItem?.note ||
+                  selectedItem?.subclass_flavor}
               </div>
             </div>
           </div>

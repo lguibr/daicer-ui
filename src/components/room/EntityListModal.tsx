@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { X, Plus, Search, Skull, User } from 'lucide-react';
-import { toast } from 'sonner';
-import type { Player, Creature, EntitySheet } from '@/types/contracts';
-import { useMutation } from '@apollo/client/react';
-import { Button } from '../ui/button';
-import Input from '../ui/input';
-import Label from '../ui/label';
-import { ScrollArea } from '../ui/scroll-area';
-import { SPAWN_CREATURE_MUTATION } from '../../graphql/mutations';
+import { useState } from "react";
+import { X, Plus, Search, Skull, User } from "lucide-react";
+import { toast } from "sonner";
+import type { Player, Creature, EntitySheet } from "@/types/contracts";
+import { useMutation } from "@apollo/client/react";
+import { Button } from "../ui/button";
+import Input from "../ui/input";
+import Label from "../ui/label";
+import { ScrollArea } from "../ui/scroll-area";
+import { SPAWN_CREATURE_MUTATION } from "../../graphql/mutations";
 
-import { UniversalEntitySheetContent } from '../game/UniversalEntitySheet';
+import { UniversalEntitySheetContent } from "../game/UniversalEntitySheet";
 
 interface EntityListModalProps {
   isOpen: boolean;
@@ -24,8 +24,9 @@ type SelectableEntity = Creature | Player;
 
 // Helper to adapt to EntitySheet for Universal Viewer
 function getEntitySheet(entity: SelectableEntity): EntitySheet | null {
-  if ('sheet' in entity && entity.sheet) return entity.sheet;
-  if ('character' in entity && entity.character) return entity.character as unknown as EntitySheet;
+  if ("sheet" in entity && entity.sheet) return entity.sheet;
+  if ("character" in entity && entity.character)
+    return entity.character as unknown as EntitySheet;
   // If it's a monster with flat fields, adapt it (simple stub or check if entity itself is EntitySheet-like)
   // EntityListModal uses `Creature` which has hp, maxHp, ac, etc.
   // UniversalEntitySheetContent expects EntitySheet.
@@ -34,21 +35,21 @@ function getEntitySheet(entity: SelectableEntity): EntitySheet | null {
   // Let's assume best effort mapping if needed.
 
   // Temporary mapping for "Creature" without nested "sheet" property (if legacy)
-  if (!('sheet' in entity) && !('character' in entity)) {
+  if (!("sheet" in entity) && !("character" in entity)) {
     // It's a raw creature/monster
     const c = entity as Creature;
     return {
       id: c.id,
       name: c.name,
-      type: c.type === 'monster' ? 'monster' : 'npc',
+      type: c.type === "monster" ? "monster" : "npc",
       hp: c.hp,
       maxHp: c.maxHp,
       ac: c.ac,
       speed: 30, // Fallback
-      level: 'level' in c ? (c as { level: number }).level : 1,
+      level: "level" in c ? (c as { level: number }).level : 1,
       stats:
-        'stats' in c
-          ? (c as { stats: EntitySheet['stats'] }).stats
+        "stats" in c
+          ? (c as { stats: EntitySheet["stats"] }).stats
           : {
               strength: 10,
               dexterity: 10,
@@ -67,22 +68,35 @@ function getEntitySheet(entity: SelectableEntity): EntitySheet | null {
 
 function SafeSheetView({ entity }: { entity: SelectableEntity }) {
   const sheet = getEntitySheet(entity);
-  if (!sheet) return <div className="p-6 text-midnight-400 italic">No sheet data available for this entity.</div>;
+  if (!sheet)
+    return (
+      <div className="p-6 text-midnight-400 italic">
+        No sheet data available for this entity.
+      </div>
+    );
 
   // UniversalEntitySheetContent takes full height, ensure container handles it.
   return <UniversalEntitySheetContent entity={sheet} />;
 }
 
-export function EntityListModal({ isOpen, onClose, creatures, players = [], roomId }: EntityListModalProps) {
-  const [selectedEntity, setSelectedEntity] = useState<SelectableEntity | null>(null);
+export function EntityListModal({
+  isOpen,
+  onClose,
+  creatures,
+  players = [],
+  roomId,
+}: EntityListModalProps) {
+  const [selectedEntity, setSelectedEntity] = useState<SelectableEntity | null>(
+    null,
+  );
   const [isAdding, setIsAdding] = useState(false);
   const [newCreature, setNewCreature] = useState({
-    type: 'npc', // or 'monster'
-    name: '',
-    race: '',
-    class: '',
+    type: "npc", // or 'monster'
+    name: "",
+    race: "",
+    class: "",
     level: 1,
-    monsterId: '',
+    monsterId: "",
     cr: 0.25,
   });
   const [loading, setLoading] = useState(false);
@@ -100,12 +114,12 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
           creature: newCreature,
         },
       });
-      toast.success('Creature spawned!');
+      toast.success("Creature spawned!");
       setIsAdding(false);
-      setNewCreature({ ...newCreature, name: '' });
+      setNewCreature({ ...newCreature, name: "" });
     } catch (err) {
       console.error(err);
-      toast.error('Failed to spawn creature');
+      toast.error("Failed to spawn creature");
     } finally {
       setLoading(false);
     }
@@ -118,7 +132,11 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
         <div className="w-1/3 border-r border-midnight-700 flex flex-col bg-midnight-950/50">
           <div className="p-4 border-b border-midnight-700 flex justify-between items-center">
             <h2 className="text-xl font-bold text-aurora-100">Entities</h2>
-            <Button size="sm" variant="outline" onClick={() => setIsAdding(!isAdding)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsAdding(!isAdding)}
+            >
               <Plus className="w-4 h-4 mr-1" />
               Add
             </Button>
@@ -128,7 +146,9 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
             {/* Players Section */}
             {players.length > 0 && (
               <div className="mb-4">
-                <h3 className="text-xs uppercase tracking-wider text-midnight-400 font-bold mb-2 px-2">Players</h3>
+                <h3 className="text-xs uppercase tracking-wider text-midnight-400 font-bold mb-2 px-2">
+                  Players
+                </h3>
                 <div className="space-y-1">
                   {players.map((p) => (
                     <div
@@ -137,7 +157,7 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                         setSelectedEntity(p);
                         setIsAdding(false);
                       }}
-                      className={`p-2 rounded cursor-pointer flex items-center gap-2 hover:bg-midnight-800 ${selectedEntity?.id === p.id ? 'bg-midnight-800 border border-aurora-500/30' : ''}`}
+                      className={`p-2 rounded cursor-pointer flex items-center gap-2 hover:bg-midnight-800 ${selectedEntity?.id === p.id ? "bg-midnight-800 border border-aurora-500/30" : ""}`}
                     >
                       <User className="w-4 h-4 text-aurora-400" />
                       <div className="overflow-hidden">
@@ -145,10 +165,13 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                           {p.character?.name || p.name}
                         </div>
                         <div className="text-xs text-midnight-400 truncate">
-                          {typeof p.character?.race === 'string' ? p.character.race : p.character?.race?.name}{' '}
-                          {typeof p.character?.class === 'string'
+                          {typeof p.character?.race === "string"
+                            ? p.character.race
+                            : p.character?.race?.name}{" "}
+                          {typeof p.character?.class === "string"
                             ? p.character.class
-                            : p.character?.class?.name || p.character?.characterClass}
+                            : p.character?.class?.name ||
+                              p.character?.characterClass}
                         </div>
                       </div>
                     </div>
@@ -162,7 +185,11 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
               <h3 className="text-xs uppercase tracking-wider text-midnight-400 font-bold mb-2 px-2">
                 Creatures & NPCs
               </h3>
-              {creatures.length === 0 && <p className="text-xs text-midnight-500 px-2">No creatures active.</p>}
+              {creatures.length === 0 && (
+                <p className="text-xs text-midnight-500 px-2">
+                  No creatures active.
+                </p>
+              )}
               <div className="space-y-1">
                 {creatures.map((c) => (
                   <div
@@ -171,11 +198,15 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                       setSelectedEntity(c);
                       setIsAdding(false);
                     }}
-                    className={`p-2 rounded cursor-pointer flex items-center gap-2 hover:bg-midnight-800 ${selectedEntity?.id === c.id ? 'bg-midnight-800 border border-nebula-500/30' : ''}`}
+                    className={`p-2 rounded cursor-pointer flex items-center gap-2 hover:bg-midnight-800 ${selectedEntity?.id === c.id ? "bg-midnight-800 border border-nebula-500/30" : ""}`}
                   >
-                    <Skull className={`w-4 h-4 ${c.type === 'monster' ? 'text-red-400' : 'text-nebula-400'}`} />
+                    <Skull
+                      className={`w-4 h-4 ${c.type === "monster" ? "text-red-400" : "text-nebula-400"}`}
+                    />
                     <div className="overflow-hidden">
-                      <div className="font-semibold text-sm truncate text-gray-200">{c.name}</div>
+                      <div className="font-semibold text-sm truncate text-gray-200">
+                        {c.name}
+                      </div>
                       <div className="text-xs text-midnight-400 truncate">
                         HP: {c.hp}/{c.maxHp} | AC: {c.ac}
                       </div>
@@ -200,20 +231,28 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
 
           {isAdding ? (
             <div className="p-6 max-w-md mx-auto w-full">
-              <h2 className="text-2xl font-bold mb-6 text-aurora-100">Spawn Creature</h2>
+              <h2 className="text-2xl font-bold mb-6 text-aurora-100">
+                Spawn Creature
+              </h2>
 
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <Button
-                    variant={newCreature.type === 'npc' ? 'default' : 'outline'}
-                    onClick={() => setNewCreature({ ...newCreature, type: 'npc' })}
+                    variant={newCreature.type === "npc" ? "default" : "outline"}
+                    onClick={() =>
+                      setNewCreature({ ...newCreature, type: "npc" })
+                    }
                     className="flex-1"
                   >
                     NPC
                   </Button>
                   <Button
-                    variant={newCreature.type === 'monster' ? 'default' : 'outline'}
-                    onClick={() => setNewCreature({ ...newCreature, type: 'monster' })}
+                    variant={
+                      newCreature.type === "monster" ? "default" : "outline"
+                    }
+                    onClick={() =>
+                      setNewCreature({ ...newCreature, type: "monster" })
+                    }
                     className="flex-1"
                   >
                     Monster
@@ -224,19 +263,30 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                   <Label>Name</Label>
                   <Input
                     value={newCreature.name}
-                    onChange={(e) => setNewCreature({ ...newCreature, name: e.target.value })}
-                    placeholder={newCreature.type === 'npc' ? 'Falric the Guard' : 'Goblin Skirmisher'}
+                    onChange={(e) =>
+                      setNewCreature({ ...newCreature, name: e.target.value })
+                    }
+                    placeholder={
+                      newCreature.type === "npc"
+                        ? "Falric the Guard"
+                        : "Goblin Skirmisher"
+                    }
                   />
                 </div>
 
-                {newCreature.type === 'npc' ? (
+                {newCreature.type === "npc" ? (
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label>Race</Label>
                         <Input
                           value={newCreature.race}
-                          onChange={(e) => setNewCreature({ ...newCreature, race: e.target.value })}
+                          onChange={(e) =>
+                            setNewCreature({
+                              ...newCreature,
+                              race: e.target.value,
+                            })
+                          }
                           placeholder="Human"
                         />
                       </div>
@@ -244,7 +294,12 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                         <Label>Class</Label>
                         <Input
                           value={newCreature.class}
-                          onChange={(e) => setNewCreature({ ...newCreature, class: e.target.value })}
+                          onChange={(e) =>
+                            setNewCreature({
+                              ...newCreature,
+                              class: e.target.value,
+                            })
+                          }
                           placeholder="Fighter"
                         />
                       </div>
@@ -254,7 +309,12 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                       <Input
                         type="number"
                         value={newCreature.level}
-                        onChange={(e) => setNewCreature({ ...newCreature, level: parseInt(e.target.value, 10) })}
+                        onChange={(e) =>
+                          setNewCreature({
+                            ...newCreature,
+                            level: parseInt(e.target.value, 10),
+                          })
+                        }
                       />
                     </div>
                   </>
@@ -264,7 +324,12 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                       <Label>Monster Filter (Type/Race)</Label>
                       <Input
                         value={newCreature.race}
-                        onChange={(e) => setNewCreature({ ...newCreature, race: e.target.value })}
+                        onChange={(e) =>
+                          setNewCreature({
+                            ...newCreature,
+                            race: e.target.value,
+                          })
+                        }
                         placeholder="e.g. Goblin, Undead"
                       />
                     </div>
@@ -274,7 +339,12 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                         type="number"
                         step="0.125"
                         value={newCreature.cr}
-                        onChange={(e) => setNewCreature({ ...newCreature, cr: parseFloat(e.target.value) })}
+                        onChange={(e) =>
+                          setNewCreature({
+                            ...newCreature,
+                            cr: parseFloat(e.target.value),
+                          })
+                        }
                       />
                     </div>
                   </>
@@ -285,7 +355,7 @@ export function EntityListModal({ isOpen, onClose, creatures, players = [], room
                   onClick={handleAddCreature}
                   disabled={loading}
                 >
-                  {loading ? 'Summoning...' : 'Spawn Entity'}
+                  {loading ? "Summoning..." : "Spawn Entity"}
                 </Button>
               </div>
             </div>

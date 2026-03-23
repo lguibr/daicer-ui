@@ -1,15 +1,20 @@
-import { useState } from 'react';
-import { useWindowSize, useDebounce, useLocalStorage, useMediaQuery } from '@/hooks';
+import { useState } from "react";
+import {
+  useWindowSize,
+  useDebounce,
+  useLocalStorage,
+  useMediaQuery,
+} from "@/hooks";
 
 /**
  * Example component demonstrating usage of @uidotdev/usehooks
  */
 export function HooksExample() {
   const { width, height } = useWindowSize();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const [theme, setTheme] = useLocalStorage('theme', 'dark');
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [theme, setTheme] = useLocalStorage("theme", "dark");
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <div>
@@ -20,7 +25,7 @@ export function HooksExample() {
         <p>
           Window: {width}px × {height}px
         </p>
-        <p>Mobile: {isMobile ? 'Yes' : 'No'}</p>
+        <p>Mobile: {isMobile ? "Yes" : "No"}</p>
       </section>
 
       <section>
@@ -37,7 +42,10 @@ export function HooksExample() {
 
       <section>
         <h3>useLocalStorage</h3>
-        <button type="button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+        <button
+          type="button"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
           Toggle Theme: {theme}
         </button>
       </section>

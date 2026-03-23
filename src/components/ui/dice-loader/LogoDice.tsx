@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import * as THREE from 'three';
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import * as THREE from "three";
 
-import { createDie } from './createDie';
-import type { DiceLoaderSize, DieVisualStyle } from './types';
+import { createDie } from "./createDie";
+import type { DiceLoaderSize, DieVisualStyle } from "./types";
 
 export interface LogoDiceProps {
   size?: DiceLoaderSize;
@@ -22,15 +22,15 @@ interface ThreeState {
   die?: THREE.Group;
 }
 
-type AnimationPhase = 'spinning' | 'shaking' | 'stopped';
+type AnimationPhase = "spinning" | "shaking" | "stopped";
 
-const SIZE_MAP: Record<Required<LogoDiceProps>['size'], number> = {
+const SIZE_MAP: Record<Required<LogoDiceProps>["size"], number> = {
   small: 0.8,
   medium: 1,
   large: 1.3,
 };
 
-const CONTAINER_SIZE_MAP: Record<Required<LogoDiceProps>['size'], number> = {
+const CONTAINER_SIZE_MAP: Record<Required<LogoDiceProps>["size"], number> = {
   small: 200,
   medium: 280,
   large: 380,
@@ -45,9 +45,9 @@ const CONTAINER_SIZE_MAP: Record<Required<LogoDiceProps>['size'], number> = {
  * Animation: Spin crazy → shake → stop with AI face pointing up
  */
 export function LogoDice({
-  size = 'medium',
-  color = '#ff9500',
-  visualStyle = 'glowing',
+  size = "medium",
+  color = "#ff9500",
+  visualStyle = "glowing",
   showAxes = false,
   className,
   style,
@@ -56,21 +56,21 @@ export function LogoDice({
   const mountRef = useRef<HTMLDivElement>(null);
   const animationFrameRef = useRef<number | undefined>(undefined);
   const stateRef = useRef<ThreeState | null>(null);
-  const [phase, setPhase] = useState<AnimationPhase>('spinning');
+  const [phase, setPhase] = useState<AnimationPhase>("spinning");
   const startTimeRef = useRef<number>(0);
 
   const canvasStyle: CSSProperties = {
     width: `${CONTAINER_SIZE_MAP[size]}px`,
     height: `${CONTAINER_SIZE_MAP[size]}px`,
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   };
 
   const rootClassName = className
     ? `flex flex-col items-center gap-3 ${className}`
-    : 'flex flex-col items-center gap-3';
+    : "flex flex-col items-center gap-3";
 
   useEffect(() => {
     if (!mountRef.current) return undefined;
@@ -84,7 +84,11 @@ export function LogoDice({
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(mountElement.clientWidth, mountElement.clientHeight, false);
+    renderer.setSize(
+      mountElement.clientWidth,
+      mountElement.clientHeight,
+      false,
+    );
     mountElement.appendChild(renderer.domElement);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
@@ -103,8 +107,12 @@ export function LogoDice({
     startTimeRef.current = Date.now();
     startTimeRef.current = Date.now();
 
-    const die = createDie('20-ai', color, visualStyle);
-    die.scale.set(SIZE_MAP[size] * 1.2, SIZE_MAP[size] * 1.2, SIZE_MAP[size] * 1.2);
+    const die = createDie("20-ai", color, visualStyle);
+    die.scale.set(
+      SIZE_MAP[size] * 1.2,
+      SIZE_MAP[size] * 1.2,
+      SIZE_MAP[size] * 1.2,
+    );
     scene.add(die);
     stateRef.current.die = die;
 
@@ -113,7 +121,7 @@ export function LogoDice({
     const TARGET_ROTATION = new THREE.Euler(
       -0.2, // Tilt forward slightly to see top face (AI)
       0.3, // Rotate to show side faces (D, CER)
-      0.1 // Small z rotation for dynamic look
+      0.1, // Small z rotation for dynamic look
     );
 
     const animate = () => {
@@ -123,16 +131,16 @@ export function LogoDice({
       const currentPhase = phase;
 
       if (animated) {
-        if (currentPhase === 'spinning') {
+        if (currentPhase === "spinning") {
           // Crazy spin phase (0-2.5s)
           if (elapsed < 2.5) {
             stateRef.current.die.rotation.x += 0.18;
             stateRef.current.die.rotation.y += 0.25;
             stateRef.current.die.rotation.z += 0.21;
           } else {
-            setPhase('shaking');
+            setPhase("shaking");
           }
-        } else if (currentPhase === 'shaking') {
+        } else if (currentPhase === "shaking") {
           // Shaking/slowing phase (2.5-5s)
           if (elapsed < 5) {
             const shakeFactor = (5 - elapsed) / 2.5;
@@ -141,22 +149,22 @@ export function LogoDice({
             stateRef.current.die.rotation.x = THREE.MathUtils.lerp(
               stateRef.current.die.rotation.x,
               TARGET_ROTATION.x + shake,
-              0.04
+              0.04,
             );
             stateRef.current.die.rotation.y = THREE.MathUtils.lerp(
               stateRef.current.die.rotation.y,
               TARGET_ROTATION.y + shake,
-              0.04
+              0.04,
             );
             stateRef.current.die.rotation.z = THREE.MathUtils.lerp(
               stateRef.current.die.rotation.z,
               TARGET_ROTATION.z + shake,
-              0.04
+              0.04,
             );
           } else {
-            setPhase('stopped');
+            setPhase("stopped");
           }
-        } else if (currentPhase === 'stopped') {
+        } else if (currentPhase === "stopped") {
           // Final settle - slow rotation to showcase D/AI/CER branding
           const settledTime = elapsed - 5;
           const gentleRotation = settledTime * 0.15; // Slow continuous rotation
@@ -164,13 +172,13 @@ export function LogoDice({
           stateRef.current.die.rotation.x = THREE.MathUtils.lerp(
             stateRef.current.die.rotation.x,
             TARGET_ROTATION.x,
-            0.08
+            0.08,
           );
           stateRef.current.die.rotation.y = TARGET_ROTATION.y + gentleRotation;
           stateRef.current.die.rotation.z = THREE.MathUtils.lerp(
             stateRef.current.die.rotation.z,
             TARGET_ROTATION.z,
-            0.08
+            0.08,
           );
         }
       } else {
@@ -192,7 +200,11 @@ export function LogoDice({
         cancelAnimationFrame(animationFrameRef.current);
       }
       if (stateRef.current) {
-        const { scene: currentScene, renderer: currentRenderer, die: currentDie } = stateRef.current;
+        const {
+          scene: currentScene,
+          renderer: currentRenderer,
+          die: currentDie,
+        } = stateRef.current;
 
         if (currentDie) {
           currentScene.remove(currentDie);
@@ -222,12 +234,20 @@ export function LogoDice({
 
   return (
     <div className={rootClassName} style={style}>
-      <div ref={mountRef} className="relative flex items-center justify-center" style={canvasStyle} />
+      <div
+        ref={mountRef}
+        className="relative flex items-center justify-center"
+        style={canvasStyle}
+      />
       {animated && (
-        <div className="text-center text-sm text-shadow-300" role="status" aria-live="polite">
-          {phase === 'spinning' && '🎲 Rolling the DAICER...'}
-          {phase === 'shaking' && '✨ Settling...'}
-          {phase === 'stopped' && '🎯 D • AI • CER'}
+        <div
+          className="text-center text-sm text-shadow-300"
+          role="status"
+          aria-live="polite"
+        >
+          {phase === "spinning" && "🎲 Rolling the DAICER..."}
+          {phase === "shaking" && "✨ Settling..."}
+          {phase === "stopped" && "🎯 D • AI • CER"}
         </div>
       )}
     </div>

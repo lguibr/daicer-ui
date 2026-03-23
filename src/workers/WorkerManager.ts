@@ -3,9 +3,9 @@
  * Factory for creating and managing OffscreenCanvas renderer workers
  */
 
-import { supportsOffscreenCanvas } from '../utils/featureDetection';
+import { supportsOffscreenCanvas } from "../utils/featureDetection";
 
-export type WorkerType = 'dice' | 'map' | 'voxel';
+export type WorkerType = "dice" | "map" | "voxel";
 
 export interface WorkerMessage {
   type: string;
@@ -36,12 +36,14 @@ export class WorkerManager {
 
   constructor(
     private workerPath: string,
-    private workerType: WorkerType
+    private workerType: WorkerType,
   ) {
     this.supportsOffscreen = supportsOffscreenCanvas();
 
     if (!this.supportsOffscreen) {
-      console.warn(`[WorkerManager] OffscreenCanvas not supported, ${workerType} will render on main thread`);
+      console.warn(
+        `[WorkerManager] OffscreenCanvas not supported, ${workerType} will render on main thread`,
+      );
     }
   }
 
@@ -61,7 +63,7 @@ export class WorkerManager {
 
       // Create worker
       this.worker = new Worker(new URL(this.workerPath, import.meta.url), {
-        type: 'module',
+        type: "module",
       });
 
       // Setup message handler
@@ -81,7 +83,10 @@ export class WorkerManager {
 
       // Setup error handler
       this.worker.onerror = (error) => {
-        console.error(`[WorkerManager] ${this.workerType} worker error:`, error);
+        console.error(
+          `[WorkerManager] ${this.workerType} worker error:`,
+          error,
+        );
         if (config.onError) {
           config.onError(error as any);
         }
@@ -90,17 +95,22 @@ export class WorkerManager {
       // Send canvas to worker
       this.worker.postMessage(
         {
-          type: 'init',
+          type: "init",
           canvas: this.offscreenCanvas,
         },
 
-        [this.offscreenCanvas as any]
+        [this.offscreenCanvas as any],
       );
 
-      console.info(`[WorkerManager] ${this.workerType} worker initialized successfully`);
+      console.info(
+        `[WorkerManager] ${this.workerType} worker initialized successfully`,
+      );
       return true;
     } catch (error) {
-      console.error(`[WorkerManager] Failed to initialize ${this.workerType} worker:`, error);
+      console.error(
+        `[WorkerManager] Failed to initialize ${this.workerType} worker:`,
+        error,
+      );
       return false;
     }
   }
@@ -163,8 +173,11 @@ export class WorkerManager {
 /**
  * Factory functions for specific worker types
  */
-export const createDiceWorker = () => new WorkerManager('../workers/diceRenderer.worker.ts', 'dice');
+export const createDiceWorker = () =>
+  new WorkerManager("../workers/diceRenderer.worker.ts", "dice");
 
-export const createMapWorker = () => new WorkerManager('../workers/worldRenderer.worker.ts', 'map');
+export const createMapWorker = () =>
+  new WorkerManager("../workers/worldRenderer.worker.ts", "map");
 
-export const createVoxelWorker = () => new WorkerManager('../workers/voxelRenderer.worker.ts', 'voxel');
+export const createVoxelWorker = () =>
+  new WorkerManager("../workers/voxelRenderer.worker.ts", "voxel");

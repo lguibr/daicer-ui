@@ -2,10 +2,10 @@
  * Authentication hook
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // Use strict Strapi URL or env var
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
 
 export interface User {
   id: number;
@@ -20,7 +20,13 @@ export interface User {
 }
 
 interface AuthState {
-  user: (User & { uid: string; displayName: string; getIdToken: () => Promise<string> }) | null;
+  user:
+    | (User & {
+        uid: string;
+        displayName: string;
+        getIdToken: () => Promise<string>;
+      })
+    | null;
   loading: boolean;
   error: string | null;
 }
@@ -38,7 +44,7 @@ export default function useAuth() {
 
   useEffect(() => {
     // Check for existing token
-    const token = localStorage.getItem('strapi_jwt');
+    const token = localStorage.getItem("strapi_jwt");
     if (token) {
       // Validate token and fetch user
       fetch(`${API_URL}/api/users/me`, {
@@ -48,7 +54,7 @@ export default function useAuth() {
       })
         .then(async (res) => {
           if (!res.ok) {
-            throw new Error('Invalid token');
+            throw new Error("Invalid token");
           }
           const userData = await res.json();
           // Map to backward compatible format
@@ -66,7 +72,7 @@ export default function useAuth() {
         })
         .catch(() => {
           // If token invalid, clear it
-          localStorage.removeItem('strapi_jwt');
+          localStorage.removeItem("strapi_jwt");
           setState({
             user: null,
             loading: false,
@@ -92,10 +98,10 @@ export default function useAuth() {
    * Sign out
    */
   const signOut = () => {
-    localStorage.removeItem('strapi_jwt');
+    localStorage.removeItem("strapi_jwt");
     setState({ user: null, loading: false, error: null });
     // Optional: Redirect to home or reload
-    window.location.href = '/';
+    window.location.href = "/";
   };
 
   return {

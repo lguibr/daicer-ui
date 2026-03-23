@@ -3,9 +3,9 @@
  * @description Test environment setup for Vitest
  */
 
-import React from 'react';
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import React from "react";
+import { vi } from "vitest";
+import "@testing-library/jest-dom";
 
 // Mock scrollIntoView and scrollTo for JSDOM
 Element.prototype.scrollIntoView = vi.fn();
@@ -20,12 +20,12 @@ if (!Element.prototype.hasPointerCapture) {
 
 // Mock useLayoutEffect to avoid "useLayoutEffect does nothing on the server" warnings or null pointer in Radix
 // Radix UI sometimes fails in JSDOM if useLayoutEffect is not consistent
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   React.useLayoutEffect = React.useEffect;
 }
 
 // Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,
@@ -41,10 +41,10 @@ Object.defineProperty(window, 'matchMedia', {
 
 // Mock Canvas 2D Context for canvas-based tests
 HTMLCanvasElement.prototype.getContext = vi.fn((contextId: string) => {
-  if (contextId === '2d') {
+  if (contextId === "2d") {
     return {
-      fillStyle: '',
-      strokeStyle: '',
+      fillStyle: "",
+      strokeStyle: "",
       lineWidth: 1,
       fillRect: vi.fn(),
       clearRect: vi.fn(),
@@ -81,9 +81,13 @@ HTMLCanvasElement.prototype.getContext = vi.fn((contextId: string) => {
 }) as typeof HTMLCanvasElement.prototype.getContext;
 
 // Mock DiceLoader to avoid WebGL dependency in tests
-vi.mock('../components/ui/dice-loader', () => {
+vi.mock("../components/ui/dice-loader", () => {
   function DiceLoader({ message }: { message?: string }) {
-    return React.createElement('div', { 'data-testid': 'dice-loader' }, message ?? null);
+    return React.createElement(
+      "div",
+      { "data-testid": "dice-loader" },
+      message ?? null,
+    );
   }
 
   return {
@@ -93,12 +97,13 @@ vi.mock('../components/ui/dice-loader', () => {
 });
 
 // Mock react-resizable-panels to avoid CSS parsing errors in JSDOM
-vi.mock('react-resizable-panels', () => ({
+vi.mock("react-resizable-panels", () => ({
   Group: ({ children }: { children: React.ReactNode }) =>
-    React.createElement('div', { 'data-testid': 'panel-group' }, children),
+    React.createElement("div", { "data-testid": "panel-group" }, children),
   Panel: ({ children }: { children: React.ReactNode }) =>
-    React.createElement('div', { 'data-testid': 'panel' }, children),
-  Separator: () => React.createElement('div', { 'data-testid': 'resize-handle' }),
+    React.createElement("div", { "data-testid": "panel" }, children),
+  Separator: () =>
+    React.createElement("div", { "data-testid": "resize-handle" }),
 }));
 
 // Mock ResizeObserver
@@ -139,9 +144,9 @@ global.ResizeObserver = class ResizeObserver {
 };
 
 // Mock lucide-react globally to prevent undefined component errors
-vi.mock('lucide-react', () => {
+vi.mock("lucide-react", () => {
   function IconStub({ ...props }: Record<string, unknown>) {
-    return React.createElement('div', { 'data-testid': 'icon-mock', ...props });
+    return React.createElement("div", { "data-testid": "icon-mock", ...props });
   }
 
   // Create a proxy to handle any icon import
@@ -152,15 +157,15 @@ vi.mock('lucide-react', () => {
         {},
         {
           get: () => IconStub,
-        }
+        },
       ),
     },
     {
       get: (target, prop) => {
-        if (prop === '__esModule') return true;
-        if (prop === 'default') return target.default;
+        if (prop === "__esModule") return true;
+        if (prop === "default") return target.default;
         return IconStub;
       },
-    }
+    },
   );
 });

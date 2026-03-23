@@ -1,33 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { BookOpen } from 'lucide-react';
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { BookOpen } from "lucide-react";
 
-import type { Room, Player, Creature } from '@/types/contracts';
+import type { Room, Player, Creature } from "@/types/contracts";
 // Let's verify compatibility.
 
-import useGamePolling from '../../hooks/useGamePolling';
-import { processTurn, submitAction } from '../../services/api';
+import useGamePolling from "../../hooks/useGamePolling";
+import { processTurn, submitAction } from "../../services/api";
 
-import useAuth from '../../hooks/useAuth';
-import { useI18n } from '../../i18n';
+import useAuth from "../../hooks/useAuth";
+import { useI18n } from "../../i18n";
 
 // import { auth } from '../../services/firebase';
-import { LoadingOverlay } from '../ui/LoadingOverlay';
+import { LoadingOverlay } from "../ui/LoadingOverlay";
 
-import { MapRenderer } from '../../features/debug/components/MapRenderer';
-import { useChunkLoader } from '../../hooks/useChunkLoader';
-import type { WorldConfig, Coordinates } from '../../features/debug/utils/types';
+import { MapRenderer } from "../../features/debug/components/MapRenderer";
+import { useChunkLoader } from "../../hooks/useChunkLoader";
+import type {
+  WorldConfig,
+  Coordinates,
+} from "../../features/debug/utils/types";
 
-import GameplayChatArea from './GameplayChatArea';
-import GameplayComposer from './GameplayComposer';
-import { TimeCycleWidget } from './map/TimeCycleWidget';
-import { RoomTabs } from '../room/RoomTabs';
-import { PlayerListTab } from '../room/PlayerListTab';
-import { RoomSettingsTab } from '../room/RoomSettingsTab';
-import { EntityListModal } from '../room/EntityListModal';
-import { Button } from '../ui/button';
+import GameplayChatArea from "./GameplayChatArea";
+import GameplayComposer from "./GameplayComposer";
+import { TimeCycleWidget } from "./map/TimeCycleWidget";
+import { RoomTabs } from "../room/RoomTabs";
+import { PlayerListTab } from "../room/PlayerListTab";
+import { RoomSettingsTab } from "../room/RoomSettingsTab";
+import { EntityListModal } from "../room/EntityListModal";
+import { Button } from "../ui/button";
 
 interface GameplayScreenProps {
   room: Room;
@@ -41,7 +44,12 @@ interface GameplayScreenProps {
  * @param props - Component props
  * @returns Gameplay UI with real-time streaming
  */
-export default function GameplayScreen({ room, players, creatures = [], onRefresh }: GameplayScreenProps) {
+export default function GameplayScreen({
+  room,
+  players,
+  creatures = [],
+  onRefresh,
+}: GameplayScreenProps) {
   const { user } = useAuth();
 
   // Memoize initial messages from room data to hydrate socket state immediately
@@ -62,7 +70,7 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
         senderName: msg.senderName,
         senderType: msg.senderType,
         timestamp: Number(msg.timestamp),
-        type: msg.senderType === 'dm' ? 'narration' : 'chat',
+        type: msg.senderType === "dm" ? "narration" : "chat",
         turn: msg.turn
           ? {
               documentId: msg.turn.documentId,
@@ -76,45 +84,69 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
   const { t } = useI18n();
   const [submitting, setSubmitting] = useState(false);
   const [showEntityList, setShowEntityList] = useState(false);
-  const [composerValue, setComposerValue] = useState('');
+  const [composerValue, setComposerValue] = useState("");
 
-  const hasPlayerAction = (playerAction: Player['action']) =>
-    typeof playerAction === 'string' && playerAction.trim().length > 0;
+  const hasPlayerAction = (playerAction: Player["action"]) =>
+    typeof playerAction === "string" && playerAction.trim().length > 0;
 
   const currentPlayer = players.find(
-    (p) => p.userId === user?.uid || (user?.documentId && p.userId === user.documentId)
+    (p) =>
+      p.userId === user?.uid ||
+      (user?.documentId && p.userId === user.documentId),
   );
-  const hasSubmitted = currentPlayer ? hasPlayerAction(currentPlayer.action) : false;
-  const allSubmitted = players.length > 0 && players.every((p) => hasPlayerAction(p.action));
-  const submittedCount = players.filter((p) => hasPlayerAction(p.action)).length;
-  const roomLanguage = room.settings?.language || 'en';
-  const isDM = (!!room.owner?.documentId && room.owner.documentId === user?.documentId) || room.ownerId === user?.uid;
+  const hasSubmitted = currentPlayer
+    ? hasPlayerAction(currentPlayer.action)
+    : false;
+  const allSubmitted =
+    players.length > 0 && players.every((p) => hasPlayerAction(p.action));
+  const submittedCount = players.filter((p) =>
+    hasPlayerAction(p.action),
+  ).length;
+  const roomLanguage = room.settings?.language || "en";
+  const isDM =
+    (!!room.owner?.documentId && room.owner.documentId === user?.documentId) ||
+    room.ownerId === user?.uid;
 
   useEffect(() => {
     console.info(
-      '[GameplayScreen Debug] State Update:',
+      "[GameplayScreen Debug] State Update:",
       JSON.stringify(
         {
-          players: players.map((p) => ({ userId: p.userId, action: p.action, rawId: (p as any).id })),
+          players: players.map((p) => ({
+            userId: p.userId,
+            action: p.action,
+            rawId: (p as any).id,
+          })),
           currentUserUid: user?.uid,
           currentUserDocId: user?.documentId,
           roomOwnerId: room.ownerId,
           roomOwnerDocId: room.owner?.documentId,
-          currentPlayer: currentPlayer ? { userId: currentPlayer.userId } : 'NOT FOUND',
+          currentPlayer: currentPlayer
+            ? { userId: currentPlayer.userId }
+            : "NOT FOUND",
           isDM,
           hasSubmitted,
           allSubmitted,
           submittedCount,
         },
         null,
-        2
-      )
+        2,
+      ),
     );
-  }, [players, user, currentPlayer, isDM, hasSubmitted, allSubmitted, submittedCount, room]);
+  }, [
+    players,
+    user,
+    currentPlayer,
+    isDM,
+    hasSubmitted,
+    allSubmitted,
+    submittedCount,
+    room,
+  ]);
 
   // Turn Data
   const { turnData } = room;
-  const turnPhase = turnData?.phase || 'idle';
+  const turnPhase = turnData?.phase || "idle";
 
   const handleSubmitAction = async (action: string) => {
     // Strapi 5 uses documentId
@@ -124,12 +156,12 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
     try {
       setSubmitting(true);
       await submitAction(roomId as string, action);
-      setComposerValue(''); // Clear input on success
+      setComposerValue(""); // Clear input on success
 
       // Refresh room state to reflect the submitted action immediately
       onRefresh?.();
     } catch (err) {
-      console.error('Failed to submit action:', err);
+      console.error("Failed to submit action:", err);
     } finally {
       setSubmitting(false);
     }
@@ -158,7 +190,7 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
   const navigate = useNavigate();
 
   const handleLeaveRoom = () => {
-    navigate('/');
+    navigate("/");
   };
 
   // Chat tab content
@@ -168,9 +200,12 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
       <div className="flex-shrink-0 border-b border-shadow-800/70 bg-midnight-400/50 px-4 py-3">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-shadow-50">{t('gameplay.feedTitle')}</h2>
+            <h2 className="text-lg font-semibold text-shadow-50">
+              {t("gameplay.feedTitle")}
+            </h2>
             <p className="text-xs text-shadow-400">
-              {t('gameplay.actionsSubmitted')}: {submittedCount} / {players.length}
+              {t("gameplay.actionsSubmitted")}: {submittedCount} /{" "}
+              {players.length}
             </p>
           </div>
         </div>
@@ -181,7 +216,7 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
         <GameplayChatArea
           messages={pollingState.messages}
           streamingMessages={pollingState.streamingMessages}
-          worldDescription={room.worldDescription || ''}
+          worldDescription={room.worldDescription || ""}
           isProcessing={pollingState.isProcessing}
           presence={pollingState.presence}
           currentUserId={(currentPlayer as any)?.user?.documentId || user?.uid}
@@ -194,14 +229,23 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
         {/* Turn Status */}
         <div className="mb-3 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span className="text-shadow-400">
-            {t('gameplay.actionsSubmitted')}: {submittedCount} / {players.length}
+            {t("gameplay.actionsSubmitted")}: {submittedCount} /{" "}
+            {players.length}
           </span>
-          {!hasSubmitted && <span className="text-aurora-200 font-semibold">{t('gameplay.yourTurn')}</span>}
+          {!hasSubmitted && (
+            <span className="text-aurora-200 font-semibold">
+              {t("gameplay.yourTurn")}
+            </span>
+          )}
           {hasSubmitted && !allSubmitted && (
-            <span className="text-nebula-200 font-semibold">{t('gameplay.waitingForOthers')}</span>
+            <span className="text-nebula-200 font-semibold">
+              {t("gameplay.waitingForOthers")}
+            </span>
           )}
           {allSubmitted && isDM && (
-            <span className="text-aurora-200 font-semibold animate-pulse">{t('gameplay.readyToProcess')}</span>
+            <span className="text-aurora-200 font-semibold animate-pulse">
+              {t("gameplay.readyToProcess")}
+            </span>
           )}
         </div>
 
@@ -216,32 +260,34 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
             {submitting ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                {t('gameplay.processing')}
+                {t("gameplay.processing")}
               </span>
             ) : (
-              t('gameplay.processTurn')
+              t("gameplay.processTurn")
             )}
           </button>
         ) : hasSubmitted ? (
           <div className="rounded-xl border border-midnight-600/60 bg-midnight-900/50 p-4 text-center">
-            <p className="text-shadow-300">✓ {t('gameplay.actionSubmitted')}</p>
+            <p className="text-shadow-300">✓ {t("gameplay.actionSubmitted")}</p>
             <p className="mt-1 text-xs text-shadow-500">
-              {turnPhase === 'processing'
-                ? 'DM Brain is thinking...'
-                : turnPhase === 'waiting_for_actions'
-                  ? 'Phase: Waiting for Actions'
+              {turnPhase === "processing"
+                ? "DM Brain is thinking..."
+                : turnPhase === "waiting_for_actions"
+                  ? "Phase: Waiting for Actions"
                   : allSubmitted
-                    ? 'Waiting for DM to process turn...'
-                    : 'Waiting for other players...'}
+                    ? "Waiting for DM to process turn..."
+                    : "Waiting for other players..."}
             </p>
           </div>
         ) : (
           <GameplayComposer
             roomId={room.documentId || room.id}
-            userName={currentPlayer?.character?.name || user?.displayName || 'Player'}
+            userName={
+              currentPlayer?.character?.name || user?.displayName || "Player"
+            }
             onSubmit={handleSubmitAction}
             disabled={submitting || pollingState.isProcessing}
-            placeholder={t('gameplay.actionPlaceholder')}
+            placeholder={t("gameplay.actionPlaceholder")}
             isProcessing={pollingState.isProcessing}
             value={composerValue}
             onChange={setComposerValue}
@@ -256,7 +302,11 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
   const [mapSize, setMapSize] = useState({ w: 800, h: 600 });
   const [viewZ, setViewZ] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
-  const [cameraPosition, setCameraPosition] = useState<Coordinates>({ x: 0, y: 0, z: 0 });
+  const [cameraPosition, setCameraPosition] = useState<Coordinates>({
+    x: 0,
+    y: 0,
+    z: 0,
+  });
 
   // Sync camera to player on mount/update if valid
   useEffect(() => {
@@ -282,7 +332,7 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
   // Fallback to defaults if room config is missing
   const mapConfig: WorldConfig = useMemo(() => {
     const defaults: WorldConfig = {
-      seed: 'default',
+      seed: "default",
       chunkSize: 32,
       globalScale: 0.01,
       seaLevel: 0,
@@ -307,7 +357,7 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
     () => ({
       getChunk: (x: number, y: number) => getChunk(x, y),
     }),
-    [getChunk]
+    [getChunk],
   );
 
   // Entities for Map
@@ -316,20 +366,20 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
       .filter((p) => p.position) // Only players with position
       .map((p) => ({
         id: p.userId,
-        type: 'player' as const,
+        type: "player" as const,
         name: p.character?.name || p.name,
         position: p.position!,
-        color: p.userId === user?.uid ? '#10b981' : '#3b82f6', // Green for self, Blue for others
+        color: p.userId === user?.uid ? "#10b981" : "#3b82f6", // Green for self, Blue for others
         visionRadius: 10, // Default
         exploredTiles: new Set<string>(), // Hydrate if available
       }));
 
     const creatureEntities = creatures.map((c) => ({
       id: (c as any).documentId || c.id,
-      type: (c.type || 'monster') as 'monster' | 'npc', // Fallback
+      type: (c.type || "monster") as "monster" | "npc", // Fallback
       name: c.name,
       position: c.position || { x: 0, y: 0, z: 0 },
-      color: '#ef4444', // Red for monsters
+      color: "#ef4444", // Red for monsters
       visionRadius: 0,
       exploredTiles: new Set<string>(),
     }));
@@ -350,7 +400,9 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
           >
             +
           </button>
-          <span className="text-xs font-mono text-shadow-400">{Math.round(zoom * 100)}%</span>
+          <span className="text-xs font-mono text-shadow-400">
+            {Math.round(zoom * 100)}%
+          </span>
           <button
             type="button"
             className="flex h-8 w-8 items-center justify-center rounded hover:bg-midnight-700 text-shadow-200"
@@ -366,7 +418,9 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
               type="button"
               onClick={() => setViewZ(z)}
               className={`flex h-8 w-8 items-center justify-center rounded text-xs font-bold transition-colors ${
-                viewZ === z ? 'bg-aurora-500 text-midnight-950' : 'text-shadow-400 hover:bg-midnight-700'
+                viewZ === z
+                  ? "bg-aurora-500 text-midnight-950"
+                  : "text-shadow-400 hover:bg-midnight-700"
               }`}
             >
               {z}
@@ -377,7 +431,10 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
 
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
         <div className="bg-midnight-950/50 backdrop-blur-sm rounded-full px-4 py-1 border border-midnight-800/50 shadow-2xl">
-          <TimeCycleWidget time={(room.turnData?.turnNumber || 0) % 24} className="w-48 h-24" />
+          <TimeCycleWidget
+            time={(room.turnData?.turnNumber || 0) % 24}
+            className="w-48 h-24"
+          />
         </div>
       </div>
 
@@ -398,7 +455,10 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
         onTileHover={() => {}}
         onZoom={(delta, mouseX, mouseY) => {
           const SCALE_FACTOR = 0.1;
-          const newZoom = Math.max(0.1, Math.min(5, zoom - delta * SCALE_FACTOR));
+          const newZoom = Math.max(
+            0.1,
+            Math.min(5, zoom - delta * SCALE_FACTOR),
+          );
           const TILE_SIZE = 32 * zoom;
           // Zoom towards cursor
           const wx = cameraPosition.x + (mouseX - mapSize.w / 2) / TILE_SIZE;
@@ -409,7 +469,11 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
           const newCenterY = wy - (mouseY - mapSize.h / 2) / NEW_TILE_SIZE;
 
           setZoom(newZoom);
-          setCameraPosition({ ...cameraPosition, x: newCenterX, y: newCenterY });
+          setCameraPosition({
+            ...cameraPosition,
+            x: newCenterX,
+            y: newCenterY,
+          });
         }}
         onPan={(dx, dy) => {
           const TILE_SIZE = 32 * zoom;
@@ -425,12 +489,16 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
 
   return (
     <>
-      {submitting && pollingState.isProcessing && <LoadingOverlay message={t('gameplay.processing')} />}
+      {submitting && pollingState.isProcessing && (
+        <LoadingOverlay message={t("gameplay.processing")} />
+      )}
 
       {/* Desktop View (lg+) - Split Screen */}
       <div className="hidden h-full w-full lg:flex">
         {/* Left: Map (50%) */}
-        <div className="h-full w-1/2 border-r border-midnight-700 bg-black relative">{mapContent}</div>
+        <div className="h-full w-1/2 border-r border-midnight-700 bg-black relative">
+          {mapContent}
+        </div>
 
         {/* Right: Chat (50%) */}
         <div className="h-full w-1/2 relative bg-midnight-900/95">
@@ -438,11 +506,20 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
 
           {/* Overlay Controls */}
           <div className="absolute right-4 top-4 flex gap-2">
-            <Button size="icon" variant="secondary" onClick={() => setShowEntityList(true)} title="Entities & Sheets">
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={() => setShowEntityList(true)}
+              title="Entities & Sheets"
+            >
               <BookOpen className="w-4 h-4" />
             </Button>
             <RoomSettingsTab room={room} onLeave={handleLeaveRoom} asModal />
-            <PlayerListTab players={players} currentUserId={user?.uid || ''} asModal />
+            <PlayerListTab
+              players={players}
+              currentUserId={user?.uid || ""}
+              asModal
+            />
           </div>
         </div>
       </div>
@@ -453,8 +530,12 @@ export default function GameplayScreen({ room, players, creatures = [], onRefres
           roomId={room.documentId || room.id}
           chatContent={chatContent}
           mapContent={mapContent}
-          playersContent={<PlayerListTab players={players} currentUserId={user?.uid || ''} />}
-          settingsContent={<RoomSettingsTab room={room} onLeave={handleLeaveRoom} />}
+          playersContent={
+            <PlayerListTab players={players} currentUserId={user?.uid || ""} />
+          }
+          settingsContent={
+            <RoomSettingsTab room={room} onLeave={handleLeaveRoom} />
+          }
         />
       </div>
 

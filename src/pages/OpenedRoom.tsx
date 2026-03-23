@@ -2,21 +2,21 @@
  * Pre-game lobby page - shows world generation, then players create characters and ready up before gameplay
  */
 
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import { Room, Player, GamePhase } from '@/types/contracts';
-import type { ToolCall } from '@/types/contracts';
-import { getRoomState } from '../services/api';
-import useAuth from '../hooks/useAuth';
-import useGamePolling from '../hooks/useGamePolling';
-import CharacterCreation from '../components/room/CharacterCreation';
-import { PrivateLayout } from '../components/layout';
-import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
-import { DiceLoader } from '../components/ui/dice-loader';
+import { Room, Player, GamePhase } from "@/types/contracts";
+import type { ToolCall } from "@/types/contracts";
+import { getRoomState } from "../services/api";
+import useAuth from "../hooks/useAuth";
+import useGamePolling from "../hooks/useGamePolling";
+import CharacterCreation from "../components/room/CharacterCreation";
+import { PrivateLayout } from "../components/layout";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
+import { DiceLoader } from "../components/ui/dice-loader";
 
-import ToolCallCard from '../components/chat/ToolCallCard';
+import ToolCallCard from "../components/chat/ToolCallCard";
 
 // import { useI18n } from '../i18n';
 
@@ -35,7 +35,9 @@ export default function OpenedRoomPage() {
 
   const { user } = useAuth();
   // Polling replacement
-  const { room: socketRoom, players: socketPlayers } = useGamePolling(roomId || '');
+  const { room: socketRoom, players: socketPlayers } = useGamePolling(
+    roomId || "",
+  );
 
   const [streamEvents, setStreamEvents] = useState<
     Array<{
@@ -62,7 +64,7 @@ export default function OpenedRoomPage() {
   // Load initial room state
   useEffect(() => {
     if (!roomId) {
-      navigate('/');
+      navigate("/");
       return;
     }
 
@@ -72,7 +74,7 @@ export default function OpenedRoomPage() {
         setRoom(data);
         setPlayers((data as Room & { players: Player[] }).players || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load room');
+        setError(err instanceof Error ? err.message : "Failed to load room");
       } finally {
         setLoading(false);
       }
@@ -104,7 +106,8 @@ export default function OpenedRoomPage() {
   }, [socketRoom, socketPlayers, roomId, navigate]);
 
   // Monitor world generation if room is in SETUP phase
-  const isWorldGenerating = room && room.phase === GamePhase.SETUP && !room.worldDescription;
+  const isWorldGenerating =
+    room && room.phase === GamePhase.SETUP && !room.worldDescription;
   const roomPhase = room?.phase;
   const hasWorldDescription = room?.worldDescription;
 
@@ -114,7 +117,7 @@ export default function OpenedRoomPage() {
       return;
     }
 
-    console.info('[OpenedRoom] Starting world generation SSE listeners');
+    console.info("[OpenedRoom] Starting world generation SSE listeners");
 
     // Clear previous events once on mount
     setStreamEvents([]);
@@ -126,7 +129,7 @@ export default function OpenedRoomPage() {
     const connectToSSE = async () => {
       if (isCleanedUp) return;
 
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
       const currentUser = user;
       if (!currentUser) return;
 
@@ -139,15 +142,15 @@ export default function OpenedRoomPage() {
 
       // Listen for all event types and add to streamEvents
       const eventTypes = [
-        'connected',
-        'node_start',
-        'node_complete',
-        'period_start',
-        'period_complete',
-        'period_text_start',
-        'period_text_complete',
-        'world_lore_chunk',
-        'node_error',
+        "connected",
+        "node_start",
+        "node_complete",
+        "period_start",
+        "period_complete",
+        "period_text_start",
+        "period_text_complete",
+        "world_lore_chunk",
+        "node_error",
       ];
 
       eventTypes.forEach((type) => {
@@ -157,17 +160,17 @@ export default function OpenedRoomPage() {
             const data = JSON.parse(event.data);
             setStreamEvents((prev) => [...prev, { ...data, type }]);
           } catch (err) {
-            console.warn('[SSE] Failed to parse event:', err);
+            console.warn("[SSE] Failed to parse event:", err);
           }
         });
       });
 
       // When Section 1 completes, switch to Section 2
-      eventSource.addEventListener('node_complete', (event) => {
+      eventSource.addEventListener("node_complete", (event) => {
         if (isCleanedUp) return;
         try {
           const data = JSON.parse(event.data);
-          if (data.node === 'synthesize_history' && currentSection === 1) {
+          if (data.node === "synthesize_history" && currentSection === 1) {
             // Section 1 done, upgrade to Section 2
             currentSection = 2;
 
@@ -179,7 +182,9 @@ export default function OpenedRoomPage() {
               if (isCleanedUp || !user) return;
               const token2 = await user.getIdToken();
               const endpoint2 = `${API_URL}/api/graph/world-config/stream?roomId=${roomId}&token=${encodeURIComponent(token2)}`;
-              eventSource = new EventSource(endpoint2, { withCredentials: true });
+              eventSource = new EventSource(endpoint2, {
+                withCredentials: true,
+              });
 
               // Re-register listeners for Section 2
               eventTypes.forEach((type) => {
@@ -187,16 +192,19 @@ export default function OpenedRoomPage() {
                   if (isCleanedUp) return;
                   try {
                     const innerData = JSON.parse(innerEvent.data);
-                    setStreamEvents((prev) => [...prev, { ...innerData, type }]);
+                    setStreamEvents((prev) => [
+                      ...prev,
+                      { ...innerData, type },
+                    ]);
                   } catch (err) {
-                    console.warn('[SSE] Failed to parse event:', err);
+                    console.warn("[SSE] Failed to parse event:", err);
                   }
                 });
               });
             }, 500);
           }
         } catch (err) {
-          console.warn('[SSE] Error handling node_complete:', err);
+          console.warn("[SSE] Error handling node_complete:", err);
         }
       });
     };
@@ -227,8 +235,8 @@ export default function OpenedRoomPage() {
         <div className="flex min-h-screen items-center justify-center">
           <Card className="max-w-md border-red-500/30 bg-midnight-800/95 p-8 text-center">
             <h2 className="mb-4 text-xl font-semibold text-red-400">Error</h2>
-            <p className="text-shadow-300">{error || 'Room not found'}</p>
-            <Button onClick={() => navigate('/')} className="mt-6">
+            <p className="text-shadow-300">{error || "Room not found"}</p>
+            <Button onClick={() => navigate("/")} className="mt-6">
               Return to Lobby
             </Button>
           </Card>
@@ -247,51 +255,65 @@ export default function OpenedRoomPage() {
           <div className="w-full max-w-4xl space-y-6">
             {/* World Generation Title */}
             <div className="text-center space-y-4">
-              <h1 className="font-display text-3xl uppercase tracking-[0.35em] text-aurora-300">Generating World</h1>
-              <p className="text-shadow-300">Creating the history and lore of your realm...</p>
+              <h1 className="font-display text-3xl uppercase tracking-[0.35em] text-aurora-300">
+                Generating World
+              </h1>
+              <p className="text-shadow-300">
+                Creating the history and lore of your realm...
+              </p>
             </div>
 
             {/* Detailed Event Stream */}
             <div className="card p-6">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-shadow-400 mb-4">Generation Log</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-shadow-400 mb-4">
+                Generation Log
+              </h3>
               <div className="max-h-[70vh] space-y-2 overflow-y-auto">
                 {streamEvents.map((event, index) => {
                   // Filter out LangChain internal noise
                   const isNoise =
-                    event.name === '  start  ' ||
-                    event.name === '  return  ' ||
-                    event.name === 'LangGraph' ||
-                    (event.name || '').includes('ChannelWrite') ||
-                    (event.name || '').includes('ChatGoogle') ||
-                    event.name === 'generateStructured';
+                    event.name === "  start  " ||
+                    event.name === "  return  " ||
+                    event.name === "LangGraph" ||
+                    (event.name || "").includes("ChannelWrite") ||
+                    (event.name || "").includes("ChatGoogle") ||
+                    event.name === "generateStructured";
 
-                  if (isNoise && event.type !== 'progress') {
+                  if (isNoise && event.type !== "progress") {
                     return null;
                   }
 
                   // Tool calls
-                  if (event.type === 'tool_call') {
+                  if (event.type === "tool_call") {
                     const toolCall: ToolCall = {
                       id: `tool-${index}`,
-                      toolName: event.tool || 'unknown',
+                      toolName: event.tool || "unknown",
                       parameters: event.args || {},
                       result: event.output,
                       timestamp: Date.now(),
-                      status: 'completed',
+                      status: "completed",
                     };
                     return (
-                      <ToolCallCard key={index} toolCall={toolCall} status={event.output ? 'complete' : 'running'} />
+                      <ToolCallCard
+                        key={index}
+                        toolCall={toolCall}
+                        status={event.output ? "complete" : "running"}
+                      />
                     );
                   }
 
                   // Period events
-                  if (event.type === 'period_start') {
+                  if (event.type === "period_start") {
                     return (
-                      <div key={index} className="rounded-lg border border-aurora-500/40 bg-aurora-900/20 px-4 py-3">
+                      <div
+                        key={index}
+                        className="rounded-lg border border-aurora-500/40 bg-aurora-900/20 px-4 py-3"
+                      >
                         <div className="flex items-center gap-2">
                           <span className="text-aurora-400">📜</span>
                           <span className="text-sm font-semibold text-aurora-200">
-                            Creating Era {event.periodNumber} of {event.totalPeriods}
+                            Creating Era {event.periodNumber} of{" "}
+                            {event.totalPeriods}
                           </span>
                         </div>
                       </div>
@@ -299,7 +321,10 @@ export default function OpenedRoomPage() {
                   }
 
                   // Period narrative - streaming or complete
-                  if (event.type === 'period_text_complete' && event.narrative) {
+                  if (
+                    event.type === "period_text_complete" &&
+                    event.narrative
+                  ) {
                     return (
                       <div
                         key={index}

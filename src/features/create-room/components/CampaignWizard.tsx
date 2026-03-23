@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
-import clsx from 'clsx';
-import type { WorldSettings, DMStyle, ScaleLevel } from '@/types/contracts';
-import { useI18n } from '@/i18n';
-import DiscreteSlider, { type SliderMark } from '@/components/forms/DiscreteSlider';
-import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
-import { WorldConfigForm } from '@/features/debug/components/WorldConfigForm';
+import { useMemo, useState } from "react";
+import clsx from "clsx";
+import type { WorldSettings, DMStyle, ScaleLevel } from "@/types/contracts";
+import { useI18n } from "@/i18n";
+import DiscreteSlider, {
+  type SliderMark,
+} from "@/components/forms/DiscreteSlider";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { WorldConfigForm } from "@/features/debug/components/WorldConfigForm";
 import {
   WIZARD_GROUPS,
   type WizardGroup,
@@ -24,9 +26,9 @@ import {
   DIFFICULTY_FALLBACK,
   WORLD_SIZE_VALUES,
   WORLD_SIZE_FALLBACK,
-} from '@/pages/create-room/constants';
-import type { WorldConfig } from '@/features/debug/utils/types';
-import { WorldPreview } from './WorldPreview';
+} from "@/pages/create-room/constants";
+import type { WorldConfig } from "@/features/debug/utils/types";
+import { WorldPreview } from "./WorldPreview";
 
 interface CampaignWizardProps {
   initialSettings?: Partial<WorldSettings>;
@@ -40,7 +42,7 @@ export function CampaignWizard({
   initialSettings,
   onSubmit,
   onCancel,
-  submitLabel = 'Forging World',
+  submitLabel = "Forging World",
   isSubmitting = false,
 }: CampaignWizardProps) {
   const { t, language } = useI18n();
@@ -48,47 +50,49 @@ export function CampaignWizard({
 
   // Wizard state
   const [currentGroup, setCurrentGroup] = useState(0);
-  const [completedGroups, setCompletedGroups] = useState<Set<number>>(new Set());
+  const [completedGroups, setCompletedGroups] = useState<Set<number>>(
+    new Set(),
+  );
 
   // Slider Marks Memoization (Identical to previous)
   const verbosityMarks = useMemo<SliderMark[]>(
     () =>
       VERBOSITY_MARK_KEYS.map(({ value, key }) => ({
         value,
-        label: VERBOSITY_FALLBACK[key]?.label ?? '',
-        description: VERBOSITY_FALLBACK[key]?.description ?? '',
+        label: VERBOSITY_FALLBACK[key]?.label ?? "",
+        description: VERBOSITY_FALLBACK[key]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const detailMarks = useMemo<SliderMark[]>(
     () =>
       DETAIL_MARK_KEYS.map(({ value, key }) => ({
         value,
-        label: DETAIL_FALLBACK[key]?.label ?? '',
-        description: DETAIL_FALLBACK[key]?.description ?? '',
+        label: DETAIL_FALLBACK[key]?.label ?? "",
+        description: DETAIL_FALLBACK[key]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const engagementMarks = useMemo<SliderMark[]>(
     () =>
       ENGAGEMENT_MARK_KEYS.map(({ value, key }) => ({
         value,
-        label: ENGAGEMENT_FALLBACK[key]?.label ?? '',
-        description: ENGAGEMENT_FALLBACK[key]?.description ?? '',
+        label: ENGAGEMENT_FALLBACK[key]?.label ?? "",
+        description: ENGAGEMENT_FALLBACK[key]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const narrativeMarks = useMemo<SliderMark[]>(
     () =>
       NARRATIVE_MARK_KEYS.map(({ value, key }) => ({
         value,
-        label: NARRATIVE_FALLBACK[key]?.label ?? '',
-        description: NARRATIVE_FALLBACK[key]?.description ?? '',
+        label: NARRATIVE_FALLBACK[key]?.label ?? "",
+        description: NARRATIVE_FALLBACK[key]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const specialModeOptions = useMemo(
@@ -96,42 +100,42 @@ export function CampaignWizard({
       SPECIAL_MODE_KEYS.map(({ id, key }) => ({
         id,
         label: SPECIAL_MODE_FALLBACK[key]?.label ?? key,
-        description: SPECIAL_MODE_FALLBACK[key]?.description ?? '',
+        description: SPECIAL_MODE_FALLBACK[key]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const adventureLengthOptions = useMemo(
     () =>
       ADVENTURE_LENGTH_VALUES.map((value) => ({
         value,
-        label: ADVENTURE_LENGTH_FALLBACK[value]?.label ?? '',
-        detail: ADVENTURE_LENGTH_FALLBACK[value]?.detail ?? '',
-        description: ADVENTURE_LENGTH_FALLBACK[value]?.description ?? '',
+        label: ADVENTURE_LENGTH_FALLBACK[value]?.label ?? "",
+        detail: ADVENTURE_LENGTH_FALLBACK[value]?.detail ?? "",
+        description: ADVENTURE_LENGTH_FALLBACK[value]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const difficultyOptions = useMemo(
     () =>
       DIFFICULTY_VALUES.map((value) => ({
         value,
-        label: DIFFICULTY_FALLBACK[value]?.label ?? '',
-        detail: DIFFICULTY_FALLBACK[value]?.detail ?? '',
-        description: DIFFICULTY_FALLBACK[value]?.description ?? '',
+        label: DIFFICULTY_FALLBACK[value]?.label ?? "",
+        detail: DIFFICULTY_FALLBACK[value]?.detail ?? "",
+        description: DIFFICULTY_FALLBACK[value]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const worldSizeOptions = useMemo(
     () =>
       WORLD_SIZE_VALUES.map((value) => ({
         value,
-        label: WORLD_SIZE_FALLBACK[value]?.label ?? '',
-        detail: WORLD_SIZE_FALLBACK[value]?.detail ?? '',
-        description: WORLD_SIZE_FALLBACK[value]?.description ?? '',
+        label: WORLD_SIZE_FALLBACK[value]?.label ?? "",
+        detail: WORLD_SIZE_FALLBACK[value]?.detail ?? "",
+        description: WORLD_SIZE_FALLBACK[value]?.description ?? "",
       })),
-    []
+    [],
   );
 
   const worldSizeMarks = useMemo<SliderMark[]>(
@@ -141,7 +145,7 @@ export function CampaignWizard({
         label: option.label,
         description: `${option.detail} — ${option.description}`,
       })),
-    [worldSizeOptions]
+    [worldSizeOptions],
   );
 
   const adventureLengthMarks = useMemo<SliderMark[]>(
@@ -151,7 +155,7 @@ export function CampaignWizard({
         label: option.label,
         description: `${option.detail} — ${option.description}`,
       })),
-    [adventureLengthOptions]
+    [adventureLengthOptions],
   );
 
   const difficultyMarks = useMemo<SliderMark[]>(
@@ -161,49 +165,57 @@ export function CampaignWizard({
         label: option.label,
         description: `${option.detail} — ${option.description}`,
       })),
-    [difficultyOptions]
+    [difficultyOptions],
   );
 
   // Initial State
   const [settings, setSettings] = useState<WorldSettings>({
     // eslint-disable-next-line react-hooks/purity
     seed: `daicer-${Math.random().toString(36).substring(7)}`,
-    worldType: 'terra',
-    worldSize: 'small',
-    theme: 'High Fantasy',
-    setting: 'Medieval Kingdom',
-    tone: 'Heroic',
-    worldBackground: '',
+    worldType: "terra",
+    worldSize: "small",
+    theme: "High Fantasy",
+    setting: "Medieval Kingdom",
+    tone: "Heroic",
+    worldBackground: "",
     dmStyle: {
       verbosity: 1,
       detail: 1,
       engagement: 1,
       narrative: 1,
       specialMode: null,
-      customDirectives: '',
+      customDirectives: "",
     },
-    dmSystemPrompt: '',
+    dmSystemPrompt: "",
     playerCount: 4,
-    adventureLength: 'short',
-    difficulty: 'easy',
+    adventureLength: "short",
+    difficulty: "easy",
     startingLevel: 1,
     attributePointBudget: 27,
     language,
     generationParams: {
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      globalScale: (initialSettings?.generationParams as any)?.globalScale ?? 0.01,
+      globalScale:
+        (initialSettings?.generationParams as any)?.globalScale ?? 0.01,
       seaLevel: (initialSettings?.generationParams as any)?.seaLevel ?? 0,
-      elevationScale: (initialSettings?.generationParams as any)?.elevationScale ?? 1,
+      elevationScale:
+        (initialSettings?.generationParams as any)?.elevationScale ?? 1,
       roughness: (initialSettings?.generationParams as any)?.roughness ?? 0.5,
       detail: (initialSettings?.generationParams as any)?.detail ?? 4,
-      moistureScale: (initialSettings?.generationParams as any)?.moistureScale ?? 1,
-      temperatureOffset: (initialSettings?.generationParams as any)?.temperatureOffset ?? 0,
-      structureChance: (initialSettings?.generationParams as any)?.structureChance ?? 0.1,
-      structureSpacing: (initialSettings?.generationParams as any)?.structureSpacing ?? 10,
-      structureSizeAvg: (initialSettings?.generationParams as any)?.structureSizeAvg ?? 10,
-      roadDensity: (initialSettings?.generationParams as any)?.roadDensity ?? 0.5,
+      moistureScale:
+        (initialSettings?.generationParams as any)?.moistureScale ?? 1,
+      temperatureOffset:
+        (initialSettings?.generationParams as any)?.temperatureOffset ?? 0,
+      structureChance:
+        (initialSettings?.generationParams as any)?.structureChance ?? 0.1,
+      structureSpacing:
+        (initialSettings?.generationParams as any)?.structureSpacing ?? 10,
+      structureSizeAvg:
+        (initialSettings?.generationParams as any)?.structureSizeAvg ?? 10,
+      roadDensity:
+        (initialSettings?.generationParams as any)?.roadDensity ?? 0.5,
       fogRadius: (initialSettings?.generationParams as any)?.fogRadius ?? 10,
-      seed: (initialSettings?.generationParams as any)?.seed ?? 'default-seed',
+      seed: (initialSettings?.generationParams as any)?.seed ?? "default-seed",
       chunkSize: (initialSettings?.generationParams as any)?.chunkSize ?? 32,
       /* eslint-enable @typescript-eslint/no-explicit-any */
     },
@@ -213,9 +225,9 @@ export function CampaignWizard({
   const validateGroup = (groupIndex: number): boolean => {
     const groupName = WIZARD_GROUPS[groupIndex];
     switch (groupName) {
-      case 'dmSettings':
+      case "dmSettings":
         return !!settings.theme && !!settings.tone && !!settings.setting;
-      case 'worldConfig':
+      case "worldConfig":
         return true; // Config always has defaults
       default:
         return false;
@@ -231,7 +243,8 @@ export function CampaignWizard({
   const goToGroup = (index: number) => {
     if (canNavigateToGroup(index)) {
       setCurrentGroup(index);
-      if (validateGroup(currentGroup)) setCompletedGroups(new Set([...completedGroups, currentGroup]));
+      if (validateGroup(currentGroup))
+        setCompletedGroups(new Set([...completedGroups, currentGroup]));
     }
   };
 
@@ -240,7 +253,7 @@ export function CampaignWizard({
       setCompletedGroups(new Set([...completedGroups, currentGroup]));
       setCurrentGroup(Math.min(currentGroup + 1, WIZARD_GROUPS.length - 1));
     } else {
-      setError(t('createWizard.errors.incomplete'));
+      setError(t("createWizard.errors.incomplete"));
     }
   };
 
@@ -249,11 +262,17 @@ export function CampaignWizard({
     setError(null);
   };
 
-  const updateSetting = <K extends keyof WorldSettings>(key: K, value: WorldSettings[K]) => {
+  const updateSetting = <K extends keyof WorldSettings>(
+    key: K,
+    value: WorldSettings[K],
+  ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  const updateDMStyle = <K extends keyof DMStyle>(key: K, value: DMStyle[K]) => {
+  const updateDMStyle = <K extends keyof DMStyle>(
+    key: K,
+    value: DMStyle[K],
+  ) => {
     setSettings((prev) => ({
       ...prev,
       dmStyle: { ...prev.dmStyle, [key]: value },
@@ -284,24 +303,30 @@ export function CampaignWizard({
     try {
       await onSubmit(settings);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Detailed error');
+      setError(err instanceof Error ? err.message : "Detailed error");
     }
   };
 
   const renderGroupContent = () => {
     switch (WIZARD_GROUPS[currentGroup]) {
-      case 'dmSettings': {
+      case "dmSettings": {
         const worldSizeIndex = Math.max(
           0,
-          worldSizeOptions.findIndex((option) => option.value === settings.worldSize)
+          worldSizeOptions.findIndex(
+            (option) => option.value === settings.worldSize,
+          ),
         );
         const adventureLengthIndex = Math.max(
           0,
-          adventureLengthOptions.findIndex((option) => option.value === settings.adventureLength)
+          adventureLengthOptions.findIndex(
+            (option) => option.value === settings.adventureLength,
+          ),
         );
         const difficultyIndex = Math.max(
           0,
-          difficultyOptions.findIndex((option) => option.value === settings.difficulty)
+          difficultyOptions.findIndex(
+            (option) => option.value === settings.difficulty,
+          ),
         );
 
         return (
@@ -315,7 +340,9 @@ export function CampaignWizard({
                 <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">
                   DM Personality & Style
                 </h2>
-                <p className="text-sm text-shadow-300">Configure your AI Dungeon Master's narration style</p>
+                <p className="text-sm text-shadow-300">
+                  Configure your AI Dungeon Master's narration style
+                </p>
               </div>
 
               <div className="grid gap-6 lg:grid-cols-2">
@@ -323,28 +350,36 @@ export function CampaignWizard({
                   id="verbosity-slider"
                   label="Verbosity"
                   value={settings.dmStyle.verbosity}
-                  onChange={(value) => updateDMStyle('verbosity', value as ScaleLevel)}
+                  onChange={(value) =>
+                    updateDMStyle("verbosity", value as ScaleLevel)
+                  }
                   marks={verbosityMarks}
                 />
                 <DiscreteSlider
                   id="detail-slider"
                   label="Detail Level"
                   value={settings.dmStyle.detail}
-                  onChange={(value) => updateDMStyle('detail', value as ScaleLevel)}
+                  onChange={(value) =>
+                    updateDMStyle("detail", value as ScaleLevel)
+                  }
                   marks={detailMarks}
                 />
                 <DiscreteSlider
                   id="engagement-slider"
                   label="Player Engagement"
                   value={settings.dmStyle.engagement}
-                  onChange={(value) => updateDMStyle('engagement', value as ScaleLevel)}
+                  onChange={(value) =>
+                    updateDMStyle("engagement", value as ScaleLevel)
+                  }
                   marks={engagementMarks}
                 />
                 <DiscreteSlider
                   id="narrative-slider"
                   label="Narrative Control"
                   value={settings.dmStyle.narrative}
-                  onChange={(value) => updateDMStyle('narrative', value as ScaleLevel)}
+                  onChange={(value) =>
+                    updateDMStyle("narrative", value as ScaleLevel)
+                  }
                   marks={narrativeMarks}
                 />
               </div>
@@ -359,16 +394,20 @@ export function CampaignWizard({
                     <button
                       key={option.label}
                       type="button"
-                      onClick={() => updateDMStyle('specialMode', option.id)}
+                      onClick={() => updateDMStyle("specialMode", option.id)}
                       className={clsx(
-                        'rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200',
+                        "rounded-lg border px-4 py-3 text-left text-sm transition-all duration-200",
                         settings.dmStyle.specialMode === option.id
-                          ? 'border-accent/40 bg-gradient-to-br from-accent/15 via-aurora-500/20 to-midnight-700/40 shadow-[0_20px_40px_rgba(122,73,217,0.25)]'
-                          : 'border-midnight-500/60 bg-midnight-500/30 hover:border-accent/30 hover:bg-midnight-400/40'
+                          ? "border-accent/40 bg-gradient-to-br from-accent/15 via-aurora-500/20 to-midnight-700/40 shadow-[0_20px_40px_rgba(122,73,217,0.25)]"
+                          : "border-midnight-500/60 bg-midnight-500/30 hover:border-accent/30 hover:bg-midnight-400/40",
                       )}
                     >
-                      <p className="font-semibold text-accent">{option.label}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-shadow-200">{option.description}</p>
+                      <p className="font-semibold text-accent">
+                        {option.label}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-shadow-200">
+                        {option.description}
+                      </p>
                     </button>
                   ))}
                 </div>
@@ -378,8 +417,12 @@ export function CampaignWizard({
             {/* Theme, Tone, Setting inputs */}
             <section className="card space-y-8 p-8 border border-midnight-700/50 bg-midnight-900/40 backdrop-blur-sm">
               <div className="space-y-2">
-                <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">Setting & Scope</h2>
-                <p className="text-sm text-shadow-300">Define the theme and scale of the adventure</p>
+                <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">
+                  Setting & Scope
+                </h2>
+                <p className="text-sm text-shadow-300">
+                  Define the theme and scale of the adventure
+                </p>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -394,7 +437,9 @@ export function CampaignWizard({
                     id="theme-input"
                     type="text"
                     value={settings.theme}
-                    onChange={(event) => updateSetting('theme', event.target.value)}
+                    onChange={(event) =>
+                      updateSetting("theme", event.target.value)
+                    }
                     className="input-style w-full"
                     placeholder="High Fantasy"
                   />
@@ -410,7 +455,9 @@ export function CampaignWizard({
                     id="tone-input"
                     type="text"
                     value={settings.tone}
-                    onChange={(event) => updateSetting('tone', event.target.value)}
+                    onChange={(event) =>
+                      updateSetting("tone", event.target.value)
+                    }
                     className="input-style w-full"
                     placeholder="Heroic"
                   />
@@ -427,7 +474,9 @@ export function CampaignWizard({
                   id="setting-input"
                   type="text"
                   value={settings.setting}
-                  onChange={(event) => updateSetting('setting', event.target.value)}
+                  onChange={(event) =>
+                    updateSetting("setting", event.target.value)
+                  }
                   className="input-style w-full"
                   placeholder="Medieval Kingdom"
                 />
@@ -441,7 +490,7 @@ export function CampaignWizard({
                   value={worldSizeIndex}
                   onChange={(index) => {
                     const option = worldSizeOptions[index];
-                    if (option) updateSetting('worldSize', option.value);
+                    if (option) updateSetting("worldSize", option.value);
                   }}
                   marks={worldSizeMarks}
                 />
@@ -451,7 +500,7 @@ export function CampaignWizard({
                   value={adventureLengthIndex}
                   onChange={(index) => {
                     const option = adventureLengthOptions[index];
-                    if (option) updateSetting('adventureLength', option.value);
+                    if (option) updateSetting("adventureLength", option.value);
                   }}
                   marks={adventureLengthMarks}
                 />
@@ -461,7 +510,7 @@ export function CampaignWizard({
                   value={difficultyIndex}
                   onChange={(index) => {
                     const option = difficultyOptions[index];
-                    if (option) updateSetting('difficulty', option.value);
+                    if (option) updateSetting("difficulty", option.value);
                   }}
                   marks={difficultyMarks}
                 />
@@ -471,23 +520,33 @@ export function CampaignWizard({
                   id="party-size-slider"
                   label="Party Size"
                   value={settings.playerCount}
-                  onChange={(value) => updateSetting('playerCount', Math.max(1, Math.min(value, 8)))}
+                  onChange={(value) =>
+                    updateSetting(
+                      "playerCount",
+                      Math.max(1, Math.min(value, 8)),
+                    )
+                  }
                   marks={[
-                    { value: 1, label: '1' },
-                    { value: 4, label: '4' },
-                    { value: 8, label: '8' },
+                    { value: 1, label: "1" },
+                    { value: 4, label: "4" },
+                    { value: 8, label: "8" },
                   ]}
                 />
                 <DiscreteSlider
                   id="starting-level-slider"
                   label="Starting Level"
                   value={settings.startingLevel}
-                  onChange={(value) => updateSetting('startingLevel', Math.max(1, Math.min(value, 20)))}
+                  onChange={(value) =>
+                    updateSetting(
+                      "startingLevel",
+                      Math.max(1, Math.min(value, 20)),
+                    )
+                  }
                   marks={[
-                    { value: 1, label: '1' },
-                    { value: 5, label: '5' },
-                    { value: 10, label: '10' },
-                    { value: 20, label: '20' },
+                    { value: 1, label: "1" },
+                    { value: 5, label: "5" },
+                    { value: 10, label: "10" },
+                    { value: 20, label: "20" },
                   ]}
                 />
               </div>
@@ -495,34 +554,49 @@ export function CampaignWizard({
           </div>
         );
       }
-      case 'worldConfig': {
+      case "worldConfig": {
         // Flatten settings to match WorldConfig shape if possible
         // WorldConfig expects: seed, globalScale, etc.
         // WorldSettings has these merged in.
 
         const config: WorldConfig = {
-          seed: settings.seed || 'default-seed',
-          chunkSize: (settings.generationParams as WorldConfig)?.chunkSize ?? 32,
+          seed: settings.seed || "default-seed",
+          chunkSize:
+            (settings.generationParams as WorldConfig)?.chunkSize ?? 32,
           // Map WorldSettings arbitrary keys to WorldConfig known keys
-          globalScale: (settings.generationParams as WorldConfig)?.globalScale ?? 0.01,
+          globalScale:
+            (settings.generationParams as WorldConfig)?.globalScale ?? 0.01,
           seaLevel: (settings.generationParams as WorldConfig)?.seaLevel ?? 0,
-          elevationScale: (settings.generationParams as WorldConfig)?.elevationScale ?? 1,
-          roughness: (settings.generationParams as WorldConfig)?.roughness ?? 0.5,
+          elevationScale:
+            (settings.generationParams as WorldConfig)?.elevationScale ?? 1,
+          roughness:
+            (settings.generationParams as WorldConfig)?.roughness ?? 0.5,
           detail: (settings.generationParams as WorldConfig)?.detail ?? 4,
-          moistureScale: (settings.generationParams as WorldConfig)?.moistureScale ?? 1,
-          temperatureOffset: (settings.generationParams as WorldConfig)?.temperatureOffset ?? 0,
-          structureChance: (settings.generationParams as WorldConfig)?.structureChance ?? 0.1,
-          structureSpacing: (settings.generationParams as WorldConfig)?.structureSpacing ?? 10,
-          structureSizeAvg: (settings.generationParams as WorldConfig)?.structureSizeAvg ?? 10,
-          roadDensity: (settings.generationParams as WorldConfig)?.roadDensity ?? 0.5,
-          fogRadius: (settings.generationParams as WorldConfig)?.fogRadius ?? 10,
+          moistureScale:
+            (settings.generationParams as WorldConfig)?.moistureScale ?? 1,
+          temperatureOffset:
+            (settings.generationParams as WorldConfig)?.temperatureOffset ?? 0,
+          structureChance:
+            (settings.generationParams as WorldConfig)?.structureChance ?? 0.1,
+          structureSpacing:
+            (settings.generationParams as WorldConfig)?.structureSpacing ?? 10,
+          structureSizeAvg:
+            (settings.generationParams as WorldConfig)?.structureSizeAvg ?? 10,
+          roadDensity:
+            (settings.generationParams as WorldConfig)?.roadDensity ?? 0.5,
+          fogRadius:
+            (settings.generationParams as WorldConfig)?.fogRadius ?? 10,
         };
 
         return (
           <div className="animate-in fade-in duration-500 h-full flex flex-col">
             <div className="space-y-2 mb-6 text-center">
-              <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">World Configuration</h2>
-              <p className="text-sm text-shadow-300">Fine-tune the physical parameters of the world generation</p>
+              <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">
+                World Configuration
+              </h2>
+              <p className="text-sm text-shadow-300">
+                Fine-tune the physical parameters of the world generation
+              </p>
             </div>
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-0">
@@ -560,10 +634,10 @@ export function CampaignWizard({
 
   const getGroupLabel = (group: WizardGroup): string => {
     switch (group) {
-      case 'dmSettings':
-        return 'DM & Scope';
-      case 'worldConfig':
-        return 'World Config';
+      case "dmSettings":
+        return "DM & Scope";
+      case "worldConfig":
+        return "World Config";
       default:
         return group;
     }
@@ -572,11 +646,15 @@ export function CampaignWizard({
   return (
     <div className="space-y-10">
       <header className="space-y-3 text-center">
-        <p className="text-xs uppercase tracking-[0.45em] text-shadow-500">Room Creation Wizard</p>
+        <p className="text-xs uppercase tracking-[0.45em] text-shadow-500">
+          Room Creation Wizard
+        </p>
         <h1 className="font-display text-3xl uppercase tracking-[0.4em] text-aurora-300 sm:text-4xl">
           Create Your Campaign
         </h1>
-        <p className="mx-auto max-w-2xl text-sm text-shadow-300">Configure your AI Dungeon Master and world</p>
+        <p className="mx-auto max-w-2xl text-sm text-shadow-300">
+          Configure your AI Dungeon Master and world
+        </p>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-10">
@@ -591,7 +669,11 @@ export function CampaignWizard({
             <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {WIZARD_GROUPS.map((groupId, index) => {
                 const status =
-                  index === currentGroup ? 'current' : completedGroups.has(index) ? 'complete' : 'upcoming';
+                  index === currentGroup
+                    ? "current"
+                    : completedGroups.has(index)
+                      ? "complete"
+                      : "upcoming";
                 const canClick = canNavigateToGroup(index);
 
                 return (
@@ -601,23 +683,23 @@ export function CampaignWizard({
                       onClick={() => goToGroup(index)}
                       disabled={!canClick}
                       className={clsx(
-                        'flex w-full flex-col gap-2 rounded-xl border px-4 py-3 text-left transition-all duration-200',
-                        status === 'current' &&
-                          'border-accent/60 bg-gradient-to-br from-accent/15 via-nebula-500/25 to-midnight-700/40 text-accent',
-                        status === 'complete' &&
-                          'border-aurora-500/60 bg-aurora-500/10 text-aurora-200 hover:border-aurora-400/70 cursor-pointer',
-                        status === 'upcoming' &&
-                          'border-midnight-500/60 bg-midnight-500/20 text-shadow-400 cursor-not-allowed opacity-60'
+                        "flex w-full flex-col gap-2 rounded-xl border px-4 py-3 text-left transition-all duration-200",
+                        status === "current" &&
+                          "border-accent/60 bg-gradient-to-br from-accent/15 via-nebula-500/25 to-midnight-700/40 text-accent",
+                        status === "complete" &&
+                          "border-aurora-500/60 bg-aurora-500/10 text-aurora-200 hover:border-aurora-400/70 cursor-pointer",
+                        status === "upcoming" &&
+                          "border-midnight-500/60 bg-midnight-500/20 text-shadow-400 cursor-not-allowed opacity-60",
                       )}
                     >
                       <span
                         className={clsx(
-                          'flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.35em]',
-                          status === 'current'
-                            ? 'border-accent/60 bg-accent/20 text-accent'
-                            : status === 'complete'
-                              ? 'border-aurora-400/60 bg-aurora-400/20 text-aurora-100'
-                              : 'border-midnight-500/60 bg-midnight-500/30 text-shadow-300'
+                          "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.35em]",
+                          status === "current"
+                            ? "border-accent/60 bg-accent/20 text-accent"
+                            : status === "complete"
+                              ? "border-aurora-400/60 bg-aurora-400/20 text-aurora-100"
+                              : "border-midnight-500/60 bg-midnight-500/30 text-shadow-300",
                         )}
                       >
                         {index + 1}
@@ -636,7 +718,9 @@ export function CampaignWizard({
         {renderGroupContent()}
 
         {error && (
-          <div className="rounded-lg border border-red-500/50 bg-red-900/40 p-4 text-sm text-red-200">{error}</div>
+          <div className="rounded-lg border border-red-500/50 bg-red-900/40 p-4 text-sm text-red-200">
+            {error}
+          </div>
         )}
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -664,7 +748,11 @@ export function CampaignWizard({
               disabled={isSubmitting || !validateGroup(currentGroup)}
               className="btn-primary sm:min-w-[170px]"
             >
-              {currentGroup === WIZARD_GROUPS.length - 1 ? (isSubmitting ? submitLabel : 'Next') : 'Next'}
+              {currentGroup === WIZARD_GROUPS.length - 1
+                ? isSubmitting
+                  ? submitLabel
+                  : "Next"
+                : "Next"}
             </button>
           </div>
         </div>

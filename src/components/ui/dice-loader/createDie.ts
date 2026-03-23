@@ -1,8 +1,8 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 // eslint-disable-next-line import/extensions
-import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-import type { DieType, DieVisualStyle } from './types';
+import type { DieType, DieVisualStyle } from "./types";
 
 const D10_VERTICES = [
   new THREE.Vector3(0, 1.3, 0),
@@ -10,7 +10,11 @@ const D10_VERTICES = [
   ...Array.from({ length: 5 }, (_, i) => {
     const angle = (i / 5) * 2 * Math.PI;
     const radius = 1;
-    return new THREE.Vector3(radius * Math.sin(angle), 0, radius * Math.cos(angle));
+    return new THREE.Vector3(
+      radius * Math.sin(angle),
+      0,
+      radius * Math.cos(angle),
+    );
   }),
 ];
 
@@ -35,7 +39,28 @@ const FACE_NUMBER_MAP: Record<DieType, (number | string)[]> = {
   10: [0, 2, 8, 6, 4, 9, 7, 1, 3, 5],
   12: [12, 2, 8, 5, 10, 4, 11, 9, 6, 3, 7, 1],
   20: [20, 2, 14, 10, 8, 1, 17, 11, 5, 9, 19, 15, 3, 7, 13, 18, 12, 6, 16, 4],
-  '20-ai': ['AI', 2, 14, 10, 'D', 1, 'CER', 11, 5, 9, 19, 15, 3, 7, 13, 18, 12, 6, 16, 4],
+  "20-ai": [
+    "AI",
+    2,
+    14,
+    10,
+    "D",
+    1,
+    "CER",
+    11,
+    5,
+    9,
+    19,
+    15,
+    3,
+    7,
+    13,
+    18,
+    12,
+    6,
+    16,
+    4,
+  ],
 };
 
 const textureCache: Record<string, THREE.CanvasTexture> = {};
@@ -47,10 +72,12 @@ function createNumberTexture(number: string): THREE.CanvasTexture {
     return cached;
   }
 
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
   if (!context) {
-    throw new Error('Unable to acquire 2D canvas context for die texture generation.');
+    throw new Error(
+      "Unable to acquire 2D canvas context for die texture generation.",
+    );
   }
 
   const size = 128;
@@ -58,9 +85,9 @@ function createNumberTexture(number: string): THREE.CanvasTexture {
   canvas.height = size;
 
   context.font = `bold ${size * 0.7}px Arial`;
-  context.fillStyle = 'white';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
+  context.fillStyle = "white";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
   context.clearRect(0, 0, size, size);
   context.fillText(number, size / 2, size / 2 + size * 0.04);
 
@@ -83,7 +110,7 @@ function createNumberPlane(num: string | number, size: number): THREE.Mesh {
 }
 
 function createDieGeometry(type: DieType): THREE.BufferGeometry {
-  const baseType = type === '20-ai' ? 20 : type;
+  const baseType = type === "20-ai" ? 20 : type;
 
   switch (baseType) {
     case 2:
@@ -99,7 +126,7 @@ function createDieGeometry(type: DieType): THREE.BufferGeometry {
         D10_VERTICES.flatMap((vertex) => vertex.toArray()),
         D10_FACES.flat(),
         1.1,
-        0
+        0,
       );
       geometry.rotateX(Math.PI / 2);
       return geometry;
@@ -118,12 +145,12 @@ function createDieGeometry(type: DieType): THREE.BufferGeometry {
 
 function createMaterialForStyle(
   color: string,
-  visualStyle: DieVisualStyle
+  visualStyle: DieVisualStyle,
 ): THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial {
   const baseColor = new THREE.Color(color);
 
   switch (visualStyle) {
-    case 'acrylic': {
+    case "acrylic": {
       // Glass-like transparent with transmission
       const material = new THREE.MeshPhysicalMaterial({
         color: baseColor,
@@ -137,7 +164,7 @@ function createMaterialForStyle(
       });
       return material;
     }
-    case 'metallic': {
+    case "metallic": {
       // Chrome-like reflective
       const material = new THREE.MeshStandardMaterial({
         color: baseColor,
@@ -148,7 +175,7 @@ function createMaterialForStyle(
       });
       return material;
     }
-    case 'glowing': {
+    case "glowing": {
       // Emissive with bloom effect
       const material = new THREE.MeshStandardMaterial({
         color: baseColor,
@@ -161,7 +188,7 @@ function createMaterialForStyle(
       });
       return material;
     }
-    case 'stone': {
+    case "stone": {
       // Matte and solid
       const material = new THREE.MeshStandardMaterial({
         color: baseColor,
@@ -172,7 +199,7 @@ function createMaterialForStyle(
       });
       return material;
     }
-    case 'standard':
+    case "standard":
     default: {
       // Original standard material
       const material = new THREE.MeshStandardMaterial({
@@ -187,7 +214,11 @@ function createMaterialForStyle(
   }
 }
 
-export function createDie(type: DieType, color: string, visualStyle: DieVisualStyle = 'standard'): THREE.Group {
+export function createDie(
+  type: DieType,
+  color: string,
+  visualStyle: DieVisualStyle = "standard",
+): THREE.Group {
   const geometry = createDieGeometry(type);
   const dieGroup = new THREE.Group();
 
@@ -197,13 +228,13 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
   dieGroup.add(dieBody);
 
   const numbers = FACE_NUMBER_MAP[type];
-  const positions = geometry.getAttribute('position');
+  const positions = geometry.getAttribute("position");
   if (!positions) {
-    throw new Error('Die geometry is missing position attributes.');
+    throw new Error("Die geometry is missing position attributes.");
   }
   const indices = geometry.index;
 
-  const baseType = type === '20-ai' ? 20 : type;
+  const baseType = type === "20-ai" ? 20 : type;
 
   if (baseType === 2) {
     const cylinderHeight = 0.2;
@@ -211,27 +242,49 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
 
     const topCenter = new THREE.Vector3(0, cylinderHeight / 2, 0);
     const topNormal = new THREE.Vector3(0, 1, 0);
-    const topPlane = createNumberPlane('1', planeSize);
-    topPlane.position.copy(topCenter).add(topNormal.clone().multiplyScalar(0.01));
+    const topPlane = createNumberPlane("1", planeSize);
+    topPlane.position
+      .copy(topCenter)
+      .add(topNormal.clone().multiplyScalar(0.01));
     topPlane.lookAt(topCenter.clone().add(topNormal));
     dieGroup.add(topPlane);
 
     const bottomCenter = new THREE.Vector3(0, -cylinderHeight / 2, 0);
     const bottomNormal = new THREE.Vector3(0, -1, 0);
-    const bottomPlane = createNumberPlane('2', planeSize);
-    bottomPlane.position.copy(bottomCenter).add(bottomNormal.clone().multiplyScalar(0.01));
+    const bottomPlane = createNumberPlane("2", planeSize);
+    bottomPlane.position
+      .copy(bottomCenter)
+      .add(bottomNormal.clone().multiplyScalar(0.01));
     bottomPlane.lookAt(bottomCenter.clone().add(bottomNormal));
     dieGroup.add(bottomPlane);
   } else if (baseType === 6) {
     const planeSize = 0.8;
     const halfSize = 1.5 / 2;
     const faceData = [
-      { normal: new THREE.Vector3(1, 0, 0), center: new THREE.Vector3(halfSize, 0, 0) },
-      { normal: new THREE.Vector3(-1, 0, 0), center: new THREE.Vector3(-halfSize, 0, 0) },
-      { normal: new THREE.Vector3(0, 1, 0), center: new THREE.Vector3(0, halfSize, 0) },
-      { normal: new THREE.Vector3(0, -1, 0), center: new THREE.Vector3(0, -halfSize, 0) },
-      { normal: new THREE.Vector3(0, 0, 1), center: new THREE.Vector3(0, 0, halfSize) },
-      { normal: new THREE.Vector3(0, 0, -1), center: new THREE.Vector3(0, 0, -halfSize) },
+      {
+        normal: new THREE.Vector3(1, 0, 0),
+        center: new THREE.Vector3(halfSize, 0, 0),
+      },
+      {
+        normal: new THREE.Vector3(-1, 0, 0),
+        center: new THREE.Vector3(-halfSize, 0, 0),
+      },
+      {
+        normal: new THREE.Vector3(0, 1, 0),
+        center: new THREE.Vector3(0, halfSize, 0),
+      },
+      {
+        normal: new THREE.Vector3(0, -1, 0),
+        center: new THREE.Vector3(0, -halfSize, 0),
+      },
+      {
+        normal: new THREE.Vector3(0, 0, 1),
+        center: new THREE.Vector3(0, 0, halfSize),
+      },
+      {
+        normal: new THREE.Vector3(0, 0, -1),
+        center: new THREE.Vector3(0, 0, -halfSize),
+      },
     ];
 
     faceData.forEach(({ normal, center }, index) => {
@@ -246,7 +299,7 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
     });
   } else if (baseType === 12) {
     if (!indices) {
-      throw new Error('D12 geometry must be indexed to place numbers.');
+      throw new Error("D12 geometry must be indexed to place numbers.");
     }
     const faceCount = 12;
     for (let i = 0; i < faceCount; i += 1) {
@@ -258,15 +311,28 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
         vertexIndices.add(indices.getY(baseIndex));
         vertexIndices.add(indices.getZ(baseIndex));
       }
-      const vertices = Array.from(vertexIndices).map((idx) => new THREE.Vector3().fromBufferAttribute(positions, idx));
+      const vertices = Array.from(vertexIndices).map((idx) =>
+        new THREE.Vector3().fromBufferAttribute(positions, idx),
+      );
       const center = vertices
         .reduce((acc, vertex) => acc.add(vertex), new THREE.Vector3())
         .divideScalar(vertices.length);
       const baseIndex = i * 9;
-      const vA = new THREE.Vector3().fromBufferAttribute(positions, indices.getX(baseIndex));
-      const vB = new THREE.Vector3().fromBufferAttribute(positions, indices.getY(baseIndex));
-      const vC = new THREE.Vector3().fromBufferAttribute(positions, indices.getZ(baseIndex));
-      const normal = new THREE.Vector3().crossVectors(vB.clone().sub(vA), vC.clone().sub(vA)).normalize();
+      const vA = new THREE.Vector3().fromBufferAttribute(
+        positions,
+        indices.getX(baseIndex),
+      );
+      const vB = new THREE.Vector3().fromBufferAttribute(
+        positions,
+        indices.getY(baseIndex),
+      );
+      const vC = new THREE.Vector3().fromBufferAttribute(
+        positions,
+        indices.getZ(baseIndex),
+      );
+      const normal = new THREE.Vector3()
+        .crossVectors(vB.clone().sub(vA), vC.clone().sub(vA))
+        .normalize();
 
       const faceNumber = numbers[i];
       if (faceNumber !== undefined) {
@@ -299,8 +365,14 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
         vC.fromBufferAttribute(positions, idx + 2);
       }
 
-      const center = new THREE.Vector3().add(vA).add(vB).add(vC).divideScalar(3);
-      const normal = new THREE.Vector3().crossVectors(vB.clone().sub(vA), vC.clone().sub(vA)).normalize();
+      const center = new THREE.Vector3()
+        .add(vA)
+        .add(vB)
+        .add(vC)
+        .divideScalar(3);
+      const normal = new THREE.Vector3()
+        .crossVectors(vB.clone().sub(vA), vC.clone().sub(vA))
+        .normalize();
 
       const faceNumber = numbers[i];
       if (faceNumber !== undefined) {
@@ -312,7 +384,7 @@ export function createDie(type: DieType, color: string, visualStyle: DieVisualSt
     }
   }
 
-  dieGroup.name = 'die';
+  dieGroup.name = "die";
   dieGroup.userData = { dieType: type, baseColor: color };
   return dieGroup;
 }

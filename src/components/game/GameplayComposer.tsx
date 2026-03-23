@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { useI18n } from '../../i18n';
-import { PromptInput, PromptInputTextarea, PromptInputSubmit } from '../ai';
+import { useI18n } from "../../i18n";
+import { PromptInput, PromptInputTextarea, PromptInputSubmit } from "../ai";
 
 /**
  * Enhanced composer using AI Elements PromptInput
  * Preserves draft persistence and typing indicators from StreamingComposer
  */
-import { ActionBar } from './ActionBar';
+import { ActionBar } from "./ActionBar";
 
 interface GameplayComposerProps {
   roomId: string;
@@ -31,7 +31,7 @@ export default function GameplayComposer({
   onChange,
 }: GameplayComposerProps) {
   const { t } = useI18n();
-  const [internalAction, setInternalAction] = useState('');
+  const [internalAction, setInternalAction] = useState("");
   const isControlled = value !== undefined;
   const action = isControlled ? value : internalAction;
 
@@ -59,7 +59,7 @@ export default function GameplayComposer({
 
   // Handle typing indicator (Removed - Server-side only)
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement> | string) => {
-    const newValue = typeof e === 'string' ? e : e.target.value;
+    const newValue = typeof e === "string" ? e : e.target.value;
 
     if (!isControlled) {
       setInternalAction(newValue);
@@ -72,7 +72,7 @@ export default function GameplayComposer({
     () => () => {
       // Typing indicator cleanup removed
     },
-    [roomId, userName]
+    [roomId, userName],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -82,9 +82,9 @@ export default function GameplayComposer({
     onSubmit(action.trim());
 
     if (!isControlled) {
-      setInternalAction('');
+      setInternalAction("");
     }
-    onChange?.(''); // Clear parent
+    onChange?.(""); // Clear parent
 
     // setIsTyping(false); // Removed
     // sendTypingIndicator call removed
@@ -94,15 +94,19 @@ export default function GameplayComposer({
   };
 
   const handleActionSelect = (text: string) => {
-    const newValue = action + (action.length > 0 && !action.endsWith(' ') ? ' ' : '') + text;
+    const newValue =
+      action + (action.length > 0 && !action.endsWith(" ") ? " " : "") + text;
     handleChange(newValue);
   };
 
-  const status = isProcessing ? 'streaming' : disabled ? 'error' : 'ready';
+  const status = isProcessing ? "streaming" : disabled ? "error" : "ready";
 
   return (
     <div className="relative space-y-2">
-      <ActionBar onActionSelect={handleActionSelect} disabled={disabled || isProcessing} />
+      <ActionBar
+        onActionSelect={handleActionSelect}
+        disabled={disabled || isProcessing}
+      />
 
       <PromptInput onSubmit={handleSubmit}>
         <PromptInputTextarea
@@ -111,20 +115,27 @@ export default function GameplayComposer({
           placeholder={
             disabled
               ? isProcessing
-                ? t('gameplay.processing')
-                : 'Combat in progress...'
-              : placeholder || t('gameplay.actionPlaceholder')
+                ? t("gameplay.processing")
+                : "Combat in progress..."
+              : placeholder || t("gameplay.actionPlaceholder")
           }
           disabled={disabled}
           minHeight={80}
           maxHeight={300}
           className="border-midnight-600/60 bg-midnight-800/60 text-shadow-50 placeholder:text-shadow-400 focus:border-aurora-500/60 focus:bg-midnight-800/80 focus:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
         />
-        <PromptInputSubmit status={status} disabled={!action.trim() || disabled} />
+        <PromptInputSubmit
+          status={status}
+          disabled={!action.trim() || disabled}
+        />
       </PromptInput>
 
       {/* Character Count */}
-      {action.length > 0 && <div className="text-right text-xs text-shadow-500">{action.length} characters</div>}
+      {action.length > 0 && (
+        <div className="text-right text-xs text-shadow-500">
+          {action.length} characters
+        </div>
+      )}
     </div>
   );
 }

@@ -1,32 +1,32 @@
 export enum BlockType {
-  AIR = 'air',
-  GRASS = 'grass',
-  DIRT = 'dirt',
-  STONE = 'stone',
-  WATER = 'water',
-  SAND = 'sand',
-  SNOW = 'snow',
-  WALL_STONE = 'wall_stone',
-  WALL_WOOD = 'wall_wood',
-  FLOOR_WOOD = 'floor_wood',
-  FLOOR_STONE = 'floor_stone',
-  DOOR = 'door',
-  STAIRS_UP = 'stairs_up',
-  STAIRS_DOWN = 'stairs_down',
-  LAVA = 'lava',
-  BEDROCK = 'bedrock',
-  TREE_LEAVES = 'tree_leaves',
-  CACTUS = 'cactus',
+  AIR = "air",
+  GRASS = "grass",
+  DIRT = "dirt",
+  STONE = "stone",
+  WATER = "water",
+  SAND = "sand",
+  SNOW = "snow",
+  WALL_STONE = "wall_stone",
+  WALL_WOOD = "wall_wood",
+  FLOOR_WOOD = "floor_wood",
+  FLOOR_STONE = "floor_stone",
+  DOOR = "door",
+  STAIRS_UP = "stairs_up",
+  STAIRS_DOWN = "stairs_down",
+  LAVA = "lava",
+  BEDROCK = "bedrock",
+  TREE_LEAVES = "tree_leaves",
+  CACTUS = "cactus",
 }
 
 export enum BiomeType {
-  OCEAN = 'ocean',
-  BEACH = 'beach',
-  PLAINS = 'plains',
-  FOREST = 'forest',
-  DESERT = 'desert',
-  MOUNTAIN = 'mountain',
-  SNOWY_PEAKS = 'snowy_peaks',
+  OCEAN = "ocean",
+  BEACH = "beach",
+  PLAINS = "plains",
+  FOREST = "forest",
+  DESERT = "desert",
+  MOUNTAIN = "mountain",
+  SNOWY_PEAKS = "snowy_peaks",
 }
 
 export type ZLevel = -3 | -2 | -1 | 0 | 1 | 2 | 3;
@@ -84,7 +84,7 @@ export interface WorldConfig {
 export interface DebugEntity {
   id: string;
   name: string;
-  type: 'player' | 'monster';
+  type: "player" | "monster";
   position: Coordinates;
   speed: string | number | Record<string, string>;
   parsedSpeed: number;

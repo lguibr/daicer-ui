@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GET_ROOM_QUERY = gql`
   fragment FullRoomContext on Room {
@@ -196,7 +196,11 @@ export const LIST_CHARACTERS_QUERY = gql`
 
 export const LIST_MONSTERS_QUERY = gql`
   query ListMonsters($filters: EntitySheetFiltersInput) {
-    entitySheets(filters: $filters, sort: "name:asc", pagination: { limit: 50 }) {
+    entitySheets(
+      filters: $filters
+      sort: "name:asc"
+      pagination: { limit: 50 }
+    ) {
       documentId
       name
       type

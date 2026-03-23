@@ -1,9 +1,9 @@
-import { UnifiedChatArea } from '@/components/chat/UnifiedChatArea';
-import { useState } from 'react';
+import { UnifiedChatArea } from "@/components/chat/UnifiedChatArea";
+import { useState } from "react";
 
 export interface GodModeMessage {
   id: string;
-  role: 'user' | 'system' | 'assistant';
+  role: "user" | "system" | "assistant";
   content: string;
   timestamp: number;
 }
@@ -39,9 +39,9 @@ export function GodModeChat({
     ...messages,
     ...events.map((e, index) => ({
       id: `event-${e.timestamp}-${index}`,
-      role: 'system',
-      sender: 'Engine',
-      content: '', // No text content
+      role: "system",
+      sender: "Engine",
+      content: "", // No text content
       timestamp: e.timestamp,
       isEvent: true,
       data: e,
@@ -76,7 +76,7 @@ export function GodModeChat({
               // We should make sure the format is intuitive.
               // If the user types "Summon goat", and Location is (10,10,0).
               // Result: "Summon goat at (10, 10, 0)"
-              const separator = fullMsg.length > 0 ? ' ' : '';
+              const separator = fullMsg.length > 0 ? " " : "";
               fullMsg = `${fullMsg}${separator}at (${activeLocation.x}, ${activeLocation.y}, ${activeLocation.z})`;
             }
 
@@ -98,7 +98,7 @@ export function GodModeChat({
           onClearCommand={() => setActiveCommand(null)}
           onCommandSelect={(cmd) => {
             setActiveCommand(cmd);
-            onInputChange('');
+            onInputChange("");
           }}
           activeLocation={activeLocation || undefined}
           onClearLocation={onClearLocation}

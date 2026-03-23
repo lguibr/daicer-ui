@@ -1,4 +1,4 @@
-import type { CombatState } from './combat';
+import type { CombatState } from "./combat";
 
 export interface CombatSimulationStep {
   index: number;

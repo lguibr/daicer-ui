@@ -11,16 +11,17 @@ export interface Coordinates {
 
 // Enum-like object for values + Type for usage
 export const Attribute = {
-  STR: 'Strength',
-  DEX: 'Dexterity',
-  CON: 'Constitution',
-  INT: 'Intelligence',
-  WIS: 'Wisdom',
-  CHA: 'Charisma',
+  STR: "Strength",
+  DEX: "Dexterity",
+  CON: "Constitution",
+  INT: "Intelligence",
+  WIS: "Wisdom",
+  CHA: "Charisma",
 } as const;
 export type Attribute = (typeof Attribute)[keyof typeof Attribute];
 
-export const calculateModifier = (score: number) => Math.floor((score - 10) / 2);
+export const calculateModifier = (score: number) =>
+  Math.floor((score - 10) / 2);
 
 export interface SkillDetail {
   name: string;
@@ -69,7 +70,7 @@ export interface EntitySheet {
 export interface Entity {
   id: string;
   documentId?: string;
-  type: 'player' | 'npc' | 'monster' | 'object';
+  type: "player" | "npc" | "monster" | "object";
   name: string;
   position: Coordinates;
   hp: number;
@@ -82,7 +83,7 @@ export interface Entity {
   stats?: any; // Legacy stat block
 }
 
-export type Role = 'dm' | 'player' | 'spectator' | 'god' | 'premium' | 'free';
+export type Role = "dm" | "player" | "spectator" | "god" | "premium" | "free";
 
 export interface MinCharacter {
   name: string;
@@ -186,7 +187,7 @@ export interface EntitySpell {
   components?: string[];
   duration?: string;
   description?: string;
-  source?: 'known' | 'prepared';
+  source?: "known" | "prepared";
 }
 
 export interface EntityProficiency {
@@ -225,7 +226,7 @@ export interface Message {
   sender: string;
   text: string;
   timestamp: number;
-  type?: 'talk' | 'narration' | 'system' | 'text' | 'narrative';
+  type?: "talk" | "narration" | "system" | "text" | "narrative";
   metadata?: Record<string, any>;
   images?: string[];
   targetPlayer?: string;
@@ -277,7 +278,7 @@ export interface Creature {
   maxHp: number;
   ac: number;
   position: Coordinates;
-  type: 'npc' | 'monster';
+  type: "npc" | "monster";
   sheet?: EntitySheet;
   attackBonus?: number;
   damage?: string;
@@ -322,11 +323,44 @@ export interface PlayerActionPayload {
 }
 
 export type ScaleLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-export type AdventureLength = 'flash' | 'short' | 'medium' | 'long' | 'epic' | 'legendary';
-export type Difficulty = 'storyteller' | 'easy' | 'medium' | 'challenging' | 'gritty' | 'deadly';
-export type WorldSize = 'intimate' | 'small' | 'medium' | 'large' | 'vast' | 'epic';
-export type DMPerformanceMode = 'pirate' | 'shakespearean' | 'noir' | 'courtly' | 'grimdark' | 'storybook';
-export type WorldType = 'terra' | 'water' | 'desert' | 'ice' | 'volcanic' | 'forest' | 'sky' | 'underground' | 'custom';
+export type AdventureLength =
+  | "flash"
+  | "short"
+  | "medium"
+  | "long"
+  | "epic"
+  | "legendary";
+export type Difficulty =
+  | "storyteller"
+  | "easy"
+  | "medium"
+  | "challenging"
+  | "gritty"
+  | "deadly";
+export type WorldSize =
+  | "intimate"
+  | "small"
+  | "medium"
+  | "large"
+  | "vast"
+  | "epic";
+export type DMPerformanceMode =
+  | "pirate"
+  | "shakespearean"
+  | "noir"
+  | "courtly"
+  | "grimdark"
+  | "storybook";
+export type WorldType =
+  | "terra"
+  | "water"
+  | "desert"
+  | "ice"
+  | "volcanic"
+  | "forest"
+  | "sky"
+  | "underground"
+  | "custom";
 
 export interface DMStyle {
   verbosity: ScaleLevel;
@@ -370,25 +404,25 @@ export interface GameEvent {
   timestamp?: number;
 }
 
-export type Language = 'en' | 'es' | 'pt-BR';
+export type Language = "en" | "es" | "pt-BR";
 export type GamePhase =
-  | 'SETUP'
-  | 'TERRAIN_GENERATION'
-  | 'CHARACTER_CREATION'
-  | 'GAMEPLAY'
-  | 'COMBAT'
-  | 'LOBBY'
-  | 'PAUSED'
-  | 'ENDED';
+  | "SETUP"
+  | "TERRAIN_GENERATION"
+  | "CHARACTER_CREATION"
+  | "GAMEPLAY"
+  | "COMBAT"
+  | "LOBBY"
+  | "PAUSED"
+  | "ENDED";
 export const GamePhase = {
-  SETUP: 'SETUP',
-  TERRAIN_GENERATION: 'TERRAIN_GENERATION',
-  CHARACTER_CREATION: 'CHARACTER_CREATION',
-  GAMEPLAY: 'GAMEPLAY',
-  COMBAT: 'COMBAT',
-  LOBBY: 'LOBBY',
-  PAUSED: 'PAUSED',
-  ENDED: 'ENDED',
+  SETUP: "SETUP",
+  TERRAIN_GENERATION: "TERRAIN_GENERATION",
+  CHARACTER_CREATION: "CHARACTER_CREATION",
+  GAMEPLAY: "GAMEPLAY",
+  COMBAT: "COMBAT",
+  LOBBY: "LOBBY",
+  PAUSED: "PAUSED",
+  ENDED: "ENDED",
 } as const;
 
 export interface HistoricalPeriod {
@@ -427,15 +461,15 @@ export interface AgentLog {
 }
 
 export enum ActionType {
-  Move = 'MOVE',
-  Attack = 'ATTACK',
-  SkillCheck = 'SKILL_CHECK',
-  CastSpell = 'CAST_SPELL',
-  Interact = 'INTERACT',
-  LongRest = 'LONG_REST',
-  ModifyTerrain = 'MODIFY_TERRAIN',
-  RollSave = 'ROLL_SAVE',
-  EndTurn = 'END_TURN',
+  Move = "MOVE",
+  Attack = "ATTACK",
+  SkillCheck = "SKILL_CHECK",
+  CastSpell = "CAST_SPELL",
+  Interact = "INTERACT",
+  LongRest = "LONG_REST",
+  ModifyTerrain = "MODIFY_TERRAIN",
+  RollSave = "ROLL_SAVE",
+  EndTurn = "END_TURN",
 }
 
 // Logic Placeholders (Mocking removed logic types)
@@ -444,14 +478,15 @@ export interface ToolCall {
   toolName: string; // Was name
   parameters: any; // Was args
   result?: any;
-  status: 'running' | 'completed' | 'error';
+  status: "running" | "completed" | "error";
   timestamp: number;
   // Legacy aliases if needed by backend types, but frontend components enforce these ^
 }
 
 export const DEFAULT_GENERATION_PARAMS = {};
 export const createUnifiedTerrainGenerator =
-  (_seed: string, _config: any) => (chunkX: number, chunkY: number, _size: number) => ({
+  (_seed: string, _config: any) =>
+  (chunkX: number, chunkY: number, _size: number) => ({
     x: chunkX,
     y: chunkY,
     z: 0,

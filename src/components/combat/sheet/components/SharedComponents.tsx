@@ -1,6 +1,10 @@
-import type { ReactNode } from 'react';
-import type { EntitySheet, SkillDetail } from '@/types/contracts';
-import { PROFICIENCY_LABEL_MAP, PROFICIENCY_STYLE_MAP, formatModifier } from '../utils';
+import type { ReactNode } from "react";
+import type { EntitySheet, SkillDetail } from "@/types/contracts";
+import {
+  PROFICIENCY_LABEL_MAP,
+  PROFICIENCY_STYLE_MAP,
+  formatModifier,
+} from "../utils";
 
 type InfoTileProps = {
   label: string;
@@ -18,7 +22,7 @@ export function InfoTile({ label, value, hint }: InfoTileProps) {
   );
 }
 
-type ResourcePool = EntitySheet['resources'][number];
+type ResourcePool = EntitySheet["resources"][number];
 
 export function ResourceTile({ pool }: { pool: ResourcePool }) {
   return (
@@ -30,8 +34,12 @@ export function ResourceTile({ pool }: { pool: ResourcePool }) {
         </span>
       </div>
       <div className="flex items-center justify-between text-xs text-shadow-400 gap-2">
-        <span className="uppercase tracking-wide">{pool.refresh.replace(/-/g, ' ')}</span>
-        {pool.description ? <span className="text-right">{pool.description}</span> : null}
+        <span className="uppercase tracking-wide">
+          {pool.refresh.replace(/-/g, " ")}
+        </span>
+        {pool.description ? (
+          <span className="text-right">{pool.description}</span>
+        ) : null}
       </div>
     </div>
   );
@@ -45,8 +53,12 @@ export function SkillBadge({ skill }: { skill: SkillDetail }) {
         <p className="text-xs text-shadow-400">{skill.ability}</p>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold text-aurora-200">{formatModifier(skill.modifier)}</span>
-        <span className={`rounded-full px-2 py-1 text-xs font-semibold ${PROFICIENCY_STYLE_MAP[skill.proficiency]}`}>
+        <span className="text-sm font-semibold text-aurora-200">
+          {formatModifier(skill.modifier)}
+        </span>
+        <span
+          className={`rounded-full px-2 py-1 text-xs font-semibold ${PROFICIENCY_STYLE_MAP[skill.proficiency]}`}
+        >
           {PROFICIENCY_LABEL_MAP[skill.proficiency]}
         </span>
       </div>

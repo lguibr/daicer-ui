@@ -3,15 +3,22 @@
  * @description Universal GraphEngine (frontend copy)
  */
 
-import { produceWithPatches, enablePatches, type Draft, type Patch } from 'immer';
-import type { StateEngine, UpdateMeta, BaseState, Unsubscribe } from './types';
-import { ReducerRegistry, mergeWithRegistry } from './registry';
+import {
+  produceWithPatches,
+  enablePatches,
+  type Draft,
+  type Patch,
+} from "immer";
+import type { StateEngine, UpdateMeta, BaseState, Unsubscribe } from "./types";
+import { ReducerRegistry, mergeWithRegistry } from "./registry";
 
 enablePatches();
 
 type Listener<T> = (state: T) => void;
 
-export class GraphEngine<TState extends BaseState> implements StateEngine<TState> {
+export class GraphEngine<
+  TState extends BaseState,
+> implements StateEngine<TState> {
   private state: TState;
 
   private listeners = new Set<Listener<TState>>();
@@ -20,7 +27,11 @@ export class GraphEngine<TState extends BaseState> implements StateEngine<TState
 
   private registry: ReducerRegistry<TState>;
 
-  constructor(initial: Partial<TState>, validateFn: (state: any) => TState, registry: ReducerRegistry<TState>) {
+  constructor(
+    initial: Partial<TState>,
+    validateFn: (state: any) => TState,
+    registry: ReducerRegistry<TState>,
+  ) {
     this.validateFn = validateFn;
     this.registry = registry;
     this.state = Object.freeze(validateFn(initial)) as TState;
@@ -49,7 +60,10 @@ export class GraphEngine<TState extends BaseState> implements StateEngine<TState
     return this.state;
   }
 
-  transaction(mutator: (draft: Draft<TState>) => void): { state: TState; patches: Patch[] } {
+  transaction(mutator: (draft: Draft<TState>) => void): {
+    state: TState;
+    patches: Patch[];
+  } {
     const [next, patches] = produceWithPatches(this.state, (draft: any) => {
       mutator(draft);
     });
@@ -61,7 +75,12 @@ export class GraphEngine<TState extends BaseState> implements StateEngine<TState
     return { state: this.state, patches };
   }
 
-  protected mapEventToPartial(_evt: { id: string; ts: number; type: string; payload: any }): Partial<TState> {
+  protected mapEventToPartial(_evt: {
+    id: string;
+    ts: number;
+    type: string;
+    payload: any;
+  }): Partial<TState> {
     return {};
   }
 

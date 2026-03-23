@@ -3,9 +3,9 @@
  * Offloads dice rendering to prevent UI blocking
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { createDiceWorker } from '../workers/WorkerManager';
-import type { WorkerManager } from '../workers/WorkerManager';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { createDiceWorker } from "../workers/WorkerManager";
+import type { WorkerManager } from "../workers/WorkerManager";
 
 interface UseDiceWorkerOptions {
   onRollComplete?: (results: number[]) => void;
@@ -33,7 +33,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
       const worker = createDiceWorker();
 
       // Setup message handlers
-      worker.on('roll-complete', (results: number[]) => {
+      worker.on("roll-complete", (results: number[]) => {
         if (onRollComplete) {
           onRollComplete(results);
         }
@@ -43,7 +43,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
       const success = worker.initialize({
         canvas,
         onError: (error) => {
-          console.error('[useDiceWorker] Worker error:', error);
+          console.error("[useDiceWorker] Worker error:", error);
         },
       });
 
@@ -54,30 +54,32 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
 
         // Start animation if auto-animate is enabled
         if (autoAnimate) {
-          worker.postMessage({ type: 'start-animation' });
+          worker.postMessage({ type: "start-animation" });
         }
 
-        console.info('[useDiceWorker] Worker initialized successfully');
+        console.info("[useDiceWorker] Worker initialized successfully");
         return true;
       }
 
-      console.warn('[useDiceWorker] Worker initialization failed, using main thread');
+      console.warn(
+        "[useDiceWorker] Worker initialization failed, using main thread",
+      );
       return false;
     },
 
-    [onRollComplete, autoAnimate]
+    [onRollComplete, autoAnimate],
   );
 
   /**
    * Add dice to the scene
    */
-  const addDice = useCallback((count: number, type: 'd6' | 'd20' = 'd20') => {
+  const addDice = useCallback((count: number, type: "d6" | "d20" = "d20") => {
     if (!workerRef.current || !isWorkerActiveRef.current) {
       return false;
     }
 
     workerRef.current.postMessage({
-      type: 'add-dice',
+      type: "add-dice",
       count,
       diceType: type,
     });
@@ -93,7 +95,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
       return false;
     }
 
-    workerRef.current.postMessage({ type: 'start-animation' });
+    workerRef.current.postMessage({ type: "start-animation" });
     return true;
   }, []);
 
@@ -105,7 +107,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
       return false;
     }
 
-    workerRef.current.postMessage({ type: 'stop-animation' });
+    workerRef.current.postMessage({ type: "stop-animation" });
     return true;
   }, []);
 
@@ -118,7 +120,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
     }
 
     workerRef.current.postMessage({
-      type: 'roll',
+      type: "roll",
       results,
     });
 
@@ -134,7 +136,7 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
     }
 
     workerRef.current.postMessage({
-      type: 'resize',
+      type: "resize",
       width,
       height,
     });
@@ -152,10 +154,10 @@ export function useDiceWorker(options: UseDiceWorkerOptions = {}) {
         workerRef.current = null;
         isWorkerActiveRef.current = false;
         setIsWorkerActive(false);
-        console.info('[useDiceWorker] Worker terminated');
+        console.info("[useDiceWorker] Worker terminated");
       }
     },
-    []
+    [],
   );
 
   return {

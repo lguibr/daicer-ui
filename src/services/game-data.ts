@@ -3,7 +3,7 @@
  * Fetches D&D 5e SRD data from backend API
  */
 
-import { apolloClient } from '../lib/apollo';
+import { apolloClient } from "../lib/apollo";
 import {
   GET_ABILITIES_QUERY,
   GET_SKILLS_QUERY,
@@ -18,7 +18,7 @@ import {
   GET_MONSTERS_QUERY,
   GET_FEATURES_QUERY,
   GET_SPELLS_QUERY,
-} from '../graphql/game-data';
+} from "../graphql/game-data";
 
 import type {
   GetAbilitiesQuery,
@@ -34,7 +34,7 @@ import type {
   GetMonstersQuery,
   GetFeaturesQuery,
   GetSpellsQuery,
-} from '../gql/graphql';
+} from "../gql/graphql";
 
 // Re-export types from shared types
 export interface Alignment {
@@ -223,53 +223,65 @@ export interface Spell {
 
 const MOCK_ALIGNMENTS: Alignment[] = [
   {
-    id: 'lg',
-    name: 'Lawful Good',
-    abbreviation: 'LG',
-    description: 'Combines a strong sense of honor and compassion.',
-  },
-  { id: 'ng', name: 'Neutral Good', abbreviation: 'NG', description: 'Does the best that a good person can do.' },
-  {
-    id: 'cg',
-    name: 'Chaotic Good',
-    abbreviation: 'CG',
-    description: 'Act as their conscience directs with little regard for expectations.',
+    id: "lg",
+    name: "Lawful Good",
+    abbreviation: "LG",
+    description: "Combines a strong sense of honor and compassion.",
   },
   {
-    id: 'ln',
-    name: 'Lawful Neutral',
-    abbreviation: 'LN',
-    description: 'Individuals who act in accordance with law, tradition, or personal codes.',
+    id: "ng",
+    name: "Neutral Good",
+    abbreviation: "NG",
+    description: "Does the best that a good person can do.",
   },
   {
-    id: 'n',
-    name: 'True Neutral',
-    abbreviation: 'N',
-    description: "Prefer to steer clear of moral questions and don't take sides.",
+    id: "cg",
+    name: "Chaotic Good",
+    abbreviation: "CG",
+    description:
+      "Act as their conscience directs with little regard for expectations.",
   },
   {
-    id: 'cn',
-    name: 'Chaotic Neutral',
-    abbreviation: 'CN',
-    description: 'Follow their whims, holding their personal freedom above all else.',
+    id: "ln",
+    name: "Lawful Neutral",
+    abbreviation: "LN",
+    description:
+      "Individuals who act in accordance with law, tradition, or personal codes.",
   },
   {
-    id: 'le',
-    name: 'Lawful Evil',
-    abbreviation: 'LE',
-    description: 'Methodically take what they want within the limits of a code of tradition.',
+    id: "n",
+    name: "True Neutral",
+    abbreviation: "N",
+    description:
+      "Prefer to steer clear of moral questions and don't take sides.",
   },
   {
-    id: 'ne',
-    name: 'Neutral Evil',
-    abbreviation: 'NE',
-    description: 'Those who do whatever they can get away with, without compassion or qualms.',
+    id: "cn",
+    name: "Chaotic Neutral",
+    abbreviation: "CN",
+    description:
+      "Follow their whims, holding their personal freedom above all else.",
   },
   {
-    id: 'ce',
-    name: 'Chaotic Evil',
-    abbreviation: 'CE',
-    description: 'Act with arbitrary violence, spurred by their greed, hatred, or bloodlust.',
+    id: "le",
+    name: "Lawful Evil",
+    abbreviation: "LE",
+    description:
+      "Methodically take what they want within the limits of a code of tradition.",
+  },
+  {
+    id: "ne",
+    name: "Neutral Evil",
+    abbreviation: "NE",
+    description:
+      "Those who do whatever they can get away with, without compassion or qualms.",
+  },
+  {
+    id: "ce",
+    name: "Chaotic Evil",
+    abbreviation: "CE",
+    description:
+      "Act with arbitrary violence, spurred by their greed, hatred, or bloodlust.",
   },
 ];
 
@@ -282,10 +294,10 @@ export async function getAlignments(): Promise<Alignment[]> {
   });
   return (
     data?.alignments?.map((a) => ({
-      id: a?.documentId || '', // Check valid ID safely
-      name: a?.name || '',
-      abbreviation: a?.abbreviation || '',
-      description: a?.description || '',
+      id: a?.documentId || "", // Check valid ID safely
+      name: a?.name || "",
+      abbreviation: a?.abbreviation || "",
+      description: a?.description || "",
     })) || MOCK_ALIGNMENTS
   );
 }
@@ -294,15 +306,17 @@ export async function getAlignments(): Promise<Alignment[]> {
  * Fetch all ability scores
  */
 export async function getAbilities(): Promise<Ability[]> {
-  const { data } = await apolloClient.query<GetAbilitiesQuery>({ query: GET_ABILITIES_QUERY });
+  const { data } = await apolloClient.query<GetAbilitiesQuery>({
+    query: GET_ABILITIES_QUERY,
+  });
   return (
     data?.abilities?.map((a) => ({
-      id: a?.documentId || '',
-      index: a?.name?.toLowerCase() || '',
-      name: a?.name || '',
-      fullName: a?.fullName || '',
-      description: a?.description || '',
-      skills: a?.skills?.map((s) => s?.name || '') || [],
+      id: a?.documentId || "",
+      index: a?.name?.toLowerCase() || "",
+      name: a?.name || "",
+      fullName: a?.fullName || "",
+      description: a?.description || "",
+      skills: a?.skills?.map((s) => s?.name || "") || [],
     })) || []
   );
 }
@@ -311,14 +325,16 @@ export async function getAbilities(): Promise<Ability[]> {
  * Fetch all skills
  */
 export async function getSkills(): Promise<Skill[]> {
-  const { data } = await apolloClient.query<GetSkillsQuery>({ query: GET_SKILLS_QUERY });
+  const { data } = await apolloClient.query<GetSkillsQuery>({
+    query: GET_SKILLS_QUERY,
+  });
   return (
     data?.skills?.map((s) => ({
-      id: s?.documentId || '',
-      index: s?.name?.toLowerCase().replace(/\s+/g, '-') || '',
-      name: s?.name || '',
-      description: s?.description || '',
-      abilityScore: s?.abilityScore?.name || '',
+      id: s?.documentId || "",
+      index: s?.name?.toLowerCase().replace(/\s+/g, "-") || "",
+      name: s?.name || "",
+      description: s?.description || "",
+      abilityScore: s?.abilityScore?.name || "",
     })) || []
   );
 }
@@ -327,14 +343,16 @@ export async function getSkills(): Promise<Skill[]> {
  * Fetch all player races
  */
 export async function getRaces(): Promise<Race[]> {
-  const { data } = await apolloClient.query<GetRacesQuery>({ query: GET_RACES_QUERY });
+  const { data } = await apolloClient.query<GetRacesQuery>({
+    query: GET_RACES_QUERY,
+  });
   return (
     data?.races?.map((r) => ({
-      id: r?.documentId || '',
-      name: r?.name || '',
-      description: r?.description || '',
+      id: r?.documentId || "",
+      name: r?.name || "",
+      description: r?.description || "",
       speed: r?.speed || 30,
-      size: r?.size || 'Medium',
+      size: r?.size || "Medium",
     })) || []
   );
 }
@@ -343,13 +361,15 @@ export async function getRaces(): Promise<Race[]> {
  * Fetch all character classes
  */
 export async function getClasses(): Promise<CharacterClass[]> {
-  const { data } = await apolloClient.query<GetClassesQuery>({ query: GET_CLASSES_QUERY });
+  const { data } = await apolloClient.query<GetClassesQuery>({
+    query: GET_CLASSES_QUERY,
+  });
   return (
     data?.classes?.map((c) => ({
-      id: c?.documentId || '',
-      name: c?.name || '',
-      description: c?.description || '',
-      hitDie: parseInt(c?.hit_die || '8', 10),
+      id: c?.documentId || "",
+      name: c?.name || "",
+      description: c?.description || "",
+      hitDie: parseInt(c?.hit_die || "8", 10),
     })) || []
   );
 }
@@ -358,13 +378,16 @@ export async function getClasses(): Promise<CharacterClass[]> {
  * Fetch all character backgrounds
  */
 export async function getBackgrounds(): Promise<Background[]> {
-  const { data } = await apolloClient.query<GetBackgroundsQuery>({ query: GET_BACKGROUNDS_QUERY });
+  const { data } = await apolloClient.query<GetBackgroundsQuery>({
+    query: GET_BACKGROUNDS_QUERY,
+  });
   return (
     data?.backgrounds?.map((b) => ({
-      id: b?.documentId || '',
-      name: b?.name || '',
-      description: b?.description || '',
-      skillProficiencies: b?.skillProficiencies?.map((s) => s?.name || '') || [],
+      id: b?.documentId || "",
+      name: b?.name || "",
+      description: b?.description || "",
+      skillProficiencies:
+        b?.skillProficiencies?.map((s) => s?.name || "") || [],
     })) || []
   );
 }
@@ -373,14 +396,16 @@ export async function getBackgrounds(): Promise<Background[]> {
  * Fetch all languages
  */
 export async function getLanguages(): Promise<Language[]> {
-  const { data } = await apolloClient.query<GetLanguagesQuery>({ query: GET_LANGUAGES_QUERY });
+  const { data } = await apolloClient.query<GetLanguagesQuery>({
+    query: GET_LANGUAGES_QUERY,
+  });
   return (
     data?.languages?.map((l) => ({
-      id: l?.documentId || '',
-      index: l?.name?.toLowerCase() || '',
-      name: l?.name || '',
+      id: l?.documentId || "",
+      index: l?.name?.toLowerCase() || "",
+      name: l?.name || "",
       isRare: false, // Default
-      note: l?.note || '',
+      note: l?.note || "",
     })) || []
   );
 }
@@ -389,13 +414,15 @@ export async function getLanguages(): Promise<Language[]> {
  * Fetch all magic schools
  */
 export async function getMagicSchools(): Promise<MagicSchool[]> {
-  const { data } = await apolloClient.query<GetMagicSchoolsQuery>({ query: GET_MAGIC_SCHOOLS_QUERY });
+  const { data } = await apolloClient.query<GetMagicSchoolsQuery>({
+    query: GET_MAGIC_SCHOOLS_QUERY,
+  });
   return (
     data?.magicSchools?.map((m) => ({
-      id: m?.documentId || '',
-      index: m?.name?.toLowerCase() || '',
-      name: m?.name || '',
-      description: m?.description || '',
+      id: m?.documentId || "",
+      index: m?.name?.toLowerCase() || "",
+      name: m?.name || "",
+      description: m?.description || "",
     })) || []
   );
 }
@@ -404,13 +431,15 @@ export async function getMagicSchools(): Promise<MagicSchool[]> {
  * Fetch all conditions
  */
 export async function getConditions(): Promise<Condition[]> {
-  const { data } = await apolloClient.query<GetConditionsQuery>({ query: GET_CONDITIONS_QUERY });
+  const { data } = await apolloClient.query<GetConditionsQuery>({
+    query: GET_CONDITIONS_QUERY,
+  });
   return (
     data?.conditions?.map((c) => ({
-      id: c?.documentId || '',
-      index: c?.name?.toLowerCase() || '',
-      name: c?.name || '',
-      description: c?.description || '',
+      id: c?.documentId || "",
+      index: c?.name?.toLowerCase() || "",
+      name: c?.name || "",
+      description: c?.description || "",
     })) || []
   );
 }
@@ -419,13 +448,15 @@ export async function getConditions(): Promise<Condition[]> {
  * Fetch all damage types
  */
 export async function getDamageTypes(): Promise<DamageType[]> {
-  const { data } = await apolloClient.query<GetDamageTypesQuery>({ query: GET_DAMAGE_TYPES_QUERY });
+  const { data } = await apolloClient.query<GetDamageTypesQuery>({
+    query: GET_DAMAGE_TYPES_QUERY,
+  });
   return (
     data?.damageTypes?.map((d) => ({
-      id: d?.documentId || '',
-      index: d?.name?.toLowerCase() || '',
-      name: d?.name || '',
-      description: d?.description || '',
+      id: d?.documentId || "",
+      index: d?.name?.toLowerCase() || "",
+      name: d?.name || "",
+      description: d?.description || "",
     })) || []
   );
 }
@@ -439,14 +470,16 @@ export async function getDamageTypes(): Promise<DamageType[]> {
  * Fetch all monsters
  */
 export async function getMonsters(): Promise<Monster[]> {
-  const { data } = await apolloClient.query<GetMonstersQuery>({ query: GET_MONSTERS_QUERY });
+  const { data } = await apolloClient.query<GetMonstersQuery>({
+    query: GET_MONSTERS_QUERY,
+  });
   return (
     data?.entitySheets?.map((m) => ({
-      id: m?.documentId || '',
-      name: m?.name || '',
-      size: 'Medium', // Default/Stub
-      type: m?.type || 'beast',
-      alignment: 'Unaligned', // Default/Stub
+      id: m?.documentId || "",
+      name: m?.name || "",
+      size: "Medium", // Default/Stub
+      type: m?.type || "beast",
+      alignment: "Unaligned", // Default/Stub
       armorClass: 10, // Default/Stub
       hitPoints: String(m?.currentHp || m?.maxHp || 10),
       speed: {
@@ -460,7 +493,7 @@ export async function getMonsters(): Promise<Monster[]> {
       abilityScores: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 },
       senses: [],
       languages: [],
-      challenge: '0',
+      challenge: "0",
       actions: [],
       imageUrl: null,
     })) || []
@@ -479,15 +512,17 @@ export async function getMonster(id: string): Promise<Monster | undefined> {
  * Fetch all class features
  */
 export async function getFeatures(): Promise<Feature[]> {
-  const { data } = await apolloClient.query<GetFeaturesQuery>({ query: GET_FEATURES_QUERY });
+  const { data } = await apolloClient.query<GetFeaturesQuery>({
+    query: GET_FEATURES_QUERY,
+  });
   return (
     data?.features?.map((f) => ({
-      id: f?.documentId || '',
-      index: f?.name?.toLowerCase().replace(/\s+/g, '-') || '',
-      name: f?.name || '',
+      id: f?.documentId || "",
+      index: f?.name?.toLowerCase().replace(/\s+/g, "-") || "",
+      name: f?.name || "",
       level: f?.level || 1,
       prerequisites: [],
-      description: f?.description || '',
+      description: f?.description || "",
     })) || []
   );
 }
@@ -496,19 +531,21 @@ export async function getFeatures(): Promise<Feature[]> {
  * Fetch all spells
  */
 export async function getSpells(): Promise<Spell[]> {
-  const { data } = await apolloClient.query<GetSpellsQuery>({ query: GET_SPELLS_QUERY });
+  const { data } = await apolloClient.query<GetSpellsQuery>({
+    query: GET_SPELLS_QUERY,
+  });
   return (
     data?.spells?.map((s) => ({
-      id: s?.documentId || '',
-      name: s?.name || '',
+      id: s?.documentId || "",
+      name: s?.name || "",
       level: s?.level || 0,
-      school: s?.school || '',
-      castingTime: '',
-      range: '',
+      school: s?.school || "",
+      castingTime: "",
+      range: "",
       components: [],
-      duration: '',
+      duration: "",
       isRitual: false,
-      description: s?.description || '',
+      description: s?.description || "",
     })) || []
   );
 }
@@ -516,23 +553,23 @@ export async function getSpells(): Promise<Spell[]> {
 // Stubs for remaining functions
 
 export async function getFeature(_id: string): Promise<Feature> {
-  throw new Error('Not implemented');
+  throw new Error("Not implemented");
 }
 export async function getTraits(): Promise<Trait[]> {
   return [];
 }
 export async function getTrait(_id: string): Promise<Trait> {
-  throw new Error('Not implemented');
+  throw new Error("Not implemented");
 }
 export async function getSubclasses(): Promise<Subclass[]> {
   return [];
 }
 export async function getSubclass(_id: string): Promise<Subclass> {
-  throw new Error('Not implemented');
+  throw new Error("Not implemented");
 }
 export async function getProficiencies(): Promise<Proficiency[]> {
   return [];
 }
 export async function getProficiency(_id: string): Promise<Proficiency> {
-  throw new Error('Not implemented');
+  throw new Error("Not implemented");
 }

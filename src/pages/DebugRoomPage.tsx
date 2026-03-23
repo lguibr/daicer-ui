@@ -1,12 +1,14 @@
-import { useParams } from 'react-router-dom';
-import Navbar from '../components/layout/Navbar';
-import { GameDebugView } from '../features/debug/components/GameDebugView';
+import { useParams } from "react-router-dom";
+import Navbar from "../components/layout/Navbar";
+import { GameDebugView } from "../features/debug/components/GameDebugView";
 
 export default function DebugRoomPage() {
   const { roomId } = useParams<{ roomId: string }>();
 
   if (!roomId) {
-    return <div className="p-8 text-center text-red-500">Room ID is required</div>;
+    return (
+      <div className="p-8 text-center text-red-500">Room ID is required</div>
+    );
   }
 
   return (

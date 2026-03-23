@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react';
-import type { Room, Player } from '@/types/contracts';
-import { gildedTokens } from '@/theme/gildedTokens';
-import { BackgroundDiceField } from '../ui/background/BackgroundDiceField';
-import DynamicLayout from './DynamicLayout';
+import type { ReactNode } from "react";
+import type { Room, Player } from "@/types/contracts";
+import { gildedTokens } from "@/theme/gildedTokens";
+import { BackgroundDiceField } from "../ui/background/BackgroundDiceField";
+import DynamicLayout from "./DynamicLayout";
 
 interface JuicyLayoutProps {
   children: ReactNode;

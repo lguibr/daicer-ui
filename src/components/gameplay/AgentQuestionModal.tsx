@@ -4,19 +4,26 @@
  * Part of human-in-the-loop interaction
  */
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import Textarea from '@/components/ui/textarea';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Textarea from "@/components/ui/textarea";
 
-import { useI18n } from '@/i18n';
+import { useI18n } from "@/i18n";
 
 export interface AgentQuestion {
   questionId: string;
   question: string;
   context?: string;
   askedAt: number;
-  askedBy: 'dm' | 'system' | 'combat';
+  askedBy: "dm" | "system" | "combat";
 }
 
 interface AgentQuestionModalProps {
@@ -25,10 +32,14 @@ interface AgentQuestionModalProps {
   onClose: () => void;
 }
 
-export function AgentQuestionModal({ question, roomId: _roomId, onClose }: AgentQuestionModalProps) {
+export function AgentQuestionModal({
+  question,
+  roomId: _roomId,
+  onClose,
+}: AgentQuestionModalProps) {
   const { t } = useI18n();
   // const { socket } = useSocket(); // Socket removed
-  const [answer, setAnswer] = useState('');
+  const [answer, setAnswer] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -38,26 +49,28 @@ export function AgentQuestionModal({ question, roomId: _roomId, onClose }: Agent
 
     try {
       // TODO: Implement GraphQL mutation for answering questions
-      console.warn('Agent answer submission not implemented (Socket removed). Needs GraphQL mutation.');
+      console.warn(
+        "Agent answer submission not implemented (Socket removed). Needs GraphQL mutation.",
+      );
 
       // Close modal after submission (optimistic)
       onClose();
     } catch (error) {
-      console.error('Failed to submit answer:', error);
+      console.error("Failed to submit answer:", error);
       setIsSubmitting(false);
     }
   };
 
   const getAskerLabel = () => {
     switch (question.askedBy) {
-      case 'dm':
-        return t('gameplay.agent.askedByDM') || 'Dungeon Master';
-      case 'combat':
-        return t('gameplay.agent.askedByCombat') || 'Combat System';
-      case 'system':
-        return t('gameplay.agent.askedBySystem') || 'Game System';
+      case "dm":
+        return t("gameplay.agent.askedByDM") || "Dungeon Master";
+      case "combat":
+        return t("gameplay.agent.askedByCombat") || "Combat System";
+      case "system":
+        return t("gameplay.agent.askedBySystem") || "Game System";
       default:
-        return t('gameplay.agent.askedByAgent') || 'AI Agent';
+        return t("gameplay.agent.askedByAgent") || "AI Agent";
     }
   };
 
@@ -67,10 +80,11 @@ export function AgentQuestionModal({ question, roomId: _roomId, onClose }: Agent
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span className="text-2xl">🤔</span>
-            {t('gameplay.agent.questionTitle') || 'The DM has a question'}
+            {t("gameplay.agent.questionTitle") || "The DM has a question"}
           </CardTitle>
           <CardDescription>
-            {t('gameplay.agent.askedBy') || 'Asked by'}: <strong>{getAskerLabel()}</strong>
+            {t("gameplay.agent.askedBy") || "Asked by"}:{" "}
+            <strong>{getAskerLabel()}</strong>
           </CardDescription>
         </CardHeader>
 
@@ -83,20 +97,26 @@ export function AgentQuestionModal({ question, roomId: _roomId, onClose }: Agent
           {/* Context (if provided) */}
           {question.context && (
             <div className="p-3 bg-muted/50 rounded-md text-sm text-muted-foreground">
-              <strong>{t('gameplay.agent.context') || 'Context'}:</strong> {question.context}
+              <strong>{t("gameplay.agent.context") || "Context"}:</strong>{" "}
+              {question.context}
             </div>
           )}
 
           {/* Answer Input */}
           <div className="space-y-2">
             <label htmlFor="agent-answer" className="text-sm font-medium">
-              {t('gameplay.agent.yourAnswer') || 'Your answer'}
+              {t("gameplay.agent.yourAnswer") || "Your answer"}
             </label>
             <Textarea
               id="agent-answer"
               value={answer}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAnswer(e.target.value)}
-              placeholder={t('gameplay.agent.answerPlaceholder') || 'Type your answer here...'}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setAnswer(e.target.value)
+              }
+              placeholder={
+                t("gameplay.agent.answerPlaceholder") ||
+                "Type your answer here..."
+              }
               rows={4}
               className="resize-none"
               disabled={isSubmitting}
@@ -106,12 +126,15 @@ export function AgentQuestionModal({ question, roomId: _roomId, onClose }: Agent
 
         <CardFooter className="flex justify-end gap-2">
           <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
-            {t('common.cancel') || 'Cancel'}
+            {t("common.cancel") || "Cancel"}
           </Button>
-          <Button onClick={handleSubmit} disabled={!answer.trim() || isSubmitting}>
+          <Button
+            onClick={handleSubmit}
+            disabled={!answer.trim() || isSubmitting}
+          >
             {isSubmitting
-              ? t('gameplay.agent.submitting') || 'Submitting...'
-              : t('gameplay.agent.submitAnswer') || 'Submit Answer'}
+              ? t("gameplay.agent.submitting") || "Submitting..."
+              : t("gameplay.agent.submitAnswer") || "Submit Answer"}
           </Button>
         </CardFooter>
       </Card>

@@ -1,10 +1,10 @@
-import React from 'react';
-import { Users, Plus, CheckCircle, Crown, Shield } from 'lucide-react';
-import type { Room, Player } from '@/types/contracts';
-import { Card } from '../ui/card';
-import { Button } from '../ui/button';
-import type { AvatarPreviewImage } from '../../types/assets';
-import useAuth from '../../hooks/useAuth';
+import React from "react";
+import { Users, Plus, CheckCircle, Crown, Shield } from "lucide-react";
+import type { Room, Player } from "@/types/contracts";
+import { Card } from "../ui/card";
+import { Button } from "../ui/button";
+import type { AvatarPreviewImage } from "../../types/assets";
+import useAuth from "../../hooks/useAuth";
 
 interface LobbyScreenProps {
   room: Room;
@@ -25,12 +25,19 @@ export function LobbyScreen({
 }: LobbyScreenProps) {
   const { user } = useAuth();
   // Use loose comparison as IDs might be string vs number, or documentId
-  const currentPlayer = players.find((p) => p.userId === user?.uid || p.userId === user?.documentId);
+  const currentPlayer = players.find(
+    (p) => p.userId === user?.uid || p.userId === user?.documentId,
+  );
   const hasCharacter = !!currentPlayer?.character;
 
   // Optimistic UI for ready state
-  const [optimisticReady, setOptimisticReady] = React.useState<boolean | null>(null);
-  const isReady = optimisticReady !== null ? optimisticReady : currentPlayer?.isReady || false;
+  const [optimisticReady, setOptimisticReady] = React.useState<boolean | null>(
+    null,
+  );
+  const isReady =
+    optimisticReady !== null
+      ? optimisticReady
+      : currentPlayer?.isReady || false;
 
   // Reset optimistic state when real state updates
   React.useEffect(() => {
@@ -39,7 +46,9 @@ export function LobbyScreen({
     }
   }, [currentPlayer?.isReady, optimisticReady]);
 
-  const allReady = players.length > 0 && players.every((p) => (p.userId === user?.uid ? isReady : p.isReady));
+  const allReady =
+    players.length > 0 &&
+    players.every((p) => (p.userId === user?.uid ? isReady : p.isReady));
 
   const renderAvatar = (player: Player) => {
     if (!player.avatarPreview?.portrait) {
@@ -52,10 +61,15 @@ export function LobbyScreen({
 
     // Cast to local type to ensure we have access to all fields (publicUrl, etc)
     // The shared package type might be outdated
-    const portrait = player.avatarPreview.portrait as unknown as AvatarPreviewImage;
+    const portrait = player.avatarPreview
+      .portrait as unknown as AvatarPreviewImage;
 
     // Check for public URL first, then base64 data
-    const src = portrait.publicUrl || (portrait.data ? `data:${portrait.mimeType};base64,${portrait.data}` : null);
+    const src =
+      portrait.publicUrl ||
+      (portrait.data
+        ? `data:${portrait.mimeType};base64,${portrait.data}`
+        : null);
 
     if (!src) {
       return (
@@ -65,18 +79,30 @@ export function LobbyScreen({
       );
     }
 
-    return <img src={src} alt={player.character?.name || 'Player'} className="w-full h-full object-cover" />;
+    return (
+      <img
+        src={src}
+        alt={player.character?.name || "Player"}
+        className="w-full h-full object-cover"
+      />
+    );
   };
 
   return (
     <div className="min-h-screen p-6 space-y-8 max-w-6xl mx-auto">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="font-display text-4xl uppercase tracking-[0.35em] text-aurora-300">Lobby</h1>
-        <p className="text-shadow-300 text-lg">Waiting for adventurers to gather...</p>
+        <h1 className="font-display text-4xl uppercase tracking-[0.35em] text-aurora-300">
+          Lobby
+        </h1>
+        <p className="text-shadow-300 text-lg">
+          Waiting for adventurers to gather...
+        </p>
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-midnight-800/50 border border-midnight-600">
           <span className="text-xs font-mono text-shadow-400">ROOM CODE:</span>
-          <span className="text-lg font-bold text-accent tracking-widest">{room.code}</span>
+          <span className="text-lg font-bold text-accent tracking-widest">
+            {room.code}
+          </span>
         </div>
       </div>
 
@@ -99,7 +125,9 @@ export function LobbyScreen({
                 <Card
                   key={player.userId}
                   className={`p-4 border transition-all duration-300 ${
-                    player.isReady ? 'border-green-500/30 bg-green-900/10' : 'border-midnight-600 bg-midnight-800/40'
+                    player.isReady
+                      ? "border-green-500/30 bg-green-900/10"
+                      : "border-midnight-600 bg-midnight-800/40"
                   }`}
                 >
                   <div className="flex items-start gap-4">
@@ -119,24 +147,28 @@ export function LobbyScreen({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <h3 className="font-bold text-aurora-100 truncate">
-                          {player.character?.name || 'Unknown Hero'}
+                          {player.character?.name || "Unknown Hero"}
                         </h3>
-                        {(room.owner?.documentId === player.userId || room.ownerId === player.userId) && (
+                        {(room.owner?.documentId === player.userId ||
+                          room.ownerId === player.userId) && (
                           <Crown className="w-4 h-4 text-yellow-500" />
                         )}
                       </div>
                       {playerHasChar ? (
                         <p className="text-xs text-shadow-400 truncate">
-                          Level {player.character?.level || 1}{' '}
-                          {typeof player.character?.race === 'string'
+                          Level {player.character?.level || 1}{" "}
+                          {typeof player.character?.race === "string"
                             ? player.character.race
-                            : player.character?.race?.name}{' '}
-                          {typeof player.character?.class === 'string'
+                            : player.character?.race?.name}{" "}
+                          {typeof player.character?.class === "string"
                             ? player.character.class
-                            : player.character?.class?.name || player.character?.characterClass}
+                            : player.character?.class?.name ||
+                              player.character?.characterClass}
                         </p>
                       ) : (
-                        <p className="text-xs text-shadow-500 italic">Creating character...</p>
+                        <p className="text-xs text-shadow-500 italic">
+                          Creating character...
+                        </p>
                       )}
                       {isMe && (
                         <span className="inline-block mt-2 text-[10px] uppercase tracking-wider bg-accent/20 text-accent px-2 py-0.5 rounded">
@@ -154,7 +186,9 @@ export function LobbyScreen({
         {/* Actions Panel */}
         <div className="space-y-6">
           <Card className="p-6 border-aurora-500/20 bg-midnight-800/60 backdrop-blur-sm sticky top-6">
-            <h3 className="text-lg font-semibold uppercase tracking-widest text-aurora-300 mb-6">Your Status</h3>
+            <h3 className="text-lg font-semibold uppercase tracking-widest text-aurora-300 mb-6">
+              Your Status
+            </h3>
 
             <div className="space-y-6">
               {!hasCharacter ? (
@@ -163,7 +197,9 @@ export function LobbyScreen({
                     <Plus className="w-8 h-8 text-midnight-400" />
                   </div>
                   <div>
-                    <p className="text-shadow-300 mb-4">You haven't created a character yet.</p>
+                    <p className="text-shadow-300 mb-4">
+                      You haven't created a character yet.
+                    </p>
                     <Button
                       onClick={onCreateCharacter}
                       className="w-full btn-primary py-6 text-lg group"
@@ -181,8 +217,12 @@ export function LobbyScreen({
                       {currentPlayer && renderAvatar(currentPlayer)}
                     </div>
                     <div>
-                      <p className="font-bold text-aurora-200">{currentPlayer.character?.name}</p>
-                      <p className="text-xs text-shadow-400">Ready to adventure</p>
+                      <p className="font-bold text-aurora-200">
+                        {currentPlayer.character?.name}
+                      </p>
+                      <p className="text-xs text-shadow-400">
+                        Ready to adventure
+                      </p>
                     </div>
                     <Button
                       variant="ghost"
@@ -203,8 +243,8 @@ export function LobbyScreen({
                     }}
                     className={`w-full py-6 text-lg transition-all duration-300 ${
                       isReady
-                        ? 'bg-green-600 hover:bg-green-700 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]'
-                        : 'bg-midnight-700 hover:bg-midnight-600 text-shadow-300'
+                        ? "bg-green-600 hover:bg-green-700 text-white shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+                        : "bg-midnight-700 hover:bg-midnight-600 text-shadow-300"
                     }`}
                     data-testid="lobby-ready-toggle"
                   >
@@ -214,7 +254,7 @@ export function LobbyScreen({
                         Ready!
                       </>
                     ) : (
-                      'Mark as Ready'
+                      "Mark as Ready"
                     )}
                   </Button>
                 </div>

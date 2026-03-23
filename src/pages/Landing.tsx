@@ -2,41 +2,46 @@
  * Root landing page - shows login for unauthenticated users, lobby for authenticated users
  */
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Shield, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Shield, Sparkles } from "lucide-react";
 
-import useAuth from '../hooks/useAuth';
-import { joinRoom } from '../services/api';
-import { useI18n } from '../i18n';
-import { DynamicLayout } from '../components/layout';
-import Logo from '../components/ui/Logo';
+import useAuth from "../hooks/useAuth";
+import { joinRoom } from "../services/api";
+import { useI18n } from "../i18n";
+import { DynamicLayout } from "../components/layout";
+import Logo from "../components/ui/Logo";
 
-import { gildedTokens } from '../theme/gildedTokens';
-import { BackgroundDiceField } from '../components/ui/background/BackgroundDiceField';
-import { PWAInstallPrompt } from '../components/pwa/PWAInstallPrompt';
+import { gildedTokens } from "../theme/gildedTokens";
+import { BackgroundDiceField } from "../components/ui/background/BackgroundDiceField";
+import { PWAInstallPrompt } from "../components/pwa/PWAInstallPrompt";
 
 /**
  * Unified landing/ page
  * Shows login screen if not authenticated, lobby if authenticated
  */
 export default function LandingPage() {
-  const { user, loading: authLoading, signInWithGoogle, error: authError } = useAuth();
+  const {
+    user,
+    loading: authLoading,
+    signInWithGoogle,
+    error: authError,
+  } = useAuth();
   const { t } = useI18n();
   const navigate = useNavigate();
-  const [roomCode, setRoomCode] = useState('');
+  const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleCreateRoom = () => {
-    navigate('/create');
+    navigate("/create");
   };
 
   const handleJoinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!roomCode.trim()) {
-      setError(t('landing.errors.missingCode'));
+      setError(t("landing.errors.missingCode"));
       return;
     }
 
@@ -46,7 +51,9 @@ export default function LandingPage() {
       const room = await joinRoom(roomCode.toUpperCase());
       navigate(`/room/${room.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('landing.errors.joinFailed'));
+      setError(
+        err instanceof Error ? err.message : t("landing.errors.joinFailed"),
+      );
     } finally {
       setLoading(false);
     }
@@ -74,20 +81,32 @@ export default function LandingPage() {
               {/* Hero Section */}
               <section className="relative flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in-95 duration-1000">
                 <div className="relative animate-float mb-4">
-                  <Logo size="xl" noShadow className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]" />
+                  <Logo
+                    size="xl"
+                    noShadow
+                    className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                  />
                   {/* Soft, borderless atmospheric glow behind */}
                   <div className="absolute inset-0 bg-aurora-500/20 blur-[50px] -z-10 rounded-full scale-150 pointer-events-none" />
                 </div>
 
                 <div className="space-y-4">
-                  <p className={`${gildedTokens.heroEyebrow} tracking-[0.5em] text-aurora-200/60`}>
-                    {t('auth.subtitle')}
+                  <p
+                    className={`${gildedTokens.heroEyebrow} tracking-[0.5em] text-aurora-200/60`}
+                  >
+                    {t("auth.subtitle")}
                   </p>
-                  <h1 className={`${gildedTokens.heroTitle} text-6xl sm:text-7xl lg:text-8xl !leading-tight`}>
-                    <span className="shiny-text filter drop-shadow-[0_0_30px_rgba(124,58,237,0.3)]">DAICER</span>
+                  <h1
+                    className={`${gildedTokens.heroTitle} text-6xl sm:text-7xl lg:text-8xl !leading-tight`}
+                  >
+                    <span className="shiny-text filter drop-shadow-[0_0_30px_rgba(124,58,237,0.3)]">
+                      DAICER
+                    </span>
                   </h1>
-                  <p className={`${gildedTokens.heroBody} max-w-2xl text-lg sm:text-xl text-aurora-100/80`}>
-                    {t('auth.heroDescription')}
+                  <p
+                    className={`${gildedTokens.heroBody} max-w-2xl text-lg sm:text-xl text-aurora-100/80`}
+                  >
+                    {t("auth.heroDescription")}
                   </p>
                 </div>
               </section>
@@ -98,11 +117,13 @@ export default function LandingPage() {
                   <div className="flex items-center justify-center gap-4 text-aurora-300/40 mb-2">
                     <div className="h-px w-16 bg-gradient-to-r from-transparent via-aurora-500/30 to-transparent" />
                     <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-aurora-200/60">
-                      {t('auth.cta.heading')}
+                      {t("auth.cta.heading")}
                     </span>
                     <div className="h-px w-16 bg-gradient-to-r from-transparent via-aurora-500/30 to-transparent" />
                   </div>
-                  <p className="text-aurora-200/50 text-sm max-w-md tracking-wide">{t('auth.cta.copy')}</p>
+                  <p className="text-aurora-200/50 text-sm max-w-md tracking-wide">
+                    {t("auth.cta.copy")}
+                  </p>
                 </div>
 
                 <button
@@ -110,7 +131,7 @@ export default function LandingPage() {
                   onClick={signInWithGoogle}
                   disabled={authLoading}
                   className="group relative w-full py-5 px-8 rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-[0.98]"
-                  aria-label={t('auth.login')}
+                  aria-label={t("auth.login")}
                 >
                   {/* Button Background & Gradient Border Effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-aurora-500/10 via-nebula-500/10 to-aurora-500/10 opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -120,7 +141,10 @@ export default function LandingPage() {
 
                   {/* Content */}
                   <div className="relative flex items-center justify-center gap-4">
-                    <svg className="h-6 w-6 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" viewBox="0 0 24 24">
+                    <svg
+                      className="h-6 w-6 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         fill="currentColor"
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -143,14 +167,16 @@ export default function LandingPage() {
                       />
                     </svg>
                     <span className="font-display text-aurora-100 tracking-[0.15em] uppercase text-sm font-bold group-hover:text-white group-hover:drop-shadow-[0_0_10px_rgba(234,179,8,0.3)] transition-all">
-                      {authLoading ? t('auth.loggingIn') : t('auth.login')}
+                      {authLoading ? t("auth.loggingIn") : t("auth.login")}
                     </span>
                     <Sparkles className="h-4 w-4 text-aurora-300 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-2 group-hover:translate-x-0" />
                   </div>
                 </button>
 
                 {authError ? (
-                  <p className="text-red-400 text-xs font-medium tracking-wide animate-pulse">{authError}</p>
+                  <p className="text-red-400 text-xs font-medium tracking-wide animate-pulse">
+                    {authError}
+                  </p>
                 ) : null}
               </section>
             </div>
@@ -181,18 +207,26 @@ export default function LandingPage() {
             {/* Header / Greeting */}
             <section className="relative flex flex-col items-center gap-4 text-center animate-in fade-in zoom-in-95 duration-1000">
               <div className="relative animate-float mb-4">
-                <Logo size="xl" noShadow className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]" />
+                <Logo
+                  size="xl"
+                  noShadow
+                  className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+                />
                 {/* Soft, borderless atmospheric glow behind */}
                 <div className="absolute inset-0 bg-aurora-500/20 blur-[50px] -z-10 rounded-full scale-150 pointer-events-none" />
               </div>
 
               <div className="space-y-2">
-                <p className={`${gildedTokens.heroEyebrow} tracking-[0.3em] text-aurora-200/60`}>
-                  {t('lobby.subtitle')}
+                <p
+                  className={`${gildedTokens.heroEyebrow} tracking-[0.3em] text-aurora-200/60`}
+                >
+                  {t("lobby.subtitle")}
                 </p>
-                <h1 className={`${gildedTokens.heroTitle} text-3xl sm:text-4xl lg:text-5xl !leading-tight`}>
+                <h1
+                  className={`${gildedTokens.heroTitle} text-3xl sm:text-4xl lg:text-5xl !leading-tight`}
+                >
                   <span className="shiny-text filter drop-shadow-[0_0_20px_rgba(124,58,237,0.2)]">
-                    {t('lobby.title')}
+                    {t("lobby.title")}
                   </span>
                 </h1>
               </div>
@@ -202,7 +236,10 @@ export default function LandingPage() {
             <section className="relative w-full flex flex-col items-center gap-6 animate-in slide-in-from-bottom-5 fade-in duration-1000 delay-200">
               {/* Guidance Text */}
               <p className="text-center text-aurora-200/50 text-sm font-medium tracking-wide max-w-xs mx-auto">
-                {t('lobby.guidance', 'Enter your room code below to join an existing chronicle.')}
+                {t(
+                  "lobby.guidance",
+                  "Enter your room code below to join an existing chronicle.",
+                )}
               </p>
 
               {/* Join Room Input */}
@@ -213,7 +250,7 @@ export default function LandingPage() {
                     type="text"
                     value={roomCode}
                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                    placeholder={t('lobby.joinHero.codePlaceholder')}
+                    placeholder={t("lobby.joinHero.codePlaceholder")}
                     maxLength={6}
                     className={`${gildedTokens.monoInput} !bg-midnight-900/60 !border-aurora-500/20 !text-3xl !py-5 !text-center !tracking-[0.5em] placeholder:tracking-[0.2em] placeholder:text-2xl placeholder:text-aurora-500/30 hover:!border-aurora-400/40 focus:!border-aurora-400/60 focus:!ring-1 focus:!ring-aurora-400/30 transition-all shadow-lg backdrop-blur-md`}
                   />
@@ -229,7 +266,9 @@ export default function LandingPage() {
                 {/* Error Message */}
                 {error && (
                   <div className="absolute -bottom-8 left-0 right-0 text-center">
-                    <span className="text-red-400 text-xs font-medium tracking-wide animate-pulse">{error}</span>
+                    <span className="text-red-400 text-xs font-medium tracking-wide animate-pulse">
+                      {error}
+                    </span>
                   </div>
                 )}
               </form>
@@ -237,7 +276,9 @@ export default function LandingPage() {
               {/* Or Divider */}
               <div className="flex items-center gap-4 w-full opacity-20 my-2">
                 <div className="h-px bg-gradient-to-r from-transparent via-aurora-100 to-transparent flex-1" />
-                <span className="text-[10px] uppercase tracking-widest text-aurora-100 font-semibold">Or</span>
+                <span className="text-[10px] uppercase tracking-widest text-aurora-100 font-semibold">
+                  Or
+                </span>
                 <div className="h-px bg-gradient-to-r from-transparent via-aurora-100 to-transparent flex-1" />
               </div>
 
@@ -258,7 +299,7 @@ export default function LandingPage() {
                 <div className="relative flex items-center justify-center gap-3">
                   <Shield className="h-5 w-5 text-aurora-300 group-hover:text-aurora-100 group-hover:drop-shadow-[0_0_8px_rgba(216,130,22,0.5)] transition-all duration-300" />
                   <span className="font-display text-aurora-100 tracking-[0.15em] uppercase text-sm font-bold group-hover:text-white group-hover:drop-shadow-[0_0_10px_rgba(216,130,22,0.3)] transition-all">
-                    {t('lobby.createButton', 'Forge New Adventure')}
+                    {t("lobby.createButton", "Forge New Adventure")}
                   </span>
                   <Sparkles className="h-4 w-4 text-nebula-300 opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-2 group-hover:translate-x-0" />
                 </div>

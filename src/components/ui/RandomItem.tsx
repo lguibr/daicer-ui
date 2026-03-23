@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useI18n } from '../../i18n';
+import { useMemo } from "react";
+import { useI18n } from "../../i18n";
 
 interface RandomItemProps {
   /** Array of pre-translated items (strings or React nodes) */

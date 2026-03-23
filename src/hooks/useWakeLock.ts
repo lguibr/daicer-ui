@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export function useWakeLock() {
   const wakeLock = useRef<WakeLockSentinel | null>(null);
   const [isLocked, setIsLocked] = useState(false);
 
   const requestWakeLock = async () => {
-    if ('wakeLock' in navigator) {
+    if ("wakeLock" in navigator) {
       try {
-        wakeLock.current = await navigator.wakeLock.request('screen');
+        wakeLock.current = await navigator.wakeLock.request("screen");
         setIsLocked(true);
 
-        wakeLock.current.addEventListener('release', () => {
+        wakeLock.current.addEventListener("release", () => {
           setIsLocked(false);
-          console.info('Wake Lock released');
+          console.info("Wake Lock released");
         });
-        console.info('Wake Lock acquired');
+        console.info("Wake Lock acquired");
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(`${err.name}, ${err.message}`);
@@ -36,15 +36,15 @@ export function useWakeLock() {
 
     // Re-acquire lock when page becomes visible again
     const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'visible' && !isLocked) {
+      if (document.visibilityState === "visible" && !isLocked) {
         await requestWakeLock();
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       releaseWakeLock();
     };
   }, [isLocked]);

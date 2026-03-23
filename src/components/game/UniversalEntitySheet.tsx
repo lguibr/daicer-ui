@@ -1,7 +1,20 @@
-import { useState, useEffect } from 'react';
-import type { EntitySheet, EntityAction, EntityFeature } from '@/types/contracts';
-import { X, Shield, Swords, Zap, Footprints, Heart, Skull, Crown } from 'lucide-react';
-import cn from '../../lib/utils';
+import { useState, useEffect } from "react";
+import type {
+  EntitySheet,
+  EntityAction,
+  EntityFeature,
+} from "@/types/contracts";
+import {
+  X,
+  Shield,
+  Swords,
+  Zap,
+  Footprints,
+  Heart,
+  Skull,
+  Crown,
+} from "lucide-react";
+import cn from "../../lib/utils";
 
 interface UniversalEntitySheetProps {
   entity: EntitySheet | null;
@@ -18,12 +31,16 @@ function formatModifier(val: number) {
 
 function AttributeBox({ label, value }: { label: string; value: number }) {
   const mod = Math.floor((value - 10) / 2);
-  const sign = mod >= 0 ? '+' : '';
+  const sign = mod >= 0 ? "+" : "";
 
   return (
     <div className="flex flex-col items-center bg-midnight-900/50 border border-midnight-700 rounded p-2 min-w-[3.5rem]">
-      <span className="text-xs uppercase text-midnight-400 font-bold tracking-wider mb-1">{label}</span>
-      <span className="text-xl font-display font-bold text-gold-400">{value}</span>
+      <span className="text-xs uppercase text-midnight-400 font-bold tracking-wider mb-1">
+        {label}
+      </span>
+      <span className="text-xl font-display font-bold text-gold-400">
+        {value}
+      </span>
       <span className="text-xs font-mono text-midnight-300 bg-midnight-800 px-1 rounded mt-1">
         {sign}
         {mod}
@@ -48,10 +65,18 @@ function VitalBox({
     <div className="flex flex-col items-center justify-center p-3 bg-midnight-800/80 border border-midnight-600 rounded-lg shadow-sm">
       <div className="flex items-center gap-2 mb-1">
         <Icon className="w-4 h-4 text-gold-500" />
-        <span className="text-xs uppercase text-midnight-400 font-bold tracking-wider">{label}</span>
+        <span className="text-xs uppercase text-midnight-400 font-bold tracking-wider">
+          {label}
+        </span>
       </div>
-      <div className="text-2xl font-display font-bold text-gray-100">{value}</div>
-      {sub && <div className="text-[10px] text-midnight-400 uppercase tracking-widest">{sub}</div>}
+      <div className="text-2xl font-display font-bold text-gray-100">
+        {value}
+      </div>
+      {sub && (
+        <div className="text-[10px] text-midnight-400 uppercase tracking-widest">
+          {sub}
+        </div>
+      )}
     </div>
   );
 }
@@ -70,7 +95,9 @@ function FeatureRow({ feature }: { feature: EntityFeature }) {
           </span>
         )}
       </div>
-      <p className="text-xs text-gray-500 leading-relaxed">{feature.description}</p>
+      <p className="text-xs text-gray-500 leading-relaxed">
+        {feature.description}
+      </p>
     </div>
   );
 }
@@ -83,11 +110,18 @@ export function UniversalEntitySheetContent({
   entity: EntitySheet;
   onAction?: (actionId: string) => void;
 }) {
-  const [activeTab, setActiveTab] = useState<'main' | 'bio'>('main');
+  const [activeTab, setActiveTab] = useState<"main" | "bio">("main");
 
   // Derive simple helpers
   const { stats, hp, maxHp, ac, speed, level, name } = entity;
-  const attrs = stats || { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 };
+  const attrs = stats || {
+    strength: 10,
+    dexterity: 10,
+    constitution: 10,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 10,
+  };
   const isDead = hp <= 0;
   const hpPercent = Math.min(100, Math.max(0, (hp / maxHp) * 100));
 
@@ -104,7 +138,7 @@ export function UniversalEntitySheetContent({
         <div className="flex items-center gap-5 relative z-10">
           {/* Avatar Circle */}
           <div className="w-16 h-16 rounded-full border-2 border-gold-600/30 bg-midnight-800 flex items-center justify-center overflow-hidden shrink-0 shadow-lg">
-            {entity.type === 'player' ? (
+            {entity.type === "player" ? (
               <Crown className="w-8 h-8 text-gold-500/50" />
             ) : (
               <Skull className="w-8 h-8 text-red-900/50" />
@@ -112,7 +146,9 @@ export function UniversalEntitySheetContent({
           </div>
 
           <div>
-            <h1 className="text-3xl font-display font-bold text-gray-100 tracking-wide drop-shadow-md">{name}</h1>
+            <h1 className="text-3xl font-display font-bold text-gray-100 tracking-wide drop-shadow-md">
+              {name}
+            </h1>
             <div className="flex gap-3 text-sm font-mono text-gold-500/80 uppercase tracking-widest mt-1">
               <span>Level {level}</span>
               <span className="w-px h-4 bg-midnight-700 mx-1" />
@@ -142,15 +178,21 @@ export function UniversalEntitySheetContent({
           <div className="w-full">
             <div className="flex justify-between text-xs uppercase font-bold text-midnight-400 mb-1">
               <span>Hit Points</span>
-              <span className={cn(hpPercent < 30 ? 'text-red-500' : 'text-gray-300')}>
+              <span
+                className={cn(
+                  hpPercent < 30 ? "text-red-500" : "text-gray-300",
+                )}
+              >
                 {hp} / {maxHp}
               </span>
             </div>
             <div className="h-3 w-full bg-midnight-950 rounded-full overflow-hidden border border-midnight-800">
               <div
                 className={cn(
-                  'h-full transition-all duration-500',
-                  hpPercent < 30 ? 'bg-red-600' : 'bg-gradient-to-r from-green-700 to-green-500'
+                  "h-full transition-all duration-500",
+                  hpPercent < 30
+                    ? "bg-red-600"
+                    : "bg-gradient-to-r from-green-700 to-green-500",
                 )}
                 style={{ width: `${hpPercent}%` }}
               />
@@ -159,15 +201,27 @@ export function UniversalEntitySheetContent({
 
           {/* Vitals Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <VitalBox icon={Shield} label="Armor" value={entity.armorClass ?? ac ?? 10} />
-            <VitalBox icon={Zap} label="Init" value={formatModifier(attrs.initiativeBonus || 0)} />
+            <VitalBox
+              icon={Shield}
+              label="Armor"
+              value={entity.armorClass ?? ac ?? 10}
+            />
+            <VitalBox
+              icon={Zap}
+              label="Init"
+              value={formatModifier(attrs.initiativeBonus || 0)}
+            />
             <VitalBox
               icon={Footprints}
               label="Speed"
-              value={typeof speed === 'number' ? speed : speed.walk}
+              value={typeof speed === "number" ? speed : speed.walk}
               sub="ft/rnd"
             />
-            <VitalBox icon={Swords} label="Prof" value={`+${Math.ceil(1 + level / 4)}`} />
+            <VitalBox
+              icon={Swords}
+              label="Prof"
+              value={`+${Math.ceil(1 + level / 4)}`}
+            />
           </div>
 
           <div className="w-full h-px bg-midnight-800" />
@@ -189,24 +243,24 @@ export function UniversalEntitySheetContent({
           <div className="flex border-b border-midnight-800 bg-midnight-900/20 shrink-0">
             <button
               type="button"
-              onClick={() => setActiveTab('main')}
+              onClick={() => setActiveTab("main")}
               className={cn(
-                'px-6 py-3 text-sm font-bold uppercase tracking-wider border-b-2 transition-all hover:bg-midnight-800/50',
-                activeTab === 'main'
-                  ? 'border-gold-600 text-gold-400 bg-midnight-800/30'
-                  : 'border-transparent text-midnight-500'
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider border-b-2 transition-all hover:bg-midnight-800/50",
+                activeTab === "main"
+                  ? "border-gold-600 text-gold-400 bg-midnight-800/30"
+                  : "border-transparent text-midnight-500",
               )}
             >
               Combat & Actions
             </button>
             <button
               type="button"
-              onClick={() => setActiveTab('bio')}
+              onClick={() => setActiveTab("bio")}
               className={cn(
-                'px-6 py-3 text-sm font-bold uppercase tracking-wider border-b-2 transition-all hover:bg-midnight-800/50',
-                activeTab === 'bio'
-                  ? 'border-gold-600 text-gold-400 bg-midnight-800/30'
-                  : 'border-transparent text-midnight-500'
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider border-b-2 transition-all hover:bg-midnight-800/50",
+                activeTab === "bio"
+                  ? "border-gold-600 text-gold-400 bg-midnight-800/30"
+                  : "border-transparent text-midnight-500",
               )}
             >
               Features & Bio
@@ -215,7 +269,7 @@ export function UniversalEntitySheetContent({
 
           {/* TAB CONTENT */}
           <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-midnight-700">
-            {activeTab === 'main' && (
+            {activeTab === "main" && (
               <div className="flex flex-col gap-8">
                 <section>
                   <h3 className="section-header mb-4 flex items-center gap-2 text-gray-400 uppercase text-xs font-bold tracking-widest">
@@ -224,7 +278,8 @@ export function UniversalEntitySheetContent({
                   </h3>
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-3">
                     {/* 1. Derived Runtime Actions (Priority) */}
-                    {entity.availableActions && entity.availableActions.length > 0
+                    {entity.availableActions &&
+                    entity.availableActions.length > 0
                       ? entity.availableActions.map((action, idx) => (
                           <div
                             key={action.id + idx}
@@ -232,12 +287,18 @@ export function UniversalEntitySheetContent({
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <div className="font-bold text-sm text-primary-gold mb-1">{action.name}</div>
+                                <div className="font-bold text-sm text-primary-gold mb-1">
+                                  {action.name}
+                                </div>
                                 <div className="text-[10px] uppercase tracking-wider text-midnight-400 font-mono">
                                   {action.type}
-                                  {action.range ? ` • ${action.range}ft` : ''}
-                                  {action.attack ? ` • +${action.attack.bonus} Hit` : ''}
-                                  {action.save ? ` • DC ${action.save.dc} ${action.save.attribute.toUpperCase()}` : ''}
+                                  {action.range ? ` • ${action.range}ft` : ""}
+                                  {action.attack
+                                    ? ` • +${action.attack.bonus} Hit`
+                                    : ""}
+                                  {action.save
+                                    ? ` • DC ${action.save.dc} ${action.save.attribute.toUpperCase()}`
+                                    : ""}
                                 </div>
                               </div>
                               {onAction && (
@@ -251,7 +312,9 @@ export function UniversalEntitySheetContent({
                               )}
                             </div>
                             {action.description && (
-                              <div className="text-xs text-gray-400 line-clamp-2">{action.description}</div>
+                              <div className="text-xs text-gray-400 line-clamp-2">
+                                {action.description}
+                              </div>
                             )}
                             {/* Cost Badge */}
                             {action.cost && (
@@ -271,45 +334,60 @@ export function UniversalEntitySheetContent({
                               Legacy Actions (Migrating...)
                             </span>
                             <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mt-2">
-                              {entity.actions.map((action: EntityAction, idx: number) => (
-                                <div
-                                  key={idx}
-                                  className="group flex flex-col gap-2 p-3 bg-midnight-900/40 border border-midnight-700/50 hover:border-gold-700/50 hover:bg-midnight-800/60 rounded transition-all cursor-default"
-                                >
-                                  <div className="font-bold text-sm text-primary-gold mb-1">{action.name}</div>
-                                  {action.description && (
-                                    <div className="text-xs text-gray-400">{action.description}</div>
-                                  )}
-                                </div>
-                              ))}
+                              {entity.actions.map(
+                                (action: EntityAction, idx: number) => (
+                                  <div
+                                    key={idx}
+                                    className="group flex flex-col gap-2 p-3 bg-midnight-900/40 border border-midnight-700/50 hover:border-gold-700/50 hover:bg-midnight-800/60 rounded transition-all cursor-default"
+                                  >
+                                    <div className="font-bold text-sm text-primary-gold mb-1">
+                                      {action.name}
+                                    </div>
+                                    {action.description && (
+                                      <div className="text-xs text-gray-400">
+                                        {action.description}
+                                      </div>
+                                    )}
+                                  </div>
+                                ),
+                              )}
                             </div>
                           </div>
                         )}
 
-                    {!entity.availableActions?.length && !entity.actions?.length && (
-                      <div className="text-sm text-shadow-500 italic p-4 text-center border border-dashed border-midnight-800 rounded col-span-full">
-                        No actions available.
-                      </div>
-                    )}
+                    {!entity.availableActions?.length &&
+                      !entity.actions?.length && (
+                        <div className="text-sm text-shadow-500 italic p-4 text-center border border-dashed border-midnight-800 rounded col-span-full">
+                          No actions available.
+                        </div>
+                      )}
                   </div>
                 </section>
               </div>
             )}
 
-            {activeTab === 'bio' && (
+            {activeTab === "bio" && (
               <div className="flex flex-col gap-8">
                 <section>
                   <h3 className="section-header mb-4 flex items-center gap-2 text-gray-400 uppercase text-xs font-bold tracking-widest">
-                    <Crown className="w-4 h-4 text-midnight-500" /> Features & Traits
+                    <Crown className="w-4 h-4 text-midnight-500" /> Features &
+                    Traits
                     <div className="h-px bg-midnight-800 flex-1" />
                   </h3>
                   <div className="flex flex-col gap-2">
                     {entity.features && entity.features.length > 0 ? (
-                      entity.features.map((feature: EntityFeature, i: number) => (
-                        <FeatureRow key={feature.name + i} feature={feature} />
-                      ))
+                      entity.features.map(
+                        (feature: EntityFeature, i: number) => (
+                          <FeatureRow
+                            key={feature.name + i}
+                            feature={feature}
+                          />
+                        ),
+                      )
                     ) : (
-                      <p className="text-midnight-500 italic text-sm">No features available.</p>
+                      <p className="text-midnight-500 italic text-sm">
+                        No features available.
+                      </p>
                     )}
                   </div>
                 </section>
@@ -320,7 +398,7 @@ export function UniversalEntitySheetContent({
                     <div className="h-px bg-midnight-800 flex-1" />
                   </h3>
                   <div className="text-gray-400 text-sm leading-relaxed space-y-2">
-                    <p>{entity.backstory || 'No backstory provided.'}</p>
+                    <p>{entity.backstory || "No backstory provided."}</p>
                   </div>
                 </section>
               </div>
@@ -332,12 +410,16 @@ export function UniversalEntitySheetContent({
   );
 }
 
-export default function UniversalEntitySheet({ entity, onClose, onAction }: UniversalEntitySheetProps) {
+export default function UniversalEntitySheet({
+  entity,
+  onClose,
+  onAction,
+}: UniversalEntitySheetProps) {
   useEffect(() => {
     if (!entity) return;
-    const handleKeyDown = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    const handleKeyDown = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [entity, onClose]);
 
   if (!entity) return null;

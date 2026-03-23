@@ -5,7 +5,7 @@
 
 // import { auth } from './firebase';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
 
 export interface TerrainTile {
   x: number;
@@ -32,7 +32,12 @@ const chunkCache = new Map<string, TerrainChunk>();
 /**
  * Get cache key for a chunk
  */
-function getChunkKey(roomId: string, chunkX: number, chunkY: number, chunkZ: number): string {
+function getChunkKey(
+  roomId: string,
+  chunkX: number,
+  chunkY: number,
+  chunkZ: number,
+): string {
   return `${roomId}:${chunkX}_${chunkY}_${chunkZ}`;
 }
 
@@ -43,15 +48,18 @@ async function generateChunkViaAPI(
   roomId: string,
   chunkX: number,
   chunkY: number,
-  chunkZ: number
+  chunkZ: number,
 ): Promise<TerrainChunk> {
-  const token = localStorage.getItem('strapi_jwt');
+  const token = localStorage.getItem("strapi_jwt");
 
-  const response = await fetch(`${API_URL}/api/assets-gen/worlds/${roomId}/chunks/${chunkX}/${chunkY}/${chunkZ}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_URL}/api/assets-gen/worlds/${roomId}/chunks/${chunkX}/${chunkY}/${chunkZ}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to generate chunk: ${response.statusText}`);
@@ -73,7 +81,7 @@ export async function fetchChunk(
   roomId: string,
   chunkX: number,
   chunkY: number,
-  chunkZ: number
+  chunkZ: number,
 ): Promise<TerrainChunk> {
   const key = getChunkKey(roomId, chunkX, chunkY, chunkZ);
 
@@ -83,7 +91,9 @@ export async function fetchChunk(
   }
 
   // 2. Generate on-demand via API
-  console.info(`Cache miss for chunk (${chunkX}, ${chunkY}, ${chunkZ}), generating...`);
+  console.info(
+    `Cache miss for chunk (${chunkX}, ${chunkY}, ${chunkZ}), generating...`,
+  );
   const generated = await generateChunkViaAPI(roomId, chunkX, chunkY, chunkZ);
   chunkCache.set(key, generated);
   return generated;

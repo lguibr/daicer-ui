@@ -1,11 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
+import { useEffect, useMemo, useRef, useState } from "react";
+import * as THREE from "three";
 
-import { createDie } from '../dice-loader/createDie';
-import type { DiceRollAnimationProps, DieAnimationState, DieRoll } from './types';
-import { generateRandomDieColor } from '../dice-loader/utils';
-import { getTargetRotationForFace } from './calculateTargetRotation';
-import { getColorForResult, lerpColor } from './colorUtils';
+import { createDie } from "../dice-loader/createDie";
+import type {
+  DiceRollAnimationProps,
+  DieAnimationState,
+  DieRoll,
+} from "./types";
+import { generateRandomDieColor } from "../dice-loader/utils";
+import { getTargetRotationForFace } from "./calculateTargetRotation";
+import { getColorForResult, lerpColor } from "./colorUtils";
 
 interface DieInstance {
   group: THREE.Group;
@@ -37,7 +41,9 @@ const CONTAINER_SIZE_MAP = {
 };
 
 // Fixed positioning patterns for clear, non-overlapping dice layout
-function getFixedDicePositions(count: number): Array<{ x: number; y: number; z: number }> {
+function getFixedDicePositions(
+  count: number,
+): Array<{ x: number; y: number; z: number }> {
   switch (count) {
     case 1:
       // Center
@@ -152,7 +158,7 @@ function disposeDieGroup(group: THREE.Group | undefined): void {
 
 export function DiceRollAnimation({
   dice,
-  size = 'medium',
+  size = "medium",
   onComplete,
   showAxes = false,
   className,
@@ -179,20 +185,24 @@ export function DiceRollAnimation({
       // I entered a large block replacement.
       // Let's try targeted replacements.
       ({
-        width: style?.width ?? `${CONTAINER_SIZE_MAP[size] ?? CONTAINER_SIZE_MAP.medium}px`,
-        height: style?.height ?? `${CONTAINER_SIZE_MAP[size] ?? CONTAINER_SIZE_MAP.medium}px`,
-        position: 'relative' as const,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width:
+          style?.width ??
+          `${CONTAINER_SIZE_MAP[size] ?? CONTAINER_SIZE_MAP.medium}px`,
+        height:
+          style?.height ??
+          `${CONTAINER_SIZE_MAP[size] ?? CONTAINER_SIZE_MAP.medium}px`,
+        position: "relative" as const,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         ...style,
       }),
-    [size, style]
+    [size, style],
   );
 
   const rootClassName = className
     ? `flex flex-col items-center gap-3 ${className}`
-    : 'flex flex-col items-center gap-3';
+    : "flex flex-col items-center gap-3";
 
   // Initialize Three.js scene
   useEffect(() => {
@@ -210,20 +220,22 @@ export function DiceRollAnimation({
     const height = mountElement.clientHeight || CONTAINER_SIZE_MAP[size] || 280;
 
     if (width === 0 || height === 0) {
-      console.warn('DiceRollAnimation: Container has zero dimensions, skipping initialization');
+      console.warn(
+        "DiceRollAnimation: Container has zero dimensions, skipping initialization",
+      );
       return undefined;
     }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     // Closer camera for small size (cards) to make dice appear larger
-    const cameraDistance = size === 'small' ? 4.5 : 7.5;
+    const cameraDistance = size === "small" ? 4.5 : 7.5;
     camera.position.set(0, 0, cameraDistance);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
-      powerPreference: 'high-performance',
+      powerPreference: "high-performance",
       failIfMajorPerformanceCaveat: false,
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap at 2x for performance
@@ -268,17 +280,22 @@ export function DiceRollAnimation({
         let allComplete = true;
 
         currentState.dice.forEach((instance) => {
-          const { group: dieGroup, state: animState, startColor, targetColor } = instance;
+          const {
+            group: dieGroup,
+            state: animState,
+            startColor,
+            targetColor,
+          } = instance;
           const elapsed = now - animState.startTime - animState.completionDelay;
 
-          if (animState.phase === 'rolling') {
+          if (animState.phase === "rolling") {
             // Fast rolling phase
             dieGroup.rotation.x += animState.rotationSpeed.x;
             dieGroup.rotation.y += animState.rotationSpeed.y;
             dieGroup.rotation.z += animState.rotationSpeed.z;
 
             if (elapsed >= ROLL_DURATION) {
-              animState.phase = 'decelerating';
+              animState.phase = "decelerating";
               // Store current rotation
               animState.currentRotation = {
                 x: dieGroup.rotation.x,
@@ -287,7 +304,7 @@ export function DiceRollAnimation({
               };
             }
             allComplete = false;
-          } else if (animState.phase === 'decelerating') {
+          } else if (animState.phase === "decelerating") {
             // Deceleration phase with easing
             const decelElapsed = elapsed - ROLL_DURATION;
             const progress = Math.min(decelElapsed / DECEL_DURATION, 1);
@@ -295,24 +312,37 @@ export function DiceRollAnimation({
 
             // Interpolate to target rotation
             dieGroup.rotation.x =
-              animState.currentRotation.x + (animState.targetRotation.x - animState.currentRotation.x) * easedProgress;
+              animState.currentRotation.x +
+              (animState.targetRotation.x - animState.currentRotation.x) *
+                easedProgress;
             dieGroup.rotation.y =
-              animState.currentRotation.y + (animState.targetRotation.y - animState.currentRotation.y) * easedProgress;
+              animState.currentRotation.y +
+              (animState.targetRotation.y - animState.currentRotation.y) *
+                easedProgress;
             dieGroup.rotation.z =
-              animState.currentRotation.z + (animState.targetRotation.z - animState.currentRotation.z) * easedProgress;
+              animState.currentRotation.z +
+              (animState.targetRotation.z - animState.currentRotation.z) *
+                easedProgress;
 
             // Smooth color transition if colorByResult is enabled
             if (startColor && targetColor) {
-              const interpolatedColor = lerpColor(startColor, targetColor, easedProgress);
+              const interpolatedColor = lerpColor(
+                startColor,
+                targetColor,
+                easedProgress,
+              );
               dieGroup.traverse((child) => {
-                if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
+                if (
+                  child instanceof THREE.Mesh &&
+                  child.material instanceof THREE.MeshStandardMaterial
+                ) {
                   child.material.color.copy(interpolatedColor);
                 }
               });
             }
 
             if (progress >= 1) {
-              animState.phase = 'displaying';
+              animState.phase = "displaying";
               // Snap to exact target rotation
               dieGroup.rotation.x = animState.targetRotation.x;
               dieGroup.rotation.y = animState.targetRotation.y;
@@ -321,19 +351,22 @@ export function DiceRollAnimation({
               // Snap to exact target color
               if (startColor && targetColor) {
                 dieGroup.traverse((child) => {
-                  if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
+                  if (
+                    child instanceof THREE.Mesh &&
+                    child.material instanceof THREE.MeshStandardMaterial
+                  ) {
                     child.material.color.copy(targetColor);
                   }
                 });
               }
             }
             allComplete = false;
-          } else if (animState.phase === 'displaying') {
+          } else if (animState.phase === "displaying") {
             // Display phase - hold the result for 2 seconds
             const displayElapsed = elapsed - ROLL_DURATION - DECEL_DURATION;
 
             if (displayElapsed >= DISPLAY_DURATION) {
-              animState.phase = 'complete';
+              animState.phase = "complete";
             } else {
               allComplete = false;
             }
@@ -352,17 +385,20 @@ export function DiceRollAnimation({
     };
 
     animate();
-    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(handleObserverResize) : null;
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(handleObserverResize)
+        : null;
     if (resizeObserver) {
       resizeObserver.observe(mountElement);
     }
-    window.addEventListener('resize', handleWindowResize);
+    window.addEventListener("resize", handleWindowResize);
 
     return () => {
       if (resizeObserver) {
         resizeObserver.disconnect();
       }
-      window.removeEventListener('resize', handleWindowResize);
+      window.removeEventListener("resize", handleWindowResize);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = undefined;
@@ -370,7 +406,12 @@ export function DiceRollAnimation({
       if (!stateRef.current) {
         return;
       }
-      const { scene: currentScene, renderer: currentRenderer, diceGroup, dice: diceInstances } = stateRef.current;
+      const {
+        scene: currentScene,
+        renderer: currentRenderer,
+        diceGroup,
+        dice: diceInstances,
+      } = stateRef.current;
 
       // Dispose all dice instances
       if (diceInstances && diceInstances.length > 0) {
@@ -401,7 +442,7 @@ export function DiceRollAnimation({
       // Try to force context loss (only works in browser with real WebGL)
       try {
         const gl = currentRenderer.getContext();
-        const ext = gl?.getExtension?.('WEBGL_lose_context');
+        const ext = gl?.getExtension?.("WEBGL_lose_context");
         if (ext) {
           ext.loseContext();
         }
@@ -426,7 +467,7 @@ export function DiceRollAnimation({
 
     if (!currentState.diceGroup) {
       currentState.diceGroup = new THREE.Group();
-      currentState.diceGroup.name = 'dice-collection';
+      currentState.diceGroup.name = "dice-collection";
       scene.add(currentState.diceGroup);
     }
 
@@ -445,9 +486,14 @@ export function DiceRollAnimation({
 
     const diceInstances: DieInstance[] = dice.map((dieRoll, index) => {
       const baseColor = dieRoll.color ?? generateRandomDieColor();
-      const finalColor = colorByResult ? getColorForResult(dieRoll.type, dieRoll.result) : baseColor;
+      const finalColor = colorByResult
+        ? getColorForResult(dieRoll.type, dieRoll.result)
+        : baseColor;
 
-      const die = createDie(dieRoll.type, colorByResult ? baseColor : finalColor);
+      const die = createDie(
+        dieRoll.type,
+        colorByResult ? baseColor : finalColor,
+      );
 
       // Use fixed position from pattern
       const position = fixedPositions[index] || { x: 0, y: 0, z: 0 };
@@ -462,24 +508,40 @@ export function DiceRollAnimation({
       die.position.set(x, y, z);
 
       // Random initial rotation
-      die.rotation.set(randomBetween(0, Math.PI * 2), randomBetween(0, Math.PI * 2), randomBetween(0, Math.PI * 2));
+      die.rotation.set(
+        randomBetween(0, Math.PI * 2),
+        randomBetween(0, Math.PI * 2),
+        randomBetween(0, Math.PI * 2),
+      );
 
       currentState.diceGroup?.add(die);
 
       // Get target rotation for the result number
-      const targetRotation = getTargetRotationForFace(dieRoll.type, dieRoll.result);
+      const targetRotation = getTargetRotationForFace(
+        dieRoll.type,
+        dieRoll.result,
+      );
 
       // Create animation state with staggered completion
       const completionDelay = randomBetween(STAGGER_MIN, STAGGER_MAX) * index;
       const state: DieAnimationState = {
-        phase: 'rolling',
+        phase: "rolling",
         startTime,
         completionDelay,
         currentRotation: { x: 0, y: 0, z: 0 },
         rotationSpeed: {
-          x: randomBetween(ROLL_SPEED_BASE.x, ROLL_SPEED_BASE.x + ROLL_SPEED_VARIATION.x),
-          y: randomBetween(ROLL_SPEED_BASE.y, ROLL_SPEED_BASE.y + ROLL_SPEED_VARIATION.y),
-          z: randomBetween(ROLL_SPEED_BASE.z, ROLL_SPEED_BASE.z + ROLL_SPEED_VARIATION.z),
+          x: randomBetween(
+            ROLL_SPEED_BASE.x,
+            ROLL_SPEED_BASE.x + ROLL_SPEED_VARIATION.x,
+          ),
+          y: randomBetween(
+            ROLL_SPEED_BASE.y,
+            ROLL_SPEED_BASE.y + ROLL_SPEED_VARIATION.y,
+          ),
+          z: randomBetween(
+            ROLL_SPEED_BASE.z,
+            ROLL_SPEED_BASE.z + ROLL_SPEED_VARIATION.z,
+          ),
         },
         targetRotation,
       };
@@ -497,13 +559,19 @@ export function DiceRollAnimation({
 
     // Scale the entire group to fit
     if (currentState.diceGroup) {
-      const boundingBox = new THREE.Box3().setFromObject(currentState.diceGroup);
+      const boundingBox = new THREE.Box3().setFromObject(
+        currentState.diceGroup,
+      );
       const sizeVector = boundingBox.getSize(new THREE.Vector3());
       const maxAxis = Math.max(sizeVector.x, sizeVector.y, sizeVector.z, 1);
       const baseMultiplier = SIZE_MAP[size] ?? SIZE_MAP.medium;
       const desiredMax = baseMultiplier * 3.0; // Increased from 2.6 for bigger dice in cards
       const uniformScale = Math.min(baseMultiplier * 1.1, desiredMax / maxAxis); // Boost by 10%
-      currentState.diceGroup.scale.set(uniformScale, uniformScale, uniformScale);
+      currentState.diceGroup.scale.set(
+        uniformScale,
+        uniformScale,
+        uniformScale,
+      );
       const center = boundingBox.getCenter(new THREE.Vector3());
       currentState.diceGroup.position.set(-center.x, -center.y, -center.z);
     }

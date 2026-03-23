@@ -1,11 +1,11 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { Sparkles } from "lucide-react";
 
-import cn from '@/lib/utils';
-import { Carousel } from '../Carousel';
+import cn from "@/lib/utils";
+import { Carousel } from "../Carousel";
 
-export type SpotlightCarouselSize = 'sm' | 'md' | 'lg';
-export type SpotlightCarouselLayout = 'split' | 'stacked';
+export type SpotlightCarouselSize = "sm" | "md" | "lg";
+export type SpotlightCarouselLayout = "split" | "stacked";
 
 export interface SpotlightCarouselItem {
   id: string;
@@ -59,39 +59,39 @@ const SIZE_CLASS_MAP: Record<
   }
 > = {
   sm: {
-    title: 'text-2xl tracking-[0.18em]',
-    description: 'text-sm leading-relaxed',
-    badge: 'text-[0.62rem] tracking-[0.46em]',
-    icon: 'h-14 w-14 text-2xl',
-    eyebrow: 'text-[0.62rem] tracking-[0.48em]',
-    accent: 'text-[0.68rem] tracking-[0.48em]',
-    spacing: 'gap-4',
+    title: "text-2xl tracking-[0.18em]",
+    description: "text-sm leading-relaxed",
+    badge: "text-[0.62rem] tracking-[0.46em]",
+    icon: "h-14 w-14 text-2xl",
+    eyebrow: "text-[0.62rem] tracking-[0.48em]",
+    accent: "text-[0.68rem] tracking-[0.48em]",
+    spacing: "gap-4",
   },
   md: {
-    title: 'text-3xl tracking-[0.22em]',
-    description: 'text-base leading-relaxed',
-    badge: 'text-[0.7rem] tracking-[0.5em]',
-    icon: 'h-16 w-16 text-3xl',
-    eyebrow: 'text-[0.7rem] tracking-[0.5em]',
-    accent: 'text-[0.72rem] tracking-[0.5em]',
-    spacing: 'gap-5',
+    title: "text-3xl tracking-[0.22em]",
+    description: "text-base leading-relaxed",
+    badge: "text-[0.7rem] tracking-[0.5em]",
+    icon: "h-16 w-16 text-3xl",
+    eyebrow: "text-[0.7rem] tracking-[0.5em]",
+    accent: "text-[0.72rem] tracking-[0.5em]",
+    spacing: "gap-5",
   },
   lg: {
-    title: 'text-4xl tracking-[0.24em]',
-    description: 'text-lg leading-relaxed',
-    badge: 'text-[0.78rem] tracking-[0.52em]',
-    icon: 'h-20 w-20 text-3xl',
-    eyebrow: 'text-[0.74rem] tracking-[0.52em]',
-    accent: 'text-[0.74rem] tracking-[0.52em]',
-    spacing: 'gap-6',
+    title: "text-4xl tracking-[0.24em]",
+    description: "text-lg leading-relaxed",
+    badge: "text-[0.78rem] tracking-[0.52em]",
+    icon: "h-20 w-20 text-3xl",
+    eyebrow: "text-[0.74rem] tracking-[0.52em]",
+    accent: "text-[0.74rem] tracking-[0.52em]",
+    spacing: "gap-6",
   },
 };
 
 export function SpotlightCarousel({
   items,
   className,
-  size = 'md',
-  layout = 'split',
+  size = "md",
+  layout = "split",
   autoPlay = true,
   interval = 8000,
   showIndicators = true,
@@ -107,13 +107,19 @@ export function SpotlightCarousel({
   renderItem,
 }: SpotlightCarouselProps) {
   const sanitizedItems = useMemo(
-    () => items.filter((item): item is SpotlightCarouselItem => Boolean(item && item.id)),
-    [items]
+    () =>
+      items.filter((item): item is SpotlightCarouselItem =>
+        Boolean(item && item.id),
+      ),
+    [items],
   );
   const slideCount = sanitizedItems.length;
   const [activeIndex, setActiveIndex] = useState<number>(() => {
-    if (typeof startIndex === 'number' && slideCount > 0) {
-      const clamped = Math.max(0, Math.min(slideCount - 1, Math.floor(startIndex)));
+    if (typeof startIndex === "number" && slideCount > 0) {
+      const clamped = Math.max(
+        0,
+        Math.min(slideCount - 1, Math.floor(startIndex)),
+      );
       return clamped;
     }
     return 0;
@@ -133,8 +139,11 @@ export function SpotlightCarousel({
   }, [slideCount]);
 
   useEffect(() => {
-    if (typeof startIndex === 'number' && slideCount > 0) {
-      const clamped = Math.max(0, Math.min(slideCount - 1, Math.floor(startIndex)));
+    if (typeof startIndex === "number" && slideCount > 0) {
+      const clamped = Math.max(
+        0,
+        Math.min(slideCount - 1, Math.floor(startIndex)),
+      );
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveIndex(clamped);
     }
@@ -142,21 +151,23 @@ export function SpotlightCarousel({
 
   const sizeClasses = SIZE_CLASS_MAP[size];
   const gridTemplate =
-    layout === 'split' ? 'grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]' : 'flex flex-col gap-6';
-  const computedSlideClassName = cn('w-full flex-shrink-0', slideClassName);
+    layout === "split"
+      ? "grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+      : "flex flex-col gap-6";
+  const computedSlideClassName = cn("w-full flex-shrink-0", slideClassName);
   const baseItemClass = cn(
     gridTemplate,
-    'w-full h-full items-center',
-    layout === 'split' ? 'text-left' : 'text-center',
-    itemClassName
+    "w-full h-full items-center",
+    layout === "split" ? "text-left" : "text-center",
+    itemClassName,
   );
   const baseContentClass = cn(
-    'flex flex-col justify-center',
+    "flex flex-col justify-center",
     sizeClasses.spacing,
-    layout === 'split' ? 'lg:text-left text-center' : 'text-center',
-    contentClassName
+    layout === "split" ? "lg:text-left text-center" : "text-center",
+    contentClassName,
   );
-  const baseMediaClass = cn('flex items-center justify-center', mediaClassName);
+  const baseMediaClass = cn("flex items-center justify-center", mediaClassName);
 
   return (
     <Carousel
@@ -191,7 +202,9 @@ export function SpotlightCarousel({
             <div
               className={cn(
                 baseContentClass,
-                isActive ? 'animate-in fade-in slide-in-from-bottom-4 duration-400' : 'opacity-60 transition-opacity'
+                isActive
+                  ? "animate-in fade-in slide-in-from-bottom-4 duration-400"
+                  : "opacity-60 transition-opacity",
               )}
               aria-hidden={!isActive}
             >
@@ -200,8 +213,8 @@ export function SpotlightCarousel({
                   {item.badge ? (
                     <span
                       className={cn(
-                        'inline-flex rounded-full border border-aurora-400/30 px-4 py-2 font-display uppercase text-aurora-200',
-                        sizeClasses.badge
+                        "inline-flex rounded-full border border-aurora-400/30 px-4 py-2 font-display uppercase text-aurora-200",
+                        sizeClasses.badge,
                       )}
                     >
                       {item.badge}
@@ -210,8 +223,8 @@ export function SpotlightCarousel({
                   {item.icon ? (
                     <span
                       className={cn(
-                        'inline-flex items-center justify-center rounded-full border border-aurora-300/40 bg-gradient-to-br from-aurora-500/20 via-midnight-900/80 to-nebula-500/30 text-aurora-50 shadow-[0_18px_42px_rgba(45,212,191,0.28)]',
-                        sizeClasses.icon
+                        "inline-flex items-center justify-center rounded-full border border-aurora-300/40 bg-gradient-to-br from-aurora-500/20 via-midnight-900/80 to-nebula-500/30 text-aurora-50 shadow-[0_18px_42px_rgba(45,212,191,0.28)]",
+                        sizeClasses.icon,
                       )}
                     >
                       {item.icon}
@@ -222,27 +235,39 @@ export function SpotlightCarousel({
                 {item.eyebrow ? (
                   <p
                     className={cn(
-                      'flex items-center gap-2 uppercase text-aurora-200/80',
+                      "flex items-center gap-2 uppercase text-aurora-200/80",
                       sizeClasses.eyebrow,
-                      layout === 'split' ? 'justify-start' : 'justify-center'
+                      layout === "split" ? "justify-start" : "justify-center",
                     )}
                   >
                     <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-aurora-400/25 bg-midnight-700/70">
-                      <Sparkles className="h-3 w-3 text-nebula-200" aria-hidden="true" />
+                      <Sparkles
+                        className="h-3 w-3 text-nebula-200"
+                        aria-hidden="true"
+                      />
                     </span>
                     {item.eyebrow}
                   </p>
                 ) : null}
               </div>
 
-              <h3 className={cn('font-display uppercase text-aurora-100', sizeClasses.title)}>{item.title}</h3>
-              <p className={cn('text-shadow-200', sizeClasses.description)}>{item.description}</p>
+              <h3
+                className={cn(
+                  "font-display uppercase text-aurora-100",
+                  sizeClasses.title,
+                )}
+              >
+                {item.title}
+              </h3>
+              <p className={cn("text-shadow-200", sizeClasses.description)}>
+                {item.description}
+              </p>
               {item.accent ? (
                 <span
                   className={cn(
-                    'inline-flex items-center justify-center rounded-full border border-aurora-400/25 px-4 py-2 uppercase text-aurora-100/90',
+                    "inline-flex items-center justify-center rounded-full border border-aurora-400/25 px-4 py-2 uppercase text-aurora-100/90",
                     sizeClasses.accent,
-                    layout === 'split' ? 'self-start' : 'self-center'
+                    layout === "split" ? "self-start" : "self-center",
                   )}
                 >
                   {item.accent}

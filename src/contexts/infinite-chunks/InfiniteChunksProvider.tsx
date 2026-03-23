@@ -4,19 +4,36 @@
  */
 
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useReducer, useEffect, useCallback, useRef } from 'react';
-import type { InfiniteChunksContextValue, InfiniteChunksOptions } from './types';
-import { infiniteChunksReducer, createInitialState } from './reducer';
-import { loadChunk, getChunksToLoad, getMaxConcurrentLoads } from './services/chunkLoader';
+import React, {
+  createContext,
+  useReducer,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
+import type {
+  InfiniteChunksContextValue,
+  InfiniteChunksOptions,
+} from "./types";
+import { infiniteChunksReducer, createInitialState } from "./reducer";
+import {
+  loadChunk,
+  getChunksToLoad,
+  getMaxConcurrentLoads,
+} from "./services/chunkLoader";
 
-export const InfiniteChunksContext = createContext<InfiniteChunksContextValue | null>(null);
+export const InfiniteChunksContext =
+  createContext<InfiniteChunksContextValue | null>(null);
 
 interface InfiniteChunksProviderProps {
   children: React.ReactNode;
   options: InfiniteChunksOptions;
 }
 
-export function InfiniteChunksProvider({ children, options }: InfiniteChunksProviderProps) {
+export function InfiniteChunksProvider({
+  children,
+  options,
+}: InfiniteChunksProviderProps) {
   const {
     roomId,
     initialGrid,
@@ -29,7 +46,10 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
     token,
   } = options;
 
-  const [state, dispatch] = useReducer(infiniteChunksReducer, createInitialState());
+  const [state, dispatch] = useReducer(
+    infiniteChunksReducer,
+    createInitialState(),
+  );
 
   // Track chunks being loaded to prevent duplicate requests
   const loadingRequestsRef = useRef(new Set<string>());
@@ -39,19 +59,22 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
     if (!roomId) return;
 
     // Debug: Log which dependency changed
-    console.info('[InfiniteChunks] Initializing/Updating provider. Changed deps:', {
-      roomId,
-      initialGridLen: initialGrid.length,
-      chunkSize,
-      loadRadius,
-      enabled,
-      chunkGeneratorChanged: !!chunkGenerator,
-      // placementMapChanged: !!placementMap,
-      layer,
-    });
+    console.info(
+      "[InfiniteChunks] Initializing/Updating provider. Changed deps:",
+      {
+        roomId,
+        initialGridLen: initialGrid.length,
+        chunkSize,
+        loadRadius,
+        enabled,
+        chunkGeneratorChanged: !!chunkGenerator,
+        // placementMapChanged: !!placementMap,
+        layer,
+      },
+    );
 
     dispatch({
-      type: 'INITIALIZE',
+      type: "INITIALIZE",
       payload: {
         initialGrid,
         config: {
@@ -59,7 +82,7 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
           chunkSize,
           loadRadius,
           enabled,
-          mode: chunkGenerator ? 'generator' : 'backend',
+          mode: chunkGenerator ? "generator" : "backend",
           layer,
           token,
         },
@@ -69,18 +92,30 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
     });
 
     console.info(
-      `[InfiniteChunks] Initialized for room ${roomId} (mode: ${chunkGenerator ? 'generator' : 'backend'}, layer: ${layer})`
+      `[InfiniteChunks] Initialized for room ${roomId} (mode: ${chunkGenerator ? "generator" : "backend"}, layer: ${layer})`,
     );
-  }, [roomId, initialGrid, chunkSize, loadRadius, enabled, chunkGenerator, /* placementMap, */ layer, token]);
+  }, [
+    roomId,
+    initialGrid,
+    chunkSize,
+    loadRadius,
+    enabled,
+    chunkGenerator,
+    /* placementMap, */ layer,
+    token,
+  ]);
 
   // Internal chunk loading logic
   const checkChunkLoadingInternal = useCallback(
     async (playerX: number, playerY: number) => {
       if (!enabled || !state.initialized) {
-        console.info('[InfiniteChunks] Skipping checkChunkLoading: not enabled or initialized', {
-          enabled,
-          initialized: state.initialized,
-        });
+        console.info(
+          "[InfiniteChunks] Skipping checkChunkLoading: not enabled or initialized",
+          {
+            enabled,
+            initialized: state.initialized,
+          },
+        );
         return;
       }
 
@@ -90,11 +125,11 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
         state.config.chunkSize,
         state.config.loadRadius,
         new Set(state.chunks.keys()),
-        state.loading
+        state.loading,
       );
 
       console.info(
-        `[InfiniteChunks] checkChunkLoading(${playerX}, ${playerY}) found ${chunksToLoad.length} chunks to load`
+        `[InfiniteChunks] checkChunkLoading(${playerX}, ${playerY}) found ${chunksToLoad.length} chunks to load`,
       );
 
       if (chunksToLoad.length === 0) return;
@@ -112,7 +147,7 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
         loadingRequestsRef.current.add(chunkKey);
 
         dispatch({
-          type: 'CHUNK_LOAD_START',
+          type: "CHUNK_LOAD_START",
           payload: { chunkKey },
         });
 
@@ -121,14 +156,14 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
           .then((chunk) => {
             loadingRequestsRef.current.delete(chunkKey);
             dispatch({
-              type: 'CHUNK_LOAD_SUCCESS',
+              type: "CHUNK_LOAD_SUCCESS",
               payload: { chunk },
             });
           })
           .catch((error) => {
             loadingRequestsRef.current.delete(chunkKey);
             dispatch({
-              type: 'CHUNK_LOAD_ERROR',
+              type: "CHUNK_LOAD_ERROR",
               payload: { chunkKey, error },
             });
           });
@@ -141,15 +176,17 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
       state.chunks,
       state.loading,
       /* state.placementMap */
-    ]
+    ],
   );
 
   // Force initial chunk loading for empty grids
   useEffect(() => {
     if (state.initialized && initialGrid.length === 0) {
-      console.info('[InfiniteChunks] Initialized with empty grid. Triggering initial load in 100ms...');
+      console.info(
+        "[InfiniteChunks] Initialized with empty grid. Triggering initial load in 100ms...",
+      );
       setTimeout(() => {
-        console.info('[InfiniteChunks] Executing initial load timeout...');
+        console.info("[InfiniteChunks] Executing initial load timeout...");
         checkChunkLoadingInternal(0, 0);
       }, 100);
     }
@@ -166,20 +203,28 @@ export function InfiniteChunksProvider({ children, options }: InfiniteChunksProv
       state,
       dispatch,
     }),
-    [state]
+    [state],
   );
 
-  return <InfiniteChunksContext.Provider value={contextValue}>{children}</InfiniteChunksContext.Provider>;
+  return (
+    <InfiniteChunksContext.Provider value={contextValue}>
+      {children}
+    </InfiniteChunksContext.Provider>
+  );
 }
 
 // Hook to check chunk loading (used by actions)
 export function useCheckChunkLoading() {
   const context = React.useContext(InfiniteChunksContext);
   if (!context) {
-    throw new Error('useCheckChunkLoading must be used within InfiniteChunksProvider');
+    throw new Error(
+      "useCheckChunkLoading must be used within InfiniteChunksProvider",
+    );
   }
 
-  const checkChunkLoadingRef = useRef<((playerX: number, playerY: number) => void) | null>(null);
+  const checkChunkLoadingRef = useRef<
+    ((playerX: number, playerY: number) => void) | null
+  >(null);
 
   // This is a workaround to expose checkChunkLoading - will be refined in actions.ts
   return useCallback((playerX: number, playerY: number) => {

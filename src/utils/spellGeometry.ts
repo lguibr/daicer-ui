@@ -1,4 +1,4 @@
-import type { GridPosition } from '../types/spells';
+import type { GridPosition } from "../types/spells";
 
 const FEET_PER_SQUARE = 5;
 
@@ -9,7 +9,7 @@ function feetToSquares(feet: number): number {
 export function calculateConeArea(
   origin: GridPosition,
   direction: { x: number; y: number },
-  length: number
+  length: number,
 ): GridPosition[] {
   const affected: GridPosition[] = [];
   const squares = feetToSquares(length);
@@ -21,7 +21,11 @@ export function calculateConeArea(
   for (let distance = 1; distance <= squares; distance += 1) {
     const spread = Math.floor(distance / 2);
 
-    for (let perpendicular = -spread; perpendicular <= spread; perpendicular += 1) {
+    for (
+      let perpendicular = -spread;
+      perpendicular <= spread;
+      perpendicular += 1
+    ) {
       const offsetX = -dirY * perpendicular;
       const offsetY = dirX * perpendicular;
 
@@ -39,7 +43,7 @@ export function calculateLineArea(
   start: GridPosition,
   end: GridPosition,
   length: number,
-  width: number = FEET_PER_SQUARE
+  width: number = FEET_PER_SQUARE,
 ): GridPosition[] {
   const affected: GridPosition[] = [];
   const squares = feetToSquares(length);
@@ -52,7 +56,11 @@ export function calculateLineArea(
   const dirY = deltaY / magnitude;
 
   for (let distance = 0; distance <= squares; distance += 1) {
-    for (let w = -Math.floor(widthSquares / 2); w <= Math.floor(widthSquares / 2); w += 1) {
+    for (
+      let w = -Math.floor(widthSquares / 2);
+      w <= Math.floor(widthSquares / 2);
+      w += 1
+    ) {
       const offsetX = -dirY * w;
       const offsetY = dirX * w;
 
@@ -74,7 +82,7 @@ export function calculateSphereArea(
   center: GridPosition,
   radius: number,
   gridWidth: number,
-  gridHeight: number
+  gridHeight: number,
 ): GridPosition[] {
   const affected: GridPosition[] = [];
   const radiusSquares = feetToSquares(radius);
@@ -95,12 +103,16 @@ export function calculateCylinderArea(
   radius: number,
   _height: number,
   gridWidth: number,
-  gridHeight: number
+  gridHeight: number,
 ): GridPosition[] {
   return calculateSphereArea(center, radius, gridWidth, gridHeight);
 }
 
-export function calculateCubeArea(corner: GridPosition, size: number, centered: boolean = false): GridPosition[] {
+export function calculateCubeArea(
+  corner: GridPosition,
+  size: number,
+  centered: boolean = false,
+): GridPosition[] {
   const affected: GridPosition[] = [];
   const squares = feetToSquares(size);
 
@@ -120,12 +132,14 @@ export function calculateSelfAuraArea(
   casterPosition: GridPosition,
   radius: number,
   gridWidth: number,
-  gridHeight: number
+  gridHeight: number,
 ): GridPosition[] {
   return calculateSphereArea(casterPosition, radius, gridWidth, gridHeight);
 }
 
-export function calculateMeleeTouchArea(casterPosition: GridPosition): GridPosition[] {
+export function calculateMeleeTouchArea(
+  casterPosition: GridPosition,
+): GridPosition[] {
   const adjacentOffsets: GridPosition[] = [
     { x: 0, y: 0 },
     { x: 1, y: 0 },

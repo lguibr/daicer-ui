@@ -3,9 +3,9 @@
  * Offloads canvas rendering to prevent UI freezing
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { createMapWorker } from '../workers/WorkerManager';
-import type { WorkerManager } from '../workers/WorkerManager';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { createMapWorker } from "../workers/WorkerManager";
+import type { WorkerManager } from "../workers/WorkerManager";
 
 interface ChunkData {
   chunkX: number;
@@ -52,12 +52,12 @@ export function useMapWorker(options: UseMapWorkerOptions) {
       const success = worker.initialize({
         canvas,
         onMessage: (data) => {
-          if (data.type === 'render-complete' && onRenderComplete) {
+          if (data.type === "render-complete" && onRenderComplete) {
             onRenderComplete();
           }
         },
         onError: (error) => {
-          console.error('[useMapWorker] Worker error:', error);
+          console.error("[useMapWorker] Worker error:", error);
         },
       });
 
@@ -68,60 +68,68 @@ export function useMapWorker(options: UseMapWorkerOptions) {
 
         // Send initial size
         worker.postMessage({
-          type: 'resize',
+          type: "resize",
           width,
           height,
           offset: viewportRef.current,
           zoom: viewportRef.current.zoom,
         });
 
-        console.info('[useMapWorker] Worker initialized successfully');
+        console.info("[useMapWorker] Worker initialized successfully");
         return true;
       }
 
-      console.warn('[useMapWorker] Worker initialization failed, using main thread');
+      console.warn(
+        "[useMapWorker] Worker initialization failed, using main thread",
+      );
       return false;
     },
 
-    [width, height, onRenderComplete]
+    [width, height, onRenderComplete],
   );
 
   /**
    * Add a chunk to the worker for rendering
    */
-  const addChunk = useCallback((chunk: ChunkData, offset: { x: number; y: number }, zoom: number) => {
-    if (!workerRef.current || !isWorkerActiveRef.current) {
-      return false;
-    }
+  const addChunk = useCallback(
+    (chunk: ChunkData, offset: { x: number; y: number }, zoom: number) => {
+      if (!workerRef.current || !isWorkerActiveRef.current) {
+        return false;
+      }
 
-    workerRef.current.postMessage({
-      type: 'add-chunk',
-      chunk,
-      offset,
-      zoom,
-    });
+      workerRef.current.postMessage({
+        type: "add-chunk",
+        chunk,
+        offset,
+        zoom,
+      });
 
-    return true;
-  }, []);
+      return true;
+    },
+    [],
+  );
 
   /**
    * Update viewport (pan/zoom) and trigger re-render
    */
-  const updateViewport = useCallback((offset: { x: number; y: number }, zoom: number) => {
-    viewportRef.current = { ...offset, zoom };
+  const updateViewport = useCallback(
+    (offset: { x: number; y: number }, zoom: number) => {
+      viewportRef.current = { ...offset, zoom };
 
-    if (!workerRef.current || !isWorkerActiveRef.current) {
-      return false;
-    }
+      if (!workerRef.current || !isWorkerActiveRef.current) {
+        return false;
+      }
 
-    workerRef.current.postMessage({
-      type: 'viewport-change',
-      offset,
-      zoom,
-    });
+      workerRef.current.postMessage({
+        type: "viewport-change",
+        offset,
+        zoom,
+      });
 
-    return true;
-  }, []);
+      return true;
+    },
+    [],
+  );
 
   /**
    * Clear all chunks from cache
@@ -132,7 +140,7 @@ export function useMapWorker(options: UseMapWorkerOptions) {
     }
 
     workerRef.current.postMessage({
-      type: 'clear',
+      type: "clear",
     });
 
     return true;
@@ -147,7 +155,7 @@ export function useMapWorker(options: UseMapWorkerOptions) {
     }
 
     workerRef.current.postMessage({
-      type: 'resize',
+      type: "resize",
       width: w,
       height: h,
       offset: viewportRef.current,
@@ -167,10 +175,10 @@ export function useMapWorker(options: UseMapWorkerOptions) {
         workerRef.current = null;
         isWorkerActiveRef.current = false;
         setIsWorkerActive(false);
-        console.info('[useMapWorker] Worker terminated');
+        console.info("[useMapWorker] Worker terminated");
       }
     },
-    []
+    [],
   );
 
   return {

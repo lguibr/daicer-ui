@@ -4,9 +4,15 @@
  */
 
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from 'react';
-import { TacticalEngine } from '../state/TacticalEngine';
-import type { TacticalState } from '../types/tactical';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
+import { TacticalEngine } from "../state/TacticalEngine";
+import type { TacticalState } from "../types/tactical";
 
 interface TacticalContextValue {
   engine: TacticalEngine;
@@ -19,17 +25,27 @@ interface TacticalProviderProps {
   initialState: Partial<TacticalState>;
 }
 
-export function TacticalProvider({ children, initialState }: TacticalProviderProps) {
-  const engine = useMemo(() => new TacticalEngine(initialState), [initialState]);
+export function TacticalProvider({
+  children,
+  initialState,
+}: TacticalProviderProps) {
+  const engine = useMemo(
+    () => new TacticalEngine(initialState),
+    [initialState],
+  );
   const value = useMemo(() => ({ engine }), [engine]);
 
-  return <TacticalContext.Provider value={value}>{children}</TacticalContext.Provider>;
+  return (
+    <TacticalContext.Provider value={value}>
+      {children}
+    </TacticalContext.Provider>
+  );
 }
 
 function useTacticalContext(): TacticalContextValue {
   const context = useContext(TacticalContext);
   if (!context) {
-    throw new Error('useTacticalContext must be used within TacticalProvider');
+    throw new Error("useTacticalContext must be used within TacticalProvider");
   }
   return context;
 }
@@ -37,10 +53,13 @@ function useTacticalContext(): TacticalContextValue {
 /**
  * Hook to access tactical state with optional selector
  */
-export function useTacticalState<T = TacticalState>(selector?: (state: TacticalState) => T): T {
+export function useTacticalState<T = TacticalState>(
+  selector?: (state: TacticalState) => T,
+): T {
   const { engine } = useTacticalContext();
 
-  const subscribe = (callback: () => void) => engine.subscribe(() => callback());
+  const subscribe = (callback: () => void) =>
+    engine.subscribe(() => callback());
 
   const getSnapshot = () => engine.getState();
 
@@ -57,15 +76,18 @@ export function useTacticalActions() {
 
   return {
     // Core engine methods
-    applyPartial: (partial: Partial<TacticalState>, meta?: { reason?: string; eventId?: string | null }) =>
-      engine.apply(partial, meta),
+    applyPartial: (
+      partial: Partial<TacticalState>,
+      meta?: { reason?: string; eventId?: string | null },
+    ) => engine.apply(partial, meta),
 
     transaction: (mutator: (draft: any) => void) => engine.transaction(mutator),
 
     // Helper methods
-    addUnit: (unit: TacticalState['units'][0]) => engine.addUnit(unit),
+    addUnit: (unit: TacticalState["units"][0]) => engine.addUnit(unit),
     removeUnit: (unitId: string) => engine.removeUnit(unitId),
-    moveUnit: (unitId: string, position: { x: number; y: number }) => engine.moveUnit(unitId, position),
+    moveUnit: (unitId: string, position: { x: number; y: number }) =>
+      engine.moveUnit(unitId, position),
     submitCommand: (command: string) => engine.submitCommand(command),
     nextTurn: () => engine.nextTurn(),
   };

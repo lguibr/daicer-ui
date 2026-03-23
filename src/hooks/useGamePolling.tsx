@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import type { Room, Player, Message, Creature } from '@/types/contracts';
-import { useQuery } from '@apollo/client/react';
-import { GAME_VIEW_QUERY } from '../graphql/queries';
+import { useState, useEffect } from "react";
+import type { Room, Player, Message, Creature } from "@/types/contracts";
+import { useQuery } from "@apollo/client/react";
+import { GAME_VIEW_QUERY } from "../graphql/queries";
 
 interface SocketState {
   connected: boolean;
@@ -25,7 +25,10 @@ interface SocketState {
  * Replaces legacy Socket.IO streaming with Apollo polling.
  * Uses GameView for Server-Side Fog of War.
  */
-export default function useGamePolling(roomId?: string, initialMessages?: Message[]) {
+export default function useGamePolling(
+  roomId?: string,
+  initialMessages?: Message[],
+) {
   const [state, setState] = useState<SocketState>(() => ({
     connected: true, // Always "connected" in polling mode
     error: null,
@@ -48,7 +51,7 @@ export default function useGamePolling(roomId?: string, initialMessages?: Messag
     variables: { roomId },
     skip: !roomId,
     pollInterval: POLL_INTERVAL,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   // Handle Updates
@@ -80,7 +83,9 @@ export default function useGamePolling(roomId?: string, initialMessages?: Messag
           senderName: msg.senderName,
           senderType: msg.senderType,
           timestamp: Number(msg.timestamp),
-          type: (msg.senderType === 'dm' ? 'narration' : 'chat') as Message['type'],
+          type: (msg.senderType === "dm"
+            ? "narration"
+            : "chat") as Message["type"],
         }))
         .sort((a, b) => a.timestamp - b.timestamp);
 
@@ -89,7 +94,7 @@ export default function useGamePolling(roomId?: string, initialMessages?: Messag
       const mappedCreatures = (view.visibleEntities || []).map((s: any) => ({
         id: s.documentId,
         name: s.name,
-        type: s.type || 'monster',
+        type: s.type || "monster",
         position: s.position || { x: 0, y: 0, z: 0 },
         currentHp: s.currentHp,
         maxHp: s.maxHp,
@@ -115,7 +120,8 @@ export default function useGamePolling(roomId?: string, initialMessages?: Messag
   const socket = {
     connected: true,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    emit: (event: string, payload: any) => console.log('[Poller] Emit ignored:', event, payload),
+    emit: (event: string, payload: any) =>
+      console.log("[Poller] Emit ignored:", event, payload),
     on: () => {},
     off: () => {},
   };

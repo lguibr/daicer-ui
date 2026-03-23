@@ -4,8 +4,8 @@
  * Eliminates code duplication between TacticalArena and CombatGrid
  */
 
-import { useState } from 'react';
-import type { GridPosition } from '../../types/spells';
+import { useState } from "react";
+import type { GridPosition } from "../../types/spells";
 
 export interface GridCell {
   x: number;
@@ -24,7 +24,7 @@ export interface GridUnit {
   maxHp: number;
   armorClass?: number;
   position: GridPosition;
-  allegiance: 'player' | 'enemy' | 'neutral';
+  allegiance: "player" | "enemy" | "neutral";
   avatar?: string;
 }
 
@@ -63,20 +63,20 @@ export interface GridRendererProps {
  */
 const defaultTerrainRenderer = (cell: GridCell): TerrainStyle => {
   const baseClasses =
-    'relative border border-shadow-700 aspect-square flex items-center justify-center transition-colors';
+    "relative border border-shadow-700 aspect-square flex items-center justify-center transition-colors";
 
   if (cell.blocksMovement) {
     return {
       classes: `${baseClasses} bg-shadow-950 border-shadow-900 cursor-not-allowed`,
-      indicator: '▓',
-      tooltip: 'Blocked',
+      indicator: "▓",
+      tooltip: "Blocked",
     };
   }
 
   return {
     classes: `${baseClasses} bg-midnight-800 hover:bg-midnight-700 cursor-pointer`,
-    indicator: '',
-    tooltip: 'Open Ground',
+    indicator: "",
+    tooltip: "Open Ground",
   };
 };
 
@@ -100,14 +100,17 @@ export function GridRenderer({
 }: GridRendererProps) {
   const [hoveredCell, setHoveredCell] = useState<GridPosition | null>(null);
 
-  const getCellAt = (x: number, y: number): GridCell | undefined => cells.find((c) => c.x === x && c.y === y);
+  const getCellAt = (x: number, y: number): GridCell | undefined =>
+    cells.find((c) => c.x === x && c.y === y);
 
   const getUnitAt = (x: number, y: number): GridUnit | undefined =>
     units.find((u) => u.position.x === x && u.position.y === y);
 
-  const isHighlighted = (x: number, y: number): boolean => highlightedSquares.some((sq) => sq.x === x && sq.y === y);
+  const isHighlighted = (x: number, y: number): boolean =>
+    highlightedSquares.some((sq) => sq.x === x && sq.y === y);
 
-  const isReachable = (x: number, y: number): boolean => reachableSquares.some((sq) => sq.x === x && sq.y === y);
+  const isReachable = (x: number, y: number): boolean =>
+    reachableSquares.some((sq) => sq.x === x && sq.y === y);
 
   const handleSquareClick = (x: number, y: number) => {
     const unit = getUnitAt(x, y);
@@ -128,11 +131,14 @@ export function GridRenderer({
     const isActive = unit?.id === activeUnitId;
 
     const terrain = terrainRenderer(cell);
-    const hoverClasses = isHovered && !cell.blocksMovement ? 'ring-2 ring-aurora-400' : '';
-    const highlightClasses = highlighted ? 'bg-amber-600/30' : '';
-    const reachableClasses = reachable ? 'bg-aurora-900/20 border-aurora-600' : '';
-    const selectedClasses = isSelected ? 'ring-2 ring-aurora-500' : '';
-    const activeClasses = isActive ? 'ring-2 ring-green-400 animate-pulse' : '';
+    const hoverClasses =
+      isHovered && !cell.blocksMovement ? "ring-2 ring-aurora-400" : "";
+    const highlightClasses = highlighted ? "bg-amber-600/30" : "";
+    const reachableClasses = reachable
+      ? "bg-aurora-900/20 border-aurora-600"
+      : "";
+    const selectedClasses = isSelected ? "ring-2 ring-aurora-500" : "";
+    const activeClasses = isActive ? "ring-2 ring-green-400 animate-pulse" : "";
 
     return (
       <button
@@ -147,7 +153,9 @@ export function GridRenderer({
       >
         {/* Terrain indicator */}
         {!unit && terrain.indicator && (
-          <span className="text-shadow-500 text-xs absolute top-0.5 left-0.5">{terrain.indicator}</span>
+          <span className="text-shadow-500 text-xs absolute top-0.5 left-0.5">
+            {terrain.indicator}
+          </span>
         )}
 
         {/* Unit display */}
@@ -155,11 +163,11 @@ export function GridRenderer({
           <div className="flex flex-col items-center gap-0.5 relative z-10">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold shadow-lg ${
-                unit.allegiance === 'player'
-                  ? 'bg-aurora-500 text-white'
-                  : unit.allegiance === 'enemy'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-500 text-white'
+                unit.allegiance === "player"
+                  ? "bg-aurora-500 text-white"
+                  : unit.allegiance === "enemy"
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-500 text-white"
               }`}
             >
               {unit.avatar || unit.name.charAt(0).toUpperCase()}
@@ -197,11 +205,13 @@ export function GridRenderer({
         className="grid gap-0.5"
         style={{
           gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
-          maxWidth: '100%',
+          maxWidth: "100%",
           aspectRatio: `${width} / ${height}`,
         }}
       >
-        {Array.from({ length: height }, (_, y) => Array.from({ length: width }, (__, x) => renderSquare(x, y)))}
+        {Array.from({ length: height }, (_, y) =>
+          Array.from({ length: width }, (__, x) => renderSquare(x, y)),
+        )}
       </div>
 
       {/* Hovered cell info */}
@@ -211,16 +221,24 @@ export function GridRenderer({
             Position: ({hoveredCell.x}, {hoveredCell.y})
           </div>
           {getCellAt(hoveredCell.x, hoveredCell.y) && (
-            <div>{terrainRenderer(getCellAt(hoveredCell.x, hoveredCell.y)!).tooltip}</div>
+            <div>
+              {
+                terrainRenderer(getCellAt(hoveredCell.x, hoveredCell.y)!)
+                  .tooltip
+              }
+            </div>
           )}
           {getUnitAt(hoveredCell.x, hoveredCell.y) && (
             <div className="mt-1 pt-1 border-t border-shadow-700">
               <strong>{getUnitAt(hoveredCell.x, hoveredCell.y)!.name}</strong>
               <div>
-                HP: {getUnitAt(hoveredCell.x, hoveredCell.y)!.hp}/{getUnitAt(hoveredCell.x, hoveredCell.y)!.maxHp}
+                HP: {getUnitAt(hoveredCell.x, hoveredCell.y)!.hp}/
+                {getUnitAt(hoveredCell.x, hoveredCell.y)!.maxHp}
               </div>
               {getUnitAt(hoveredCell.x, hoveredCell.y)!.armorClass && (
-                <div>AC: {getUnitAt(hoveredCell.x, hoveredCell.y)!.armorClass}</div>
+                <div>
+                  AC: {getUnitAt(hoveredCell.x, hoveredCell.y)!.armorClass}
+                </div>
               )}
             </div>
           )}

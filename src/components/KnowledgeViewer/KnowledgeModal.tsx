@@ -1,8 +1,15 @@
-import { useState, useEffect } from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { X, BookOpen, Database, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { MarkdownRenderer } from './MarkdownRenderer';
+import { useState, useEffect } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import {
+  X,
+  BookOpen,
+  Database,
+  Tag,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 // Note: importing UnifiedSearchResult type from backend might be hard if not shared.
 // We define a local interface matching it.
 
@@ -14,7 +21,7 @@ export interface SearchResult {
   sourceId: number;
   sourceName: string;
   tags: string[];
-  kind?: 'entity' | 'knowledge';
+  kind?: "entity" | "knowledge";
   content?: string; // Full content to be fetched
 }
 
@@ -24,8 +31,12 @@ interface KnowledgeModalProps {
   result: SearchResult | null;
 }
 
-export function KnowledgeModal({ isOpen, onClose, result }: KnowledgeModalProps) {
-  const [content, setContent] = useState<string>('');
+export function KnowledgeModal({
+  isOpen,
+  onClose,
+  result,
+}: KnowledgeModalProps) {
+  const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   // In a real app, 'result' might only have excerpt. We need to fetch full content.
@@ -38,7 +49,7 @@ export function KnowledgeModal({ isOpen, onClose, result }: KnowledgeModalProps)
   if (result?.id !== lastResultId) {
     setLastResultId(result?.id ?? null);
     setLoading(true);
-    setContent('');
+    setContent("");
   }
 
   useEffect(() => {
@@ -48,7 +59,9 @@ export function KnowledgeModal({ isOpen, onClose, result }: KnowledgeModalProps)
         // Fallback to excerpt for demo
         setContent(
           result.content ||
-            (result.excerpt ? `${result.excerpt}\n\n*(Full content would be fetched here...)*` : 'Loading...')
+            (result.excerpt
+              ? `${result.excerpt}\n\n*(Full content would be fetched here...)*`
+              : "Loading..."),
         );
         setLoading(false);
       }, 300);
@@ -71,20 +84,32 @@ export function KnowledgeModal({ isOpen, onClose, result }: KnowledgeModalProps)
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    'p-2 rounded-lg',
-                    result.kind === 'entity' ? 'bg-indigo-500/20 text-indigo-400' : 'bg-emerald-500/20 text-emerald-400'
+                    "p-2 rounded-lg",
+                    result.kind === "entity"
+                      ? "bg-indigo-500/20 text-indigo-400"
+                      : "bg-emerald-500/20 text-emerald-400",
                   )}
                 >
-                  {result.kind === 'entity' ? <Database className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
+                  {result.kind === "entity" ? (
+                    <Database className="w-5 h-5" />
+                  ) : (
+                    <BookOpen className="w-5 h-5" />
+                  )}
                 </div>
                 <div>
-                  <Dialog.Title className="text-xl font-bold text-white tracking-tight">{result.title}</Dialog.Title>
+                  <Dialog.Title className="text-xl font-bold text-white tracking-tight">
+                    {result.title}
+                  </Dialog.Title>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs font-medium text-white/40 uppercase tracking-wider">
-                      {result.kind === 'entity' ? 'Game Entity' : 'Knowledge Source'}
+                      {result.kind === "entity"
+                        ? "Game Entity"
+                        : "Knowledge Source"}
                     </span>
-                    {result.kind === 'entity' && (
-                      <span className="text-xs text-white/20">• ID: {result.sourceName}</span>
+                    {result.kind === "entity" && (
+                      <span className="text-xs text-white/20">
+                        • ID: {result.sourceName}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -130,17 +155,32 @@ export function KnowledgeModal({ isOpen, onClose, result }: KnowledgeModalProps)
           <div className="flex items-center justify-between p-4 border-t border-white/10 bg-white/5 text-sm text-white/40">
             <div className="flex items-center gap-2">
               <span>Matched Score:</span>
-              <span className={cn('font-bold', (result.score || 0) > 0.8 ? 'text-emerald-400' : 'text-amber-400')}>
+              <span
+                className={cn(
+                  "font-bold",
+                  (result.score || 0) > 0.8
+                    ? "text-emerald-400"
+                    : "text-amber-400",
+                )}
+              >
                 {Math.round((result.score || 0) * 100)}%
               </span>
             </div>
 
             <div className="flex items-center gap-2">
-              <button type="button" className="p-2 hover:bg-white/10 rounded-lg disabled:opacity-30" disabled>
+              <button
+                type="button"
+                className="p-2 hover:bg-white/10 rounded-lg disabled:opacity-30"
+                disabled
+              >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <span>Page 1 of 1</span>
-              <button type="button" className="p-2 hover:bg-white/10 rounded-lg disabled:opacity-30" disabled>
+              <button
+                type="button"
+                className="p-2 hover:bg-white/10 rounded-lg disabled:opacity-30"
+                disabled
+              >
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>

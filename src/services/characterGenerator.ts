@@ -1,9 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { faker } from '@faker-js/faker';
-import type { CharacterFormState } from '../components/room/character-creation/types';
+import { faker } from "@faker-js/faker";
+import type { CharacterFormState } from "../components/room/character-creation/types";
 
 // Helper to get random item from array
-const random = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)] as T;
+const random = <T>(arr: T[]): T =>
+  arr[Math.floor(Math.random() * arr.length)] as T;
 
 // Standard Array for stats: 15, 14, 13, 12, 10, 8
 // We will shuffle assigning them based on class priority
@@ -15,23 +16,29 @@ interface ClassStatPriority {
 }
 
 const CLASS_PRIORITIES: Record<string, ClassStatPriority> = {
-  Barbarian: { primary: ['Strength'], secondary: ['Constitution', 'Dexterity'] },
-  Bard: { primary: ['Charisma'], secondary: ['Dexterity', 'Constitution'] },
-  Cleric: { primary: ['Wisdom'], secondary: ['Strength', 'Constitution'] },
-  Druid: { primary: ['Wisdom'], secondary: ['Constitution', 'Dexterity'] },
-  Fighter: { primary: ['Strength', 'Dexterity'], secondary: ['Constitution'] },
-  Monk: { primary: ['Dexterity', 'Wisdom'], secondary: ['Constitution'] },
-  Paladin: { primary: ['Strength', 'Charisma'], secondary: ['Constitution'] },
-  Ranger: { primary: ['Dexterity', 'Wisdom'], secondary: ['Constitution'] },
-  Rogue: { primary: ['Dexterity'], secondary: ['Intelligence', 'Charisma'] },
-  Sorcerer: { primary: ['Charisma'], secondary: ['Constitution'] },
-  Warlock: { primary: ['Charisma'], secondary: ['Constitution', 'Dexterity'] },
-  Wizard: { primary: ['Intelligence'], secondary: ['Constitution', 'Dexterity'] },
+  Barbarian: {
+    primary: ["Strength"],
+    secondary: ["Constitution", "Dexterity"],
+  },
+  Bard: { primary: ["Charisma"], secondary: ["Dexterity", "Constitution"] },
+  Cleric: { primary: ["Wisdom"], secondary: ["Strength", "Constitution"] },
+  Druid: { primary: ["Wisdom"], secondary: ["Constitution", "Dexterity"] },
+  Fighter: { primary: ["Strength", "Dexterity"], secondary: ["Constitution"] },
+  Monk: { primary: ["Dexterity", "Wisdom"], secondary: ["Constitution"] },
+  Paladin: { primary: ["Strength", "Charisma"], secondary: ["Constitution"] },
+  Ranger: { primary: ["Dexterity", "Wisdom"], secondary: ["Constitution"] },
+  Rogue: { primary: ["Dexterity"], secondary: ["Intelligence", "Charisma"] },
+  Sorcerer: { primary: ["Charisma"], secondary: ["Constitution"] },
+  Warlock: { primary: ["Charisma"], secondary: ["Constitution", "Dexterity"] },
+  Wizard: {
+    primary: ["Intelligence"],
+    secondary: ["Constitution", "Dexterity"],
+  },
 };
 
 export const generateRandomCharacter = (
   characterClass: string,
-  race: string = 'Human'
+  race: string = "Human",
 ): Partial<CharacterFormState> => {
   const gender = faker.person.sexType();
   const firstName = faker.person.firstName(gender);
@@ -54,7 +61,10 @@ export const generateRandomCharacter = (
   const bonds = faker.lorem.sentence();
   const flaws = faker.hacker.phrase(); // playful choice
 
-  const priority = CLASS_PRIORITIES[characterClass] || { primary: ['Strength'], secondary: ['Constitution'] };
+  const priority = CLASS_PRIORITIES[characterClass] || {
+    primary: ["Strength"],
+    secondary: ["Constitution"],
+  };
 
   // Re-do attributes clean
   const cleanAttributes: Record<string, number> = {};
@@ -88,7 +98,14 @@ export const generateRandomCharacter = (
   });
 
   // Rest
-  ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'].forEach((stat) => {
+  [
+    "Strength",
+    "Dexterity",
+    "Constitution",
+    "Intelligence",
+    "Wisdom",
+    "Charisma",
+  ].forEach((stat) => {
     if (!assigned.has(stat)) {
       const idx = Math.floor(Math.random() * pool.length);
       cleanAttributes[stat] = pool[idx]!;
@@ -103,26 +120,26 @@ export const generateRandomCharacter = (
     characterClass,
     background: backstory,
     alignment: random([
-      'Lawful Good',
-      'Neutral Good',
-      'Chaotic Good',
-      'Lawful Neutral',
-      'True Neutral',
-      'Chaotic Neutral',
-      'Lawful Evil',
-      'Neutral Evil',
-      'Chaotic Evil',
+      "Lawful Good",
+      "Neutral Good",
+      "Chaotic Good",
+      "Lawful Neutral",
+      "True Neutral",
+      "Chaotic Neutral",
+      "Lawful Evil",
+      "Neutral Evil",
+      "Chaotic Evil",
     ]),
     attributes: cleanAttributes,
     appearance: {
       age: age.toString(),
       height: `${heightFt}'${heightIn}"`,
       weight: `${weight} lbs`,
-      gender: gender === 'male' ? 'Male' : 'Female',
-      eyes: random(['Blue', 'Green', 'Brown', 'Hazel', 'Grey']),
-      skin: random(['Fair', 'Tan', 'Dark', 'Olive', 'Light']),
-      hair: random(['Black', 'Brown', 'Blonde', 'Red', 'White', 'Grey']),
-      description: `A ${heightFt}'${heightIn}" ${race} with ${random(['rugged', 'scared', 'beautiful', 'plain'])} features.`,
+      gender: gender === "male" ? "Male" : "Female",
+      eyes: random(["Blue", "Green", "Brown", "Hazel", "Grey"]),
+      skin: random(["Fair", "Tan", "Dark", "Olive", "Light"]),
+      hair: random(["Black", "Brown", "Blonde", "Red", "White", "Grey"]),
+      description: `A ${heightFt}'${heightIn}" ${race} with ${random(["rugged", "scared", "beautiful", "plain"])} features.`,
     },
     personality: {
       traits,

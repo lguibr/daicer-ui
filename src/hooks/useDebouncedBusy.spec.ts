@@ -1,7 +1,7 @@
-import { renderHook, act } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { renderHook, act } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { useDebouncedBusy } from './useDebouncedBusy';
+import { useDebouncedBusy } from "./useDebouncedBusy";
 
 const advance = (ms: number) => {
   act(() => {
@@ -9,7 +9,7 @@ const advance = (ms: number) => {
   });
 };
 
-describe('useDebouncedBusy', () => {
+describe("useDebouncedBusy", () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -19,10 +19,13 @@ describe('useDebouncedBusy', () => {
     vi.useRealTimers();
   });
 
-  it('delays entry until the configured delay elapses', () => {
-    const { result, rerender } = renderHook(({ active }) => useDebouncedBusy(active, { enterDelayMs: 200 }), {
-      initialProps: { active: false },
-    });
+  it("delays entry until the configured delay elapses", () => {
+    const { result, rerender } = renderHook(
+      ({ active }) => useDebouncedBusy(active, { enterDelayMs: 200 }),
+      {
+        initialProps: { active: false },
+      },
+    );
 
     expect(result.current.isBusy).toBe(false);
 
@@ -36,10 +39,13 @@ describe('useDebouncedBusy', () => {
     expect(result.current.isBusy).toBe(true);
   });
 
-  it('cancels the pending show if the source settles before the delay', () => {
-    const { result, rerender } = renderHook(({ active }) => useDebouncedBusy(active, { enterDelayMs: 150 }), {
-      initialProps: { active: false },
-    });
+  it("cancels the pending show if the source settles before the delay", () => {
+    const { result, rerender } = renderHook(
+      ({ active }) => useDebouncedBusy(active, { enterDelayMs: 150 }),
+      {
+        initialProps: { active: false },
+      },
+    );
 
     rerender({ active: true });
     rerender({ active: false });
@@ -48,10 +54,11 @@ describe('useDebouncedBusy', () => {
     expect(result.current.isBusy).toBe(false);
   });
 
-  it('keeps the busy flag for the minimum visible duration even after settle', () => {
+  it("keeps the busy flag for the minimum visible duration even after settle", () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useDebouncedBusy(active, { enterDelayMs: 50, minVisibleMs: 300 }),
-      { initialProps: { active: false } }
+      ({ active }) =>
+        useDebouncedBusy(active, { enterDelayMs: 50, minVisibleMs: 300 }),
+      { initialProps: { active: false } },
     );
 
     rerender({ active: true });
@@ -69,10 +76,13 @@ describe('useDebouncedBusy', () => {
     expect(result.current.isBusy).toBe(false);
   });
 
-  it('uses the default minimum visible time when not provided', () => {
-    const { result, rerender } = renderHook(({ active }) => useDebouncedBusy(active), {
-      initialProps: { active: false },
-    });
+  it("uses the default minimum visible time when not provided", () => {
+    const { result, rerender } = renderHook(
+      ({ active }) => useDebouncedBusy(active),
+      {
+        initialProps: { active: false },
+      },
+    );
 
     rerender({ active: true });
     advance(200);

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import type { Table as DataTable } from '@tanstack/react-table';
+import type { ReactNode } from "react";
+import type { Table as DataTable } from "@tanstack/react-table";
 
-import { useI18n } from '../../../i18n';
-import Input from '../input';
-import { DataTableViewOptions } from './DataTableViewOptions';
+import { useI18n } from "../../../i18n";
+import Input from "../input";
+import { DataTableViewOptions } from "./DataTableViewOptions";
 
 interface DataTableToolbarProps<TData> {
   table: DataTable<TData>;
@@ -14,17 +14,17 @@ interface DataTableToolbarProps<TData> {
   children?: ReactNode;
 }
 
-const DEFAULT_FILTER_COLUMN = 'name';
+const DEFAULT_FILTER_COLUMN = "name";
 
 export function DataTableToolbar<TData>({
   table,
   filterColumnId = DEFAULT_FILTER_COLUMN,
-  placeholderKey = 'ui.dataTable.filter.placeholder',
+  placeholderKey = "ui.dataTable.filter.placeholder",
   children,
 }: DataTableToolbarProps<TData>) {
   const { t } = useI18n();
   const filterColumn = table.getColumn(filterColumnId);
-  const currentFilterValue = (filterColumn?.getFilterValue() as string) ?? '';
+  const currentFilterValue = (filterColumn?.getFilterValue() as string) ?? "";
 
   return (
     <div className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center">

@@ -9,14 +9,14 @@ export interface GridPosition {
 }
 
 export type TerrainType =
-  | 'floor'
-  | 'wall'
-  | 'difficult'
-  | 'cover_half'
-  | 'cover_full'
-  | 'hazard'
-  | 'elevation_high'
-  | 'elevation_low';
+  | "floor"
+  | "wall"
+  | "difficult"
+  | "cover_half"
+  | "cover_full"
+  | "hazard"
+  | "elevation_high"
+  | "elevation_low";
 
 export interface GridCell {
   x: number;
@@ -52,7 +52,7 @@ export interface TacticalUnit {
   position: GridPosition;
   facing?: number;
 
-  allegiance: 'player' | 'enemy' | 'neutral';
+  allegiance: "player" | "enemy" | "neutral";
   isPlayer: boolean;
 
   avatar?: string;
@@ -85,7 +85,7 @@ export interface TacticalState {
 
   encounterId: string;
   arenaId: string;
-  phase: 'setup' | 'initiative' | 'in_progress' | 'complete';
+  phase: "setup" | "initiative" | "in_progress" | "complete";
 
   arena: any | null;
   units: TacticalUnit[];
@@ -101,7 +101,7 @@ export interface TacticalState {
   actionPlan: any | null;
 
   isCombatOver: boolean;
-  winner: 'player' | 'enemy' | 'neutral' | null;
+  winner: "player" | "enemy" | "neutral" | null;
 
   log: any[];
 

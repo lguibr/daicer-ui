@@ -2,4 +2,4 @@
  * Room components barrel export
  */
 
-export { default as CharacterCreation } from './CharacterCreation';
+export { default as CharacterCreation } from "./CharacterCreation";

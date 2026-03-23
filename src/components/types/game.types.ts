@@ -2,7 +2,7 @@
  * Game component type definitions
  */
 
-import type { Message, Player } from '@/types/contracts';
+import type { Message, Player } from "@/types/contracts";
 
 /**
  * Chat area props

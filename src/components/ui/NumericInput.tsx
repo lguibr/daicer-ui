@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Minus, Plus } from 'lucide-react';
-import cn from '@/lib/utils';
-import { Button } from './button';
+import { useState, useEffect } from "react";
+import { Minus, Plus } from "lucide-react";
+import cn from "@/lib/utils";
+import { Button } from "./button";
 
 interface NumericInputProps {
   value: number;
@@ -58,8 +58,10 @@ export function NumericInput({
   };
 
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
-      {label && <label className="text-sm font-semibold text-shadow-100">{label}</label>}
+    <div className={cn("flex flex-col gap-2", className)}>
+      {label && (
+        <label className="text-sm font-semibold text-shadow-100">{label}</label>
+      )}
       <div className="flex items-center gap-2">
         {showButtons && (
           <Button
@@ -83,10 +85,10 @@ export function NumericInput({
           step={step}
           disabled={disabled}
           className={cn(
-            'h-10 w-20 rounded-lg border border-midnight-600 bg-midnight-800/60 text-center text-lg font-semibold text-shadow-50 transition-colors',
-            'focus:border-aurora-400 focus:outline-none focus:ring-2 focus:ring-aurora-400/20',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
+            "h-10 w-20 rounded-lg border border-midnight-600 bg-midnight-800/60 text-center text-lg font-semibold text-shadow-50 transition-colors",
+            "focus:border-aurora-400 focus:outline-none focus:ring-2 focus:ring-aurora-400/20",
+            "disabled:opacity-50 disabled:cursor-not-allowed",
+            "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
           )}
         />
         {showButtons && (

@@ -6,7 +6,7 @@
 // Stub document object for texture creation
 const document = {
   createElement: (tag: string): any => {
-    if (tag === 'canvas') {
+    if (tag === "canvas") {
       // Return OffscreenCanvas in worker context
       return new OffscreenCanvas(1, 1);
     }
@@ -19,7 +19,8 @@ const document = {
     };
   },
 
-  createElementNS: (_ns: string, tag: string): any => document.createElement(tag),
+  createElementNS: (_ns: string, tag: string): any =>
+    document.createElement(tag),
   body: {
     style: {},
     appendChild: () => {},
@@ -34,7 +35,8 @@ const window = {
   innerHeight: 600,
   addEventListener: () => {},
   removeEventListener: () => {},
-  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(callback, 16), // ~60 FPS
+  requestAnimationFrame: (callback: FrameRequestCallback) =>
+    setTimeout(callback, 16), // ~60 FPS
   cancelAnimationFrame: (id: number) => {
     clearTimeout(id);
   },
@@ -49,7 +51,7 @@ declare global {
 }
 
 // Inject into worker global scope
-if (typeof self !== 'undefined') {
+if (typeof self !== "undefined") {
   (self as any).document = document;
 
   (self as any).window = window;

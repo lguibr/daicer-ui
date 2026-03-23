@@ -1,4 +1,4 @@
-import type { Tile } from '@/types/contracts';
+import type { Tile } from "@/types/contracts";
 
 export {};
 

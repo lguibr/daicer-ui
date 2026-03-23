@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { Check } from 'lucide-react';
-import cn from '@/lib/utils';
-import { Button } from './button';
+import { createContext, useContext, useState, ReactNode } from "react";
+import { Check } from "lucide-react";
+import cn from "@/lib/utils";
+import { Button } from "./button";
 
 interface Step {
   id: string;
@@ -21,12 +21,14 @@ interface FormWizardContextValue {
   setCanGoNext: (can: boolean) => void;
 }
 
-const FormWizardContext = createContext<FormWizardContextValue | undefined>(undefined);
+const FormWizardContext = createContext<FormWizardContextValue | undefined>(
+  undefined,
+);
 
 function useFormWizard() {
   const context = useContext(FormWizardContext);
   if (!context) {
-    throw new Error('useFormWizard must be used within a FormWizard component');
+    throw new Error("useFormWizard must be used within a FormWizard component");
   }
   return context;
 }
@@ -39,7 +41,13 @@ interface FormWizardProps {
   className?: string;
 }
 
-function FormWizard({ steps, children, onComplete, onStepChange, className }: FormWizardProps) {
+function FormWizard({
+  steps,
+  children,
+  onComplete,
+  onStepChange,
+  className,
+}: FormWizardProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [canGoNext, setCanGoNext] = useState(true);
 
@@ -78,7 +86,7 @@ function FormWizard({ steps, children, onComplete, onStepChange, className }: Fo
 
   return (
     <FormWizardContext.Provider value={value}>
-      <div className={cn('flex flex-col gap-8', className)}>{children}</div>
+      <div className={cn("flex flex-col gap-8", className)}>{children}</div>
     </FormWizardContext.Provider>
   );
 }
@@ -92,8 +100,11 @@ function FormWizardSteps({ className }: FormWizardStepsProps) {
   const currentStep = steps[currentStepIndex];
 
   return (
-    <div className={cn('space-y-3', className)}>
-      <nav aria-label="Progress" className="relative overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]">
+    <div className={cn("space-y-3", className)}>
+      <nav
+        aria-label="Progress"
+        className="relative overflow-x-auto pb-2 [-webkit-overflow-scrolling:touch]"
+      >
         {/* fade masks for scroll edges */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-background via-background/60 to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background via-background/60 to-transparent" />
@@ -111,19 +122,20 @@ function FormWizardSteps({ className }: FormWizardStepsProps) {
                   onClick={() => (isFuture ? null : goToStep(index))}
                   disabled={isFuture}
                   className={cn(
-                    'group flex items-center gap-3 transition-all',
-                    (isComplete || isCurrent) && 'cursor-pointer',
-                    isFuture && 'cursor-not-allowed opacity-40'
+                    "group flex items-center gap-3 transition-all",
+                    (isComplete || isCurrent) && "cursor-pointer",
+                    isFuture && "cursor-not-allowed opacity-40",
                   )}
                 >
                   <div
                     className={cn(
-                      'flex h-11 w-11 items-center justify-center rounded-full border-[3px] text-sm font-semibold transition-all md:h-12 md:w-12',
+                      "flex h-11 w-11 items-center justify-center rounded-full border-[3px] text-sm font-semibold transition-all md:h-12 md:w-12",
                       isComplete &&
-                        'border-aurora-400 bg-aurora-500/20 text-aurora-100 group-hover:scale-110 group-hover:border-aurora-300 group-hover:bg-aurora-500/30',
+                        "border-aurora-400 bg-aurora-500/20 text-aurora-100 group-hover:scale-110 group-hover:border-aurora-300 group-hover:bg-aurora-500/30",
                       isCurrent &&
-                        'border-aurora-300 bg-aurora-500/30 text-aurora-50 ring-4 ring-aurora-500/20 shadow-[0_8px_24px_rgba(29,143,242,0.25)]',
-                      isFuture && 'border-midnight-600 bg-midnight-700/70 text-shadow-400'
+                        "border-aurora-300 bg-aurora-500/30 text-aurora-50 ring-4 ring-aurora-500/20 shadow-[0_8px_24px_rgba(29,143,242,0.25)]",
+                      isFuture &&
+                        "border-midnight-600 bg-midnight-700/70 text-shadow-400",
                     )}
                   >
                     {isComplete ? <Check className="h-5 w-5" /> : index + 1}
@@ -132,10 +144,11 @@ function FormWizardSteps({ className }: FormWizardStepsProps) {
                   <div className="hidden flex-col items-start md:flex">
                     <span
                       className={cn(
-                        'font-display text-sm font-bold uppercase tracking-wider transition-colors',
-                        isComplete && 'text-shadow-200 group-hover:text-aurora-200',
-                        isCurrent && 'text-aurora-100 text-shadow-glow',
-                        isFuture && 'text-shadow-500'
+                        "font-display text-sm font-bold uppercase tracking-wider transition-colors",
+                        isComplete &&
+                          "text-shadow-200 group-hover:text-aurora-200",
+                        isCurrent && "text-aurora-100 text-shadow-glow",
+                        isFuture && "text-shadow-500",
                       )}
                     >
                       {step.title}
@@ -150,8 +163,10 @@ function FormWizardSteps({ className }: FormWizardStepsProps) {
                 {index < steps.length - 1 && (
                   <div
                     className={cn(
-                      'mx-1 h-px w-6 transition-colors md:mx-2 md:h-0.5 md:w-10',
-                      index < currentStepIndex ? 'bg-aurora-400/50' : 'bg-midnight-700'
+                      "mx-1 h-px w-6 transition-colors md:mx-2 md:h-0.5 md:w-10",
+                      index < currentStepIndex
+                        ? "bg-aurora-400/50"
+                        : "bg-midnight-700",
                     )}
                   />
                 )}
@@ -164,9 +179,13 @@ function FormWizardSteps({ className }: FormWizardStepsProps) {
       {/* mobile current step label */}
       {currentStep && (
         <div className="px-2 text-center md:hidden">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-shadow-400">{currentStep.title}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-shadow-400">
+            {currentStep.title}
+          </p>
           {currentStep.description && (
-            <p className="mt-1 text-[11px] leading-snug text-shadow-500">{currentStep.description}</p>
+            <p className="mt-1 text-[11px] leading-snug text-shadow-500">
+              {currentStep.description}
+            </p>
           )}
         </div>
       )}
@@ -180,7 +199,7 @@ interface FormWizardContentProps {
 }
 
 function FormWizardContent({ children, className }: FormWizardContentProps) {
-  return <div className={cn('flex-1', className)}>{children}</div>;
+  return <div className={cn("flex-1", className)}>{children}</div>;
 }
 
 interface FormWizardStepProps {
@@ -212,15 +231,16 @@ interface FormWizardActionsProps {
 
 function FormWizardActions({
   className,
-  previousLabel = 'Previous',
-  nextLabel = 'Next',
-  completeLabel = 'Complete',
+  previousLabel = "Previous",
+  nextLabel = "Next",
+  completeLabel = "Complete",
   showPrevious = true,
   showNext = true,
   onNext,
   onPrevious,
 }: FormWizardActionsProps) {
-  const { nextStep, previousStep, isFirstStep, isLastStep, canGoNext } = useFormWizard();
+  const { nextStep, previousStep, isFirstStep, isLastStep, canGoNext } =
+    useFormWizard();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleNext = async () => {
@@ -247,8 +267,8 @@ function FormWizardActions({
   return (
     <div
       className={cn(
-        'mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4',
-        className
+        "mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4",
+        className,
       )}
     >
       {showPrevious && (
@@ -272,14 +292,25 @@ function FormWizardActions({
           disabled={!canGoNext || isProcessing}
           className="w-full min-w-[140px] border border-aurora-400/50 bg-gradient-to-br from-aurora-600 to-aurora-700 font-bold uppercase tracking-wider text-white shadow-[0_0_20px_rgba(211,143,31,0.3)] hover:from-aurora-500 hover:to-aurora-600 hover:shadow-[0_0_30px_rgba(211,143,31,0.5)] sm:w-auto transition-all transform hover:-translate-y-0.5"
           size="lg"
-          data-testid={isLastStep ? 'wizard-complete-btn' : 'wizard-next-btn'}
+          data-testid={isLastStep ? "wizard-complete-btn" : "wizard-next-btn"}
         >
-          {isProcessing ? 'Processing...' : isLastStep ? completeLabel : nextLabel}
+          {isProcessing
+            ? "Processing..."
+            : isLastStep
+              ? completeLabel
+              : nextLabel}
         </Button>
       )}
     </div>
   );
 }
 
-export { FormWizard, FormWizardSteps, FormWizardContent, FormWizardStep, FormWizardActions, useFormWizard };
+export {
+  FormWizard,
+  FormWizardSteps,
+  FormWizardContent,
+  FormWizardStep,
+  FormWizardActions,
+  useFormWizard,
+};
 export type { Step };

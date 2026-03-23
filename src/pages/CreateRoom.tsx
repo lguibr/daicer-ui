@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import type { WorldSettings } from '@/types/contracts';
-import PrivateLayout from '../components/layout/PrivateLayout';
-import { createRoom } from '../services/api';
+import type { WorldSettings } from "@/types/contracts";
+import PrivateLayout from "../components/layout/PrivateLayout";
+import { createRoom } from "../services/api";
 
-import { CampaignWizard } from '../features/create-room/components/CampaignWizard';
+import { CampaignWizard } from "../features/create-room/components/CampaignWizard";
 
 export default function CreateRoomPage() {
   const navigate = useNavigate();
@@ -28,7 +28,10 @@ export default function CreateRoomPage() {
       });
     } catch (err) {
       console.error(err);
-      console.error('Failed to create room:', err instanceof Error ? err.message : 'Unknown error');
+      console.error(
+        "Failed to create room:",
+        err instanceof Error ? err.message : "Unknown error",
+      );
       setLoading(false);
     }
   };
@@ -36,7 +39,11 @@ export default function CreateRoomPage() {
   return (
     <PrivateLayout showNavbar>
       <div className="relative mx-auto min-h-screen max-w-6xl px-6 py-16 sm:px-10 lg:px-12">
-        <CampaignWizard onSubmit={handleSubmit} onCancel={() => navigate('/')} isSubmitting={loading} />
+        <CampaignWizard
+          onSubmit={handleSubmit}
+          onCancel={() => navigate("/")}
+          isSubmitting={loading}
+        />
       </div>
     </PrivateLayout>
   );

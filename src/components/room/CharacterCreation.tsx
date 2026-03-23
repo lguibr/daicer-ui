@@ -1,19 +1,19 @@
-import { useMemo, useEffect } from 'react';
-import { Shield } from 'lucide-react';
-import clsx from 'clsx';
-import { LoadingOverlay } from '../ui/LoadingOverlay';
-import Textarea from '../ui/textarea';
-import { DiceLoader } from '../ui/dice-loader';
-import { useI18n } from '../../i18n';
-import type { CharacterCreationProps } from './character-creation/types';
-import { AttributesSection } from './character-creation/AttributesSection';
-import { AppearanceSection } from './character-creation/AppearanceSection';
-import { PersonalitySection } from './character-creation/PersonalitySection';
-import { AvatarSection } from './character-creation/AvatarSection';
+import { useMemo, useEffect } from "react";
+import { Shield } from "lucide-react";
+import clsx from "clsx";
+import { LoadingOverlay } from "../ui/LoadingOverlay";
+import Textarea from "../ui/textarea";
+import { DiceLoader } from "../ui/dice-loader";
+import { useI18n } from "../../i18n";
+import type { CharacterCreationProps } from "./character-creation/types";
+import { AttributesSection } from "./character-creation/AttributesSection";
+import { AppearanceSection } from "./character-creation/AppearanceSection";
+import { PersonalitySection } from "./character-creation/PersonalitySection";
+import { AvatarSection } from "./character-creation/AvatarSection";
 
-import { useCharacterCreationController } from './character-creation/hooks/useCharacterCreationController';
-import { RaceSelectionGrid } from './character-creation/helpers';
-import { EpicClassSelectionGrid } from './character-creation/EpicClassCards';
+import { useCharacterCreationController } from "./character-creation/hooks/useCharacterCreationController";
+import { RaceSelectionGrid } from "./character-creation/helpers";
+import { EpicClassSelectionGrid } from "./character-creation/EpicClassCards";
 import {
   FormWizard,
   FormWizardContent,
@@ -21,17 +21,22 @@ import {
   FormWizardActions,
   type Step,
   useFormWizard,
-} from '../ui/FormWizard';
+} from "../ui/FormWizard";
 
-function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useCharacterCreationController> }) {
+function CharacterCreationWizardContent({
+  ctrl,
+}: {
+  ctrl: ReturnType<typeof useCharacterCreationController>;
+}) {
   // const { t } = useI18n();
   const { formData, avatarGen, ui, actions, data, previewImages } = ctrl;
-  const { currentStepIndex, steps, nextStep, previousStep, setCanGoNext } = useFormWizard();
+  const { currentStepIndex, steps, nextStep, previousStep, setCanGoNext } =
+    useFormWizard();
   const currentStep = steps[currentStepIndex];
 
   // Validation Effect
   useEffect(() => {
-    if (currentStep?.id === 'attributes') {
+    if (currentStep?.id === "attributes") {
       setCanGoNext(ui.pointsRemaining === 0);
     } else {
       setCanGoNext(true);
@@ -50,7 +55,7 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
           </div>
         )}
 
-        {currentStep.id === 'class' && (
+        {currentStep.id === "class" && (
           <FormWizardStep step="class">
             <EpicClassSelectionGrid
               options={(data.classes || []).map((c) => ({
@@ -59,13 +64,13 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
                 description: c.description,
               }))}
               selectedClass={formData.characterClass}
-              onSelect={(id) => actions.updateField('characterClass', id)}
+              onSelect={(id) => actions.updateField("characterClass", id)}
               loading={ui.loading}
             />
           </FormWizardStep>
         )}
 
-        {currentStep.id === 'race' && (
+        {currentStep.id === "race" && (
           <FormWizardStep step="race">
             <RaceSelectionGrid
               options={(data.races || []).map((r) => ({
@@ -76,13 +81,13 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
                 speed: undefined, // speed is likely undefined on Race type from controller anyway, or I can map it if available
               }))}
               selectedRace={formData.race}
-              onSelect={(id) => actions.updateField('race', id)}
+              onSelect={(id) => actions.updateField("race", id)}
               loading={ui.loading}
             />
           </FormWizardStep>
         )}
 
-        {currentStep.id === 'attributes' && (
+        {currentStep.id === "attributes" && (
           <FormWizardStep step="attributes">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               <div className="lg:col-span-8">
@@ -95,7 +100,9 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
               </div>
               <div className="lg:col-span-4 space-y-6">
                 <div className="glass-panel p-6 rounded-xl space-y-4">
-                  <h3 className="text-lg font-cinzel font-bold text-primary-gold">Point Buy</h3>
+                  <h3 className="text-lg font-cinzel font-bold text-primary-gold">
+                    Point Buy
+                  </h3>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground">Budget</span>
                     <span className="font-mono">{ui.attributeBudget}</span>
@@ -104,8 +111,10 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
                     <span className="text-muted-foreground">Remaining</span>
                     <span
                       className={clsx(
-                        'font-mono font-bold',
-                        ui.pointsRemaining < 0 ? 'text-destructive' : 'text-emerald-400'
+                        "font-mono font-bold",
+                        ui.pointsRemaining < 0
+                          ? "text-destructive"
+                          : "text-emerald-400",
                       )}
                     >
                       {ui.pointsRemaining}
@@ -117,27 +126,42 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
           </FormWizardStep>
         )}
 
-        {currentStep.id === 'details' && (
+        {currentStep.id === "details" && (
           <FormWizardStep step="details">
             <div className="space-y-8">
               <AppearanceSection
                 name={formData.name}
-                onNameChange={(val) => actions.updateField('name', val)}
+                onNameChange={(val) => actions.updateField("name", val)}
                 appearance={formData.appearance}
-                onAppearanceChange={(k, v) => actions.updateField('appearance', { ...formData.appearance, [k]: v })}
+                onAppearanceChange={(k, v) =>
+                  actions.updateField("appearance", {
+                    ...formData.appearance,
+                    [k]: v,
+                  })
+                }
               />
               <PersonalitySection
                 personality={formData.personality}
-                onPersonalityChange={(k, v) => actions.updateField('personality', { ...formData.personality, [k]: v })}
+                onPersonalityChange={(k, v) =>
+                  actions.updateField("personality", {
+                    ...formData.personality,
+                    [k]: v,
+                  })
+                }
               />
               <div className="glass-panel p-6 rounded-xl space-y-4">
-                <label htmlFor="backstory" className="text-sm font-medium text-muted-foreground">
+                <label
+                  htmlFor="backstory"
+                  className="text-sm font-medium text-muted-foreground"
+                >
                   Backstory
                 </label>
                 <Textarea
                   id="backstory"
                   value={formData.backstory}
-                  onChange={(e) => actions.updateField('backstory', e.target.value)}
+                  onChange={(e) =>
+                    actions.updateField("backstory", e.target.value)
+                  }
                   className="min-h-[150px]"
                   placeholder="Tell us about your hero..."
                 />
@@ -146,7 +170,7 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
           </FormWizardStep>
         )}
 
-        {currentStep.id === 'review' && (
+        {currentStep.id === "review" && (
           <FormWizardStep step="review">
             <AvatarSection
               images={previewImages}
@@ -162,7 +186,7 @@ function CharacterCreationWizardContent({ ctrl }: { ctrl: ReturnType<typeof useC
 
       <FormWizardActions
         onNext={() => {
-          if (currentStep.id === 'review') actions.handleCreateCharacter();
+          if (currentStep.id === "review") actions.handleCreateCharacter();
           else nextStep();
         }}
         onPrevious={previousStep}
@@ -179,33 +203,33 @@ export default function CharacterCreation(props: CharacterCreationProps) {
   const wizardSteps = useMemo<Step[]>(
     () => [
       {
-        id: 'class',
-        title: t('characterCreation.steps.class.title'),
-        description: t('characterCreation.steps.class.description'),
+        id: "class",
+        title: t("characterCreation.steps.class.title"),
+        description: t("characterCreation.steps.class.description"),
       },
       {
-        id: 'race',
-        title: t('characterCreation.steps.race.title'),
-        description: t('characterCreation.steps.race.description'),
+        id: "race",
+        title: t("characterCreation.steps.race.title"),
+        description: t("characterCreation.steps.race.description"),
       },
       {
-        id: 'attributes',
-        title: t('characterCreation.steps.attributes.title'),
-        description: t('characterCreation.steps.attributes.description'),
+        id: "attributes",
+        title: t("characterCreation.steps.attributes.title"),
+        description: t("characterCreation.steps.attributes.description"),
       },
 
       {
-        id: 'details',
-        title: t('characterCreation.steps.details.title'),
-        description: t('characterCreation.steps.details.description'),
+        id: "details",
+        title: t("characterCreation.steps.details.title"),
+        description: t("characterCreation.steps.details.description"),
       },
       {
-        id: 'review',
-        title: t('characterCreation.steps.review.title'),
-        description: t('characterCreation.steps.review.description'),
+        id: "review",
+        title: t("characterCreation.steps.review.title"),
+        description: t("characterCreation.steps.review.description"),
       },
     ],
-    [t]
+    [t],
   );
 
   if (ui.loading && !formData.characterClass)
@@ -217,9 +241,13 @@ export default function CharacterCreation(props: CharacterCreationProps) {
 
   return (
     <div className="w-full h-full flex flex-col bg-background text-foreground relative overflow-hidden">
-      {ui.loading && <LoadingOverlay message={t('common.processing')} />}
+      {ui.loading && <LoadingOverlay message={t("common.processing")} />}
 
-      <FormWizard steps={wizardSteps} className="w-full h-full" onComplete={actions.handleCreateCharacter}>
+      <FormWizard
+        steps={wizardSteps}
+        className="w-full h-full"
+        onComplete={actions.handleCreateCharacter}
+      >
         <CharacterCreationWizardContent ctrl={ctrl} />
       </FormWizard>
     </div>

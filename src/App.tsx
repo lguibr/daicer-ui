@@ -1,26 +1,26 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import LandingPage from './pages/Landing';
-import GoogleAuthCallback from './pages/GoogleAuthCallback';
-import GameRoomPage from './pages/GameRoom';
-import RoomsPage from './pages/Rooms';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import LandingPage from "./pages/Landing";
+import GoogleAuthCallback from "./pages/GoogleAuthCallback";
+import GameRoomPage from "./pages/GameRoom";
+import RoomsPage from "./pages/Rooms";
 
-import { RulesExplorerLayout } from './pages/RulesExplorer/Layout';
-import { RulesDashboard } from './pages/RulesExplorer/RulesDashboard';
-import { RulesCategoryPage } from './pages/RulesExplorer/RulesCategoryPage';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import DebugPage from './pages/DebugPage';
-import DebugRoomPage from './pages/DebugRoomPage';
-import NotFoundPage from './pages/NotFound';
-import ErrorPage from './pages/Error';
-import { NavigateToPlay } from './components/common/NavigateToPlay';
+import { RulesExplorerLayout } from "./pages/RulesExplorer/Layout";
+import { RulesDashboard } from "./pages/RulesExplorer/RulesDashboard";
+import { RulesCategoryPage } from "./pages/RulesExplorer/RulesCategoryPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import DebugPage from "./pages/DebugPage";
+import DebugRoomPage from "./pages/DebugRoomPage";
+import NotFoundPage from "./pages/NotFound";
+import ErrorPage from "./pages/Error";
+import { NavigateToPlay } from "./components/common/NavigateToPlay";
 
-import AuthEventHandler from './components/auth/AuthEventHandler';
+import AuthEventHandler from "./components/auth/AuthEventHandler";
 
 // New Create Room Flow
-import CreateRoomLayout from './features/create-room/layout/CreateRoomLayout';
-import DmSettingsPage from './features/create-room/pages/DmSettingsPage';
-import WorldConfigPage from './features/create-room/pages/WorldConfigPage';
-import CharacterSelectionPage from './features/create-room/pages/CharacterSelectionPage';
+import CreateRoomLayout from "./features/create-room/layout/CreateRoomLayout";
+import DmSettingsPage from "./features/create-room/pages/DmSettingsPage";
+import WorldConfigPage from "./features/create-room/pages/WorldConfigPage";
+import CharacterSelectionPage from "./features/create-room/pages/CharacterSelectionPage";
 
 export default function App() {
   return (
@@ -28,7 +28,10 @@ export default function App() {
       <AuthEventHandler />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/connect/google/redirect" element={<GoogleAuthCallback />} />
+        <Route
+          path="/connect/google/redirect"
+          element={<GoogleAuthCallback />}
+        />
 
         {/* Create Room Wizard Flow */}
         <Route
@@ -42,7 +45,10 @@ export default function App() {
           <Route index element={<Navigate to="dm-settings" replace />} />
           <Route path="dm-settings" element={<DmSettingsPage />} />
           <Route path="world-generation" element={<WorldConfigPage />} />
-          <Route path="character-selection/:roomId" element={<CharacterSelectionPage />} />
+          <Route
+            path="character-selection/:roomId"
+            element={<CharacterSelectionPage />}
+          />
         </Route>
 
         <Route

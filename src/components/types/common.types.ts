@@ -3,7 +3,7 @@
  * @description Common component prop types shared across all components
  */
 
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Base props that most components accept

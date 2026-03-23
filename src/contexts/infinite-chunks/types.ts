@@ -3,9 +3,9 @@
  * All interfaces and types for the infinite chunk system
  */
 
-import type { ChunkDTO, Tile } from '@/types/contracts';
+import type { ChunkDTO, Tile } from "@/types/contracts";
 
-export type TerrainChunk = Omit<ChunkDTO, 'tiles' | 'biomes'> & {
+export type TerrainChunk = Omit<ChunkDTO, "tiles" | "biomes"> & {
   tiles: Tile[][];
   biomes: string[][];
   structures: unknown[];
@@ -25,8 +25,18 @@ export type TerrainChunk = Omit<ChunkDTO, 'tiles' | 'biomes'> & {
 };
 
 export interface ChunkGenerator {
-  generateChunk: (worldX: number, worldY: number, width: number, height: number) => string[][];
-  generateChunk3D?: (worldX: number, worldY: number, width: number, height: number) => string[][][];
+  generateChunk: (
+    worldX: number,
+    worldY: number,
+    width: number,
+    height: number,
+  ) => string[][];
+  generateChunk3D?: (
+    worldX: number,
+    worldY: number,
+    width: number,
+    height: number,
+  ) => string[][][];
 }
 
 // ============================================================================
@@ -38,7 +48,7 @@ export interface InfiniteChunksConfig {
   chunkSize: number;
   loadRadius: number;
   enabled: boolean;
-  mode: 'backend' | 'generator'; // Backend API or client-side generator
+  mode: "backend" | "generator"; // Backend API or client-side generator
   layer: number; // Z-level
   token?: string; // Auth token for backend API
 }
@@ -83,7 +93,7 @@ export interface InfiniteChunksState {
 
 export type InfiniteChunksAction =
   | {
-      type: 'INITIALIZE';
+      type: "INITIALIZE";
       payload: {
         initialGrid: (Tile | null)[][];
         config: InfiniteChunksConfig;
@@ -91,12 +101,12 @@ export type InfiniteChunksAction =
         // placementMap?: GlobalPlacementMap | null;
       };
     }
-  | { type: 'CHUNK_LOAD_START'; payload: { chunkKey: string } }
-  | { type: 'CHUNK_LOAD_SUCCESS'; payload: { chunk: TerrainChunk } }
-  | { type: 'CHUNK_LOAD_ERROR'; payload: { chunkKey: string; error: Error } }
-  | { type: 'SET_LOAD_RADIUS'; payload: { radius: number } }
-  | { type: 'SET_LAYER'; payload: { layer: number } }
-  | { type: 'RESET' };
+  | { type: "CHUNK_LOAD_START"; payload: { chunkKey: string } }
+  | { type: "CHUNK_LOAD_SUCCESS"; payload: { chunk: TerrainChunk } }
+  | { type: "CHUNK_LOAD_ERROR"; payload: { chunkKey: string; error: Error } }
+  | { type: "SET_LOAD_RADIUS"; payload: { radius: number } }
+  | { type: "SET_LAYER"; payload: { layer: number } }
+  | { type: "RESET" };
 
 // ============================================================================
 // Context

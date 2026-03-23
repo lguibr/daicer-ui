@@ -2,9 +2,13 @@
  * CreateRoom Wizard Types
  */
 
-import type { WorldSettings } from '@/types/contracts';
+import type { WorldSettings } from "@/types/contracts";
 
-export type WizardGroup = 'dmAndScope' | 'worldConfig' | 'characters' | 'inRoomConfig';
+export type WizardGroup =
+  | "dmAndScope"
+  | "worldConfig"
+  | "characters"
+  | "inRoomConfig";
 
 export interface SectionOutputs {
   section1: {
@@ -29,7 +33,7 @@ export interface WorldGenSettings {
   structureDensity: number;
   structureTypes: string[];
   enableRoads: boolean;
-  roadQuality: 'trail' | 'path' | 'road' | 'highway' | 'medium';
+  roadQuality: "trail" | "path" | "road" | "highway" | "medium";
   terrainComplexity: number;
 }
 

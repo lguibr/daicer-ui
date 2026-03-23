@@ -1,4 +1,8 @@
-import type { GridPosition, SpellPreviewSnapshot, SpellResolutionSnapshot } from './spells';
+import type {
+  GridPosition,
+  SpellPreviewSnapshot,
+  SpellResolutionSnapshot,
+} from "./spells";
 
 export type Position = GridPosition;
 
@@ -70,7 +74,7 @@ export interface CombatState {
   turnOrder: string[];
   round: number;
   isCombatOver: boolean;
-  winner: 'player' | 'enemy' | null;
+  winner: "player" | "enemy" | null;
   log: CombatLogEntry[];
   diceHistory: DiceRollResult[];
   gridWidth: number;

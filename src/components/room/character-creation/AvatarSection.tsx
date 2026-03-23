@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign, react/button-has-type */
-import { useState } from 'react';
-import { Upload, Camera, Wand2, RefreshCw } from 'lucide-react';
-import clsx from 'clsx';
-import type { AvatarPreviewResponse } from '../../../types/assets';
-import { Button } from '../../ui/button';
-import { DiceLoader } from '../../ui/dice-loader';
-import { useI18n } from '../../../i18n';
-import { previewPlaceholders } from './constants';
-import { WebcamCapture } from '../../ui/WebcamCapture';
+import { useState } from "react";
+import { Upload, Camera, Wand2, RefreshCw } from "lucide-react";
+import clsx from "clsx";
+import type { AvatarPreviewResponse } from "../../../types/assets";
+import { Button } from "../../ui/button";
+import { DiceLoader } from "../../ui/dice-loader";
+import { useI18n } from "../../../i18n";
+import { previewPlaceholders } from "./constants";
+import { WebcamCapture } from "../../ui/WebcamCapture";
 
 export type AvatarSlot = keyof AvatarPreviewResponse;
 
@@ -24,7 +24,9 @@ interface AvatarSectionProps {
   onGenerateAll: () => void; // Changed to single action for all avatars
 
   // Dimensions for placeholders
-  placeholderDimensions: Partial<Record<AvatarSlot, { width: number; height: number }>>;
+  placeholderDimensions: Partial<
+    Record<AvatarSlot, { width: number; height: number }>
+  >;
 }
 
 export function AvatarSection({
@@ -37,15 +39,20 @@ export function AvatarSection({
 }: AvatarSectionProps) {
   const { t } = useI18n();
   const [webcamOpen, setWebcamOpen] = useState(false);
-  const [activeWebcamSlot, setActiveWebcamSlot] = useState<AvatarSlot | null>(null);
+  const [activeWebcamSlot, setActiveWebcamSlot] = useState<AvatarSlot | null>(
+    null,
+  );
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, slot: AvatarSlot) => {
+  const handleFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    slot: AvatarSlot,
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       onUpload(slot, file);
     }
     // Reset input
-    event.target.value = '';
+    event.target.value = "";
   };
 
   const openWebcam = (slot: AvatarSlot) => {
@@ -59,11 +66,15 @@ export function AvatarSection({
     }
   };
 
-  const renderSlot = (slot: AvatarSlot, labelKey: string, placeholderSrc: string) => {
+  const renderSlot = (
+    slot: AvatarSlot,
+    labelKey: string,
+    placeholderSrc: string,
+  ) => {
     const image = images[slot];
     const isLoading = loading[slot];
     const translatedLabel = t(labelKey);
-    const isFullBody = slot === 'fullBody';
+    const isFullBody = slot === "fullBody";
     const placeholderDims = placeholderDimensions[slot];
 
     return (
@@ -72,24 +83,35 @@ export function AvatarSection({
           {/* Image Area */}
           <div
             className={clsx(
-              'relative flex items-center justify-center min-h-[320px] w-full',
-              isFullBody ? 'bg-midnight-900' : 'bg-midnight-800/40'
+              "relative flex items-center justify-center min-h-[320px] w-full",
+              isFullBody ? "bg-midnight-900" : "bg-midnight-800/40",
             )}
             style={
               !image && placeholderDims
-                ? { aspectRatio: `${placeholderDims.width} / ${placeholderDims.height}` }
+                ? {
+                    aspectRatio: `${placeholderDims.width} / ${placeholderDims.height}`,
+                  }
                 : undefined
             }
           >
             {isLoading ? (
               <div className="absolute inset-0 flex items-center justify-center bg-midnight-900/50 backdrop-blur-sm z-10">
-                <DiceLoader size="medium" diceCount={slot === 'portrait' ? 1 : slot === 'upperBody' ? 2 : 3} />
+                <DiceLoader
+                  size="medium"
+                  diceCount={
+                    slot === "portrait" ? 1 : slot === "upperBody" ? 2 : 3
+                  }
+                />
               </div>
             ) : null}
 
             {/* Show either generated image or placeholder */}
             {image ? (
-              <img src={image} alt={translatedLabel} className="w-full h-auto object-contain max-h-[500px]" />
+              <img
+                src={image}
+                alt={translatedLabel}
+                className="w-full h-auto object-contain max-h-[500px]"
+              />
             ) : (
               <img
                 src={placeholderSrc}
@@ -133,7 +155,9 @@ export function AvatarSection({
         </div>
 
         <div className="text-center">
-          <h3 className="text-sm font-semibold text-aurora-200 uppercase tracking-wider">{translatedLabel}</h3>
+          <h3 className="text-sm font-semibold text-aurora-200 uppercase tracking-wider">
+            {translatedLabel}
+          </h3>
         </div>
       </div>
     );
@@ -145,7 +169,9 @@ export function AvatarSection({
   return (
     <>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {previewPlaceholders.map(({ key, labelKey, src }) => renderSlot(key as AvatarSlot, labelKey, src))}
+        {previewPlaceholders.map(({ key, labelKey, src }) =>
+          renderSlot(key as AvatarSlot, labelKey, src),
+        )}
       </div>
 
       {/* Single Generate All Button */}
@@ -176,7 +202,11 @@ export function AvatarSection({
         </Button>
       </div>
 
-      <WebcamCapture open={webcamOpen} onOpenChange={setWebcamOpen} onCapture={handleWebcamCapture} />
+      <WebcamCapture
+        open={webcamOpen}
+        onOpenChange={setWebcamOpen}
+        onCapture={handleWebcamCapture}
+      />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const GENERATE_TERRAIN_MUTATION = gql`
   mutation GenerateTerrain($roomId: ID!) {

@@ -1,14 +1,14 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { TimeControls } from '../TimeControls';
-import { useTimeFrame } from '../../../../contexts/TimeFrameContext';
+import { render, screen, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { TimeControls } from "../TimeControls";
+import { useTimeFrame } from "../../../../contexts/TimeFrameContext";
 
 // Mock context
-vi.mock('../../../../contexts/TimeFrameContext', () => ({
+vi.mock("../../../../contexts/TimeFrameContext", () => ({
   useTimeFrame: vi.fn(),
 }));
 
-describe('TimeControls', () => {
+describe("TimeControls", () => {
   const mockGoLive = vi.fn();
   const mockJumpToFrame = vi.fn();
 
@@ -23,75 +23,75 @@ describe('TimeControls', () => {
     });
   });
 
-  it('should render no history state', () => {
+  it("should render no history state", () => {
     (useTimeFrame as any).mockReturnValue({
       history: [],
     });
     render(<TimeControls />);
-    expect(screen.getByText('No History Available')).toBeInTheDocument();
+    expect(screen.getByText("No History Available")).toBeInTheDocument();
   });
 
-  it('should render LIVE state correctly', () => {
+  it("should render LIVE state correctly", () => {
     (useTimeFrame as any).mockReturnValue({
-      history: [{ id: '1' }, { id: '2' }],
+      history: [{ id: "1" }, { id: "2" }],
       isLive: true,
-      currentTimeFrame: { id: '2', turnNumber: 2 },
+      currentTimeFrame: { id: "2", turnNumber: 2 },
       goLive: mockGoLive,
     });
     render(<TimeControls />);
 
-    expect(screen.getByText('LIVE')).toBeInTheDocument();
+    expect(screen.getByText("LIVE")).toBeInTheDocument();
 
     // START and NOW labels
-    expect(screen.getByText('START')).toBeInTheDocument();
-    expect(screen.getByText('NOW (2)')).toBeInTheDocument(); // total 2
+    expect(screen.getByText("START")).toBeInTheDocument();
+    expect(screen.getByText("NOW (2)")).toBeInTheDocument(); // total 2
 
     // Slider value should be max
-    const slider = screen.getByRole('slider');
-    expect(slider).toHaveValue('1'); // length - 1
+    const slider = screen.getByRole("slider");
+    expect(slider).toHaveValue("1"); // length - 1
 
     // GO LIVE disabled
-    const btn = screen.getByText('GO LIVE');
+    const btn = screen.getByText("GO LIVE");
     expect(btn).toBeDisabled();
   });
 
-  it('should render HIST historical state', () => {
+  it("should render HIST historical state", () => {
     (useTimeFrame as any).mockReturnValue({
       history: [
-        { id: '1', turnNumber: 1 },
-        { id: '2', turnNumber: 2 },
+        { id: "1", turnNumber: 1 },
+        { id: "2", turnNumber: 2 },
       ],
       isLive: false,
-      currentTimeFrame: { id: '1', turnNumber: 1 },
+      currentTimeFrame: { id: "1", turnNumber: 1 },
       goLive: mockGoLive,
       jumpToFrame: mockJumpToFrame,
     });
     render(<TimeControls />);
 
-    expect(screen.getByText('HIST: T1')).toBeInTheDocument();
+    expect(screen.getByText("HIST: T1")).toBeInTheDocument();
 
     // Slider value should be 0
-    const slider = screen.getByRole('slider');
-    expect(slider).toHaveValue('0');
+    const slider = screen.getByRole("slider");
+    expect(slider).toHaveValue("0");
 
     // GO LIVE enabled
-    const btn = screen.getByText('GO LIVE');
+    const btn = screen.getByText("GO LIVE");
     expect(btn).not.toBeDisabled();
   });
 
-  it('should call goLive when clicking button', () => {
+  it("should call goLive when clicking button", () => {
     (useTimeFrame as any).mockReturnValue({
-      history: [{ id: '1' }],
+      history: [{ id: "1" }],
       isLive: false,
       goLive: mockGoLive,
     });
     render(<TimeControls />);
-    fireEvent.click(screen.getByText('GO LIVE'));
+    fireEvent.click(screen.getByText("GO LIVE"));
     expect(mockGoLive).toHaveBeenCalled();
   });
 
-  it('should scrub slider to jump frame', () => {
-    const history = [{ id: 'f1' }, { id: 'f2' }, { id: 'f3' }];
+  it("should scrub slider to jump frame", () => {
+    const history = [{ id: "f1" }, { id: "f2" }, { id: "f3" }];
     (useTimeFrame as any).mockReturnValue({
       history,
       isLive: false,
@@ -100,14 +100,14 @@ describe('TimeControls', () => {
     });
     render(<TimeControls />);
 
-    const slider = screen.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '1' } });
+    const slider = screen.getByRole("slider");
+    fireEvent.change(slider, { target: { value: "1" } });
 
-    expect(mockJumpToFrame).toHaveBeenCalledWith('f2');
+    expect(mockJumpToFrame).toHaveBeenCalledWith("f2");
   });
 
-  it('should go live if scrubbed to end', () => {
-    const history = [{ id: 'f1' }, { id: 'f2' }];
+  it("should go live if scrubbed to end", () => {
+    const history = [{ id: "f1" }, { id: "f2" }];
     (useTimeFrame as any).mockReturnValue({
       history,
       isLive: false,
@@ -117,35 +117,35 @@ describe('TimeControls', () => {
     });
     render(<TimeControls />);
 
-    const slider = screen.getByRole('slider');
-    fireEvent.change(slider, { target: { value: '1' } }); // Max index
+    const slider = screen.getByRole("slider");
+    fireEvent.change(slider, { target: { value: "1" } }); // Max index
 
     expect(mockGoLive).toHaveBeenCalled();
   });
 
-  it('should handle documentId vs id', () => {
+  it("should handle documentId vs id", () => {
     // Test the logic: (f as any).documentId === ... || f.id === ...
     const history = [
-      { documentId: 'doc1', id: 'legacy1' },
-      { documentId: 'doc2', id: 'legacy2' },
+      { documentId: "doc1", id: "legacy1" },
+      { documentId: "doc2", id: "legacy2" },
     ];
     (useTimeFrame as any).mockReturnValue({
       history,
       isLive: false,
-      currentTimeFrame: { documentId: 'doc2' },
+      currentTimeFrame: { documentId: "doc2" },
       jumpToFrame: mockJumpToFrame,
     });
     render(<TimeControls />);
 
-    const slider = screen.getByRole('slider');
-    expect(slider).toHaveValue('1'); // Index 1
+    const slider = screen.getByRole("slider");
+    expect(slider).toHaveValue("1"); // Index 1
   });
 
-  it('should handle undefined history gracefully', () => {
+  it("should handle undefined history gracefully", () => {
     (useTimeFrame as any).mockReturnValue({
       history: undefined,
     });
     render(<TimeControls />);
-    expect(screen.getByText('No History Available')).toBeInTheDocument();
+    expect(screen.getByText("No History Available")).toBeInTheDocument();
   });
 });

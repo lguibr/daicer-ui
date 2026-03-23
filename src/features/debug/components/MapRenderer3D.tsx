@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useRef, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrthographicCamera, CameraControls } from '@react-three/drei';
-import * as THREE from 'three';
-import type { Coordinates, Chunk, ZLevel } from '../utils/types';
+import React, { useRef, useMemo } from "react";
+import { Canvas } from "@react-three/fiber";
+import { OrthographicCamera, CameraControls } from "@react-three/drei";
+import * as THREE from "three";
+import type { Coordinates, Chunk, ZLevel } from "../utils/types";
 
 interface ChunkProvider {
   getChunk: (x: number, y: number) => Chunk | null | undefined;
@@ -78,7 +78,7 @@ const MapScene = ({
   onTileClick,
   onTileHover,
   entities,
-}: Omit<MapRenderer3DProps, 'width' | 'height' | 'onCenterChange'>) => {
+}: Omit<MapRenderer3DProps, "width" | "height" | "onCenterChange">) => {
   // ... existing implementation ...
   const groupRef = useRef<THREE.Group>(null);
 
@@ -90,36 +90,36 @@ const MapScene = ({
   // Helper to get color
   const getBlockColor = (block: string, moisture: number = 0): string => {
     switch (block) {
-      case 'water':
-        return '#1e3a8a';
-      case 'grass':
-        return moisture > 0.6 ? '#14532d' : '#15803d'; // Darker if wet
-      case 'stone':
-        return '#44403c';
-      case 'sand':
-        return '#d97706';
-      case 'snow':
-        return '#e5e7eb';
-      case 'stairs_up':
-        return '#22d3ee';
-      case 'stairs_down':
-        return '#d946ef';
-      case 'lava':
-        return '#ef4444';
-      case 'bedrock':
-        return '#18181b';
-      case 'door':
-        return '#854d0e';
+      case "water":
+        return "#1e3a8a";
+      case "grass":
+        return moisture > 0.6 ? "#14532d" : "#15803d"; // Darker if wet
+      case "stone":
+        return "#44403c";
+      case "sand":
+        return "#d97706";
+      case "snow":
+        return "#e5e7eb";
+      case "stairs_up":
+        return "#22d3ee";
+      case "stairs_down":
+        return "#d946ef";
+      case "lava":
+        return "#ef4444";
+      case "bedrock":
+        return "#18181b";
+      case "door":
+        return "#854d0e";
       default:
-        if (block.startsWith('wall')) return '#78716c';
-        if (block.startsWith('floor')) return '#57534e';
-        return '#ff00ff'; // Error pink
+        if (block.startsWith("wall")) return "#78716c";
+        if (block.startsWith("floor")) return "#57534e";
+        return "#ff00ff"; // Error pink
     }
   };
 
   // Generate meshes
   const meshes = useMemo(() => {
-    const items: JSX.Element[] = [];
+    const items: React.JSX.Element[] = [];
     const startX = Math.floor(center.x - VIEW_RADIUS);
     const endX = Math.ceil(center.x + VIEW_RADIUS);
     const startY = Math.floor(center.y - VIEW_RADIUS);
@@ -157,7 +157,10 @@ const MapScene = ({
         const elevation = tile.elevation || 0;
         // Base height: 0.2 (floor) + elevation * scale
         // Wall height: 1.0 + elevation * scale
-        const isWall = tile.block.startsWith('wall') || tile.block === 'tree_leaves' || tile.block === 'cactus';
+        const isWall =
+          tile.block.startsWith("wall") ||
+          tile.block === "tree_leaves" ||
+          tile.block === "cactus";
         const height = isWall ? 1.0 : 0.2 + elevation * TILE_HEIGHT_SCALE;
 
         // Position: world coordinates centered
@@ -175,7 +178,7 @@ const MapScene = ({
         // Fog Logic
         const opacity = isVisible ? 1.0 : 0.4;
         const transparent = !isVisible;
-        const materialColor = isVisible ? color : '#3f3f46'; // Grey out if fog
+        const materialColor = isVisible ? color : "#3f3f46"; // Grey out if fog
 
         items.push(
           <mesh
@@ -184,7 +187,10 @@ const MapScene = ({
             userData={{ coords: { x: wx, y: wy, z: viewZ } }}
             onClick={(e) => {
               e.stopPropagation();
-              onTileClick({ x: wx, y: wy, z: viewZ as ZLevel }, e as unknown as React.MouseEvent);
+              onTileClick(
+                { x: wx, y: wy, z: viewZ as ZLevel },
+                e as unknown as React.MouseEvent,
+              );
             }}
             onPointerOver={(e) => {
               e.stopPropagation();
@@ -192,23 +198,40 @@ const MapScene = ({
             }}
           >
             <boxGeometry args={[TILE_SIZE * 0.95, height, TILE_SIZE * 0.95]} />
-            <meshStandardMaterial color={materialColor} transparent={transparent} opacity={opacity} />
-          </mesh>
+            <meshStandardMaterial
+              color={materialColor}
+              transparent={transparent}
+              opacity={opacity}
+            />
+          </mesh>,
         );
 
         // "Moisture Details" - simple spheres for bushes if wet & grass
-        if (tile.moisture && tile.moisture > 0.6 && tile.block === 'grass' && isVisible) {
+        if (
+          tile.moisture &&
+          tile.moisture > 0.6 &&
+          tile.block === "grass" &&
+          isVisible
+        ) {
           items.push(
             <mesh key={`${key}-bio`} position={[posX, height, posZ]}>
               <sphereGeometry args={[0.2, 4, 4]} />
               <meshStandardMaterial color="#166534" />
-            </mesh>
+            </mesh>,
           );
         }
       }
     }
     return items;
-  }, [center, viewZ, chunkProvider, visibleTiles, exploredTiles, onTileClick, onTileHover]);
+  }, [
+    center,
+    viewZ,
+    chunkProvider,
+    visibleTiles,
+    exploredTiles,
+    onTileClick,
+    onTileHover,
+  ]);
 
   return (
     <group ref={groupRef}>
@@ -218,9 +241,16 @@ const MapScene = ({
       {entities.map((ent, i: number) => {
         if (ent.position.z !== viewZ) return null;
         return (
-          <mesh key={`ent-${i}`} position={[ent.position.x, 1.5, -ent.position.y]}>
+          <mesh
+            key={`ent-${i}`}
+            position={[ent.position.x, 1.5, -ent.position.y]}
+          >
             <capsuleGeometry args={[0.3, 0.8, 4, 8]} />
-            <meshStandardMaterial color={ent.color} emissive={ent.color} emissiveIntensity={0.5} />
+            <meshStandardMaterial
+              color={ent.color}
+              emissive={ent.color}
+              emissiveIntensity={0.5}
+            />
           </mesh>
         );
       })}

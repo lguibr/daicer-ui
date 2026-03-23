@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import type { Player } from '@/types/contracts';
-import { listRooms } from '../services/api';
-import { PrivateLayout } from '../components/layout';
-import { Button } from '../components/ui/button';
-import { useI18n } from '../i18n';
-import EntitySheetPanel from '../components/game/EntitySheetPanel';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { Player } from "@/types/contracts";
+import { listRooms } from "../services/api";
+import { PrivateLayout } from "../components/layout";
+import { Button } from "../components/ui/button";
+import { useI18n } from "../i18n";
+import EntitySheetPanel from "../components/game/EntitySheetPanel";
 
 interface CharacterWithRoom {
-  character: Player['character'];
+  character: Player["character"];
   player: Player;
   roomId: string;
   roomCode: string;
@@ -29,14 +29,20 @@ export default function CharactersPage() {
     loading: true,
     error: null,
   });
-  const [selectedContext, setSelectedContext] = useState<{ player: Player; roomId: string } | null>(null);
+  const [selectedContext, setSelectedContext] = useState<{
+    player: Player;
+    roomId: string;
+  } | null>(null);
 
   const sortedCharacters = useMemo(
-    () => [...state.characters].sort((a, b) => (a.character?.name || '').localeCompare(b.character?.name || '')),
-    [state.characters]
+    () =>
+      [...state.characters].sort((a, b) =>
+        (a.character?.name || "").localeCompare(b.character?.name || ""),
+      ),
+    [state.characters],
   );
 
-  const errorMessage = t('characters.messages.error');
+  const errorMessage = t("characters.messages.error");
 
   const fetchCharacters = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
@@ -55,7 +61,9 @@ export default function CharactersPage() {
           });
         }
       }
-      const validCharacters = characters.filter((c) => c.character !== null && c.character !== undefined);
+      const validCharacters = characters.filter(
+        (c) => c.character !== null && c.character !== undefined,
+      );
       setState({ characters: validCharacters, loading: false, error: null });
     } catch (error) {
       setState({
@@ -69,7 +77,7 @@ export default function CharactersPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCharacters().catch((err: unknown) => {
-      console.error('Failed to fetch characters:', err);
+      console.error("Failed to fetch characters:", err);
     });
   }, [fetchCharacters]);
 
@@ -78,10 +86,10 @@ export default function CharactersPage() {
       <div className="mx-auto flex min-h-dvh w-full flex-col gap-10 px-6 py-12 sm:px-10 lg:px-16 xl:max-w-6xl">
         <header className="flex flex-col gap-4 text-center sm:gap-6">
           <h1 className="font-display text-4xl uppercase tracking-[0.32em] text-aurora-200 sm:text-5xl">
-            {t('characters.title')}
+            {t("characters.title")}
           </h1>
           <p className="mx-auto max-w-3xl text-base leading-relaxed text-shadow-100/90 sm:text-lg">
-            {t('characters.subtitle')}
+            {t("characters.subtitle")}
           </p>
         </header>
 
@@ -99,19 +107,31 @@ export default function CharactersPage() {
                 fetchCharacters().catch(() => {});
               }}
             >
-              {t('characters.actions.retry')}
+              {t("characters.actions.retry")}
             </Button>
           </div>
         ) : sortedCharacters.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <h2 className="text-2xl font-semibold text-shadow-50">{t('characters.empty.title')}</h2>
-            <p className="max-w-xl text-sm text-shadow-300">{t('characters.empty.description')}</p>
+            <h2 className="text-2xl font-semibold text-shadow-50">
+              {t("characters.empty.title")}
+            </h2>
+            <p className="max-w-xl text-sm text-shadow-300">
+              {t("characters.empty.description")}
+            </p>
             <div className="flex gap-3">
-              <Button type="button" variant="default" onClick={() => navigate('/')}>
-                {t('characters.empty.joinGame')}
+              <Button
+                type="button"
+                variant="default"
+                onClick={() => navigate("/")}
+              >
+                {t("characters.empty.joinGame")}
               </Button>
-              <Button type="button" variant="secondary" onClick={() => navigate('/characters/demo')}>
-                {t('characters.empty.tryDemo')}
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => navigate("/characters/demo")}
+              >
+                {t("characters.empty.tryDemo")}
               </Button>
             </div>
           </div>
@@ -119,11 +139,17 @@ export default function CharactersPage() {
           <div className="grid gap-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-shadow-300">
-                {sortedCharacters.length}{' '}
-                {sortedCharacters.length === 1 ? t('characters.stats.character') : t('characters.stats.characters')}
+                {sortedCharacters.length}{" "}
+                {sortedCharacters.length === 1
+                  ? t("characters.stats.character")
+                  : t("characters.stats.characters")}
               </p>
-              <Button type="button" variant="secondary" onClick={() => navigate('/characters/demo')}>
-                {t('characters.actions.tryDemo')}
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => navigate("/characters/demo")}
+              >
+                {t("characters.actions.tryDemo")}
               </Button>
             </div>
 
@@ -134,13 +160,14 @@ export default function CharactersPage() {
 
               // Safe accessors with defaults
               const getEntityName = (ent: unknown) => {
-                if (!ent) return '';
-                if (typeof ent === 'string') return ent;
-                return (ent as { name?: string }).name || '';
+                if (!ent) return "";
+                if (typeof ent === "string") return ent;
+                return (ent as { name?: string }).name || "";
               };
 
-              const raceName = getEntityName(character?.race) || 'Unknown Race';
-              const className = getEntityName(character?.characterClass) || 'Unknown Class';
+              const raceName = getEntityName(character?.race) || "Unknown Race";
+              const className =
+                getEntityName(character?.characterClass) || "Unknown Class";
               const portraitUrl = character?.portrait?.url;
 
               return (
@@ -164,7 +191,9 @@ export default function CharactersPage() {
 
                       <div className="space-y-3">
                         <div>
-                          <h3 className="text-2xl font-bold text-shadow-50">{character?.name}</h3>
+                          <h3 className="text-2xl font-bold text-shadow-50">
+                            {character?.name}
+                          </h3>
                           <p className="text-base text-shadow-300">
                             {raceName} • {className}
                           </p>
@@ -177,8 +206,12 @@ export default function CharactersPage() {
                         </div>
 
                         <div className="flex items-center gap-2 text-xs text-shadow-500">
-                          <span className="uppercase tracking-wider">{t('characters.labels.room')}</span>
-                          <span className="font-mono tracking-wider text-aurora-200">{roomCode}</span>
+                          <span className="uppercase tracking-wider">
+                            {t("characters.labels.room")}
+                          </span>
+                          <span className="font-mono tracking-wider text-aurora-200">
+                            {roomCode}
+                          </span>
                           <span>•</span>
                           <span>{phaseLabel}</span>
                         </div>
@@ -192,10 +225,14 @@ export default function CharactersPage() {
                         onClick={() => setSelectedContext({ player, roomId })}
                         className="sm:min-w-[160px]"
                       >
-                        {t('characters.actions.viewSheet')}
+                        {t("characters.actions.viewSheet")}
                       </Button>
-                      <Button type="button" variant="default" onClick={() => navigate(`/room/${roomId}`)}>
-                        {t('characters.actions.goToRoom')}
+                      <Button
+                        type="button"
+                        variant="default"
+                        onClick={() => navigate(`/room/${roomId}`)}
+                      >
+                        {t("characters.actions.goToRoom")}
                       </Button>
                     </div>
                   </div>
@@ -203,10 +240,12 @@ export default function CharactersPage() {
                   {!!character?.backstory && (
                     <div className="mt-4 rounded-2xl border border-shadow-700 bg-shadow-900/60 p-4">
                       <p className="text-xs uppercase tracking-wider text-shadow-500 mb-2">
-                        {t('characters.labels.backstory')}
+                        {t("characters.labels.backstory")}
                       </p>
                       {}
-                      <p className="text-sm leading-relaxed text-shadow-200 line-clamp-3">{character.backstory}</p>
+                      <p className="text-sm leading-relaxed text-shadow-200 line-clamp-3">
+                        {character.backstory}
+                      </p>
                     </div>
                   )}
                 </article>

@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import { Moon, Sun } from 'lucide-react';
+import { cn } from "@/lib/utils";
+import { Moon, Sun } from "lucide-react";
 
 interface TimeCycleWidgetProps {
   time: number; // Total hours (or turns representing hours)
@@ -51,11 +51,18 @@ export function TimeCycleWidget({ time, className }: TimeCycleWidgetProps) {
   const sunY = cy + radius * -Math.sin(angleRad); // -sin because Y is down in SVG.
 
   // Decorative Styles
-  const glowColor = isDay ? 'rgba(251, 191, 36, 0.6)' : 'rgba(167, 139, 250, 0.4)';
-  const trackColor = isDay ? 'stroke-aurora-500/20' : 'stroke-nebula-500/20';
+  const glowColor = isDay
+    ? "rgba(251, 191, 36, 0.6)"
+    : "rgba(167, 139, 250, 0.4)";
+  const trackColor = isDay ? "stroke-aurora-500/20" : "stroke-nebula-500/20";
 
   return (
-    <div className={cn('relative w-32 h-16 pointer-events-none select-none', className)}>
+    <div
+      className={cn(
+        "relative w-32 h-16 pointer-events-none select-none",
+        className,
+      )}
+    >
       {/* SVG Container */}
       <svg viewBox="0 0 100 50" className="w-full h-full overflow-visible">
         <defs>
@@ -83,18 +90,23 @@ export function TimeCycleWidget({ time, className }: TimeCycleWidgetProps) {
         <path
           d="M 10 50 A 40 40 0 0 1 90 50"
           fill="none"
-          className={cn('stroke-[3px] stroke-linecap-round', trackColor)}
+          className={cn("stroke-[3px] stroke-linecap-round", trackColor)}
         />
 
         {/* Moving Celestial Body */}
         <g
           style={{
             transform: `translate(${sunX}px, ${sunY}px)`,
-            transition: 'transform 1s linear', // Smooth movement
+            transition: "transform 1s linear", // Smooth movement
           }}
         >
           {/* Glow behind */}
-          <circle r="8" fill={glowColor} filter="url(#glow)" className="opacity-70" />
+          <circle
+            r="8"
+            fill={glowColor}
+            filter="url(#glow)"
+            className="opacity-70"
+          />
 
           {/* Icon container */}
           <foreignObject x="-8" y="-8" width="16" height="16">
@@ -113,13 +125,13 @@ export function TimeCycleWidget({ time, className }: TimeCycleWidgetProps) {
       <div className="absolute bottom-0 left-0 right-0 text-center flex flex-col items-center justify-end translate-y-1/2">
         <span
           className={cn(
-            'text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border backdrop-blur-sm',
+            "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border backdrop-blur-sm",
             isDay
-              ? 'text-amber-200 border-amber-500/30 bg-amber-950/50'
-              : 'text-violet-200 border-violet-500/30 bg-midnight-950/50'
+              ? "text-amber-200 border-amber-500/30 bg-amber-950/50"
+              : "text-violet-200 border-violet-500/30 bg-midnight-950/50",
           )}
         >
-          {Math.floor(cycleTime).toString().padStart(2, '0')}:00
+          {Math.floor(cycleTime).toString().padStart(2, "0")}:00
         </span>
       </div>
     </div>

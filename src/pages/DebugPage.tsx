@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import JuicyLayout from '@/components/layout/JuicyLayout'; // [NEW] Import JuicyLayout
+import { useState } from "react";
+import JuicyLayout from "@/components/layout/JuicyLayout"; // [NEW] Import JuicyLayout
 // import Navbar from '../components/layout/Navbar'; // [REMOVED] Handled by JuicyLayout
 
-import { ChevronLeft } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { ChevronLeft } from "lucide-react";
+import { Button } from "../components/ui/button";
 
-import { RoomSelection } from '../features/debug/components/RoomSelection';
-import { GameDebugView } from '../features/debug/components/GameDebugView';
-import { WorldConfigForm } from '../features/debug/components/WorldConfigForm';
+import { RoomSelection } from "../features/debug/components/RoomSelection";
+import { GameDebugView } from "../features/debug/components/GameDebugView";
+import { WorldConfigForm } from "../features/debug/components/WorldConfigForm";
 
-import type { WorldConfig } from '../features/debug/utils/types';
+import type { WorldConfig } from "../features/debug/utils/types";
 
-type Stage = 'selection' | 'dm-setup' | 'world' | 'debug';
+type Stage = "selection" | "dm-setup" | "world" | "debug";
 
 export default function DebugPage() {
-  const [stage, setStage] = useState<Stage>('selection');
+  const [stage, setStage] = useState<Stage>("selection");
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
 
   // World Config State for the 'world' stage
@@ -38,13 +38,13 @@ export default function DebugPage() {
   // Handlers
   const handleRoomSelect = (roomId: string) => {
     setActiveRoomId(roomId);
-    setStage('debug'); // Jump straight to debug for existing rooms
+    setStage("debug"); // Jump straight to debug for existing rooms
   };
 
   const handleLaunchGame = async () => {
     // Here we would save the world config to the room via mutation
     // For now, we just proceed to debug view which uses the config locally or re-seeds
-    setStage('debug');
+    setStage("debug");
   };
 
   return (
@@ -53,25 +53,25 @@ export default function DebugPage() {
         {/* Local Breadcrumb / Toolbar */}
 
         <div className="flex-1 overflow-hidden relative">
-          {stage === 'selection' && (
+          {stage === "selection" && (
             <div className="h-full overflow-y-auto p-6">
               <RoomSelection
                 onSelect={handleRoomSelect}
                 onCreate={() => {
                   // Redirect to unified wizard with debug target
-                  window.location.href = '/create?target=debug';
+                  window.location.href = "/create?target=debug";
                 }}
               />
             </div>
           )}
 
-          {stage !== 'selection' && (
+          {stage !== "selection" && (
             <div className="absolute top-4 left-4 z-50">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  setStage('selection');
+                  setStage("selection");
                   setActiveRoomId(null);
                 }}
                 className="gap-2 text-aurora-300 hover:text-aurora-100 hover:bg-midnight-800/50"
@@ -84,11 +84,15 @@ export default function DebugPage() {
 
           {/* Navigation for Knowledge Base (Temporary Access) */}
 
-          {stage === 'world' && (
+          {stage === "world" && (
             <div className="h-full flex flex-col items-center justify-center p-8 space-y-8 animate-in zoom-in-95 duration-500">
               <div className="text-center space-y-2">
-                <h1 className="text-3xl font-black text-aurora-500 tracking-tighter">INITIALIZE WORLD</h1>
-                <p className="text-muted-foreground">Configure the physical terrain and biomes</p>
+                <h1 className="text-3xl font-black text-aurora-500 tracking-tighter">
+                  INITIALIZE WORLD
+                </h1>
+                <p className="text-muted-foreground">
+                  Configure the physical terrain and biomes
+                </p>
               </div>
 
               <div className="w-full max-w-md bg-midnight-900 border border-midnight-800 rounded-xl p-6 shadow-2xl">
@@ -111,7 +115,9 @@ export default function DebugPage() {
             </div>
           )}
 
-          {stage === 'debug' && activeRoomId && <GameDebugView roomId={activeRoomId} />}
+          {stage === "debug" && activeRoomId && (
+            <GameDebugView roomId={activeRoomId} />
+          )}
         </div>
       </div>
     </JuicyLayout>

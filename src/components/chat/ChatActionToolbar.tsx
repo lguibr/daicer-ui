@@ -1,20 +1,29 @@
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Input from '@/components/ui/input';
-import { useEntitySearch } from '@/hooks/useEntitySearch';
-import { cn } from '@/lib/utils';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { TOOLS, ToolDefinition, ToolField } from '@/features/debug/utils/tool-definitions';
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Input from "@/components/ui/input";
+import { useEntitySearch } from "@/hooks/useEntitySearch";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  TOOLS,
+  ToolDefinition,
+  ToolField,
+} from "@/features/debug/utils/tool-definitions";
 
 interface ChatActionToolbarProps {
-  onCommandSelect: (cmd: { prefix: string; id: string; name: string; label: string }) => void;
+  onCommandSelect: (cmd: {
+    prefix: string;
+    id: string;
+    name: string;
+    label: string;
+  }) => void;
   activeEntity?: { id: string; name: string };
   activeLocation?: { x: number; y: number; z: number; label: string } | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   roomEntities?: any[];
   disabled?: boolean;
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 }
 
 export function ChatActionToolbar({
@@ -23,7 +32,7 @@ export function ChatActionToolbar({
   activeLocation,
   roomEntities = [],
   disabled,
-  orientation = 'horizontal',
+  orientation = "horizontal",
 }: ChatActionToolbarProps) {
   const [selectedToolId, setSelectedToolId] = useState<string | null>(null);
 
@@ -32,8 +41,10 @@ export function ChatActionToolbar({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   // Search State
-  const [activeSearchField, setActiveSearchField] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeSearchField, setActiveSearchField] = useState<string | null>(
+    null,
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const { search, results, loading } = useEntitySearch();
 
   const selectedTool = TOOLS.find((t) => t.id === selectedToolId);
@@ -47,16 +58,22 @@ export function ChatActionToolbar({
           const updates: Record<string, any> = { ...prev };
 
           // 1. JSON Position Field
-          const posField = selectedTool.fields.find((f) => f.type === 'position');
+          const posField = selectedTool.fields.find(
+            (f) => f.type === "position",
+          );
           if (posField) {
-            updates[posField.name] = JSON.stringify({ x: activeLocation.x, y: activeLocation.y, z: activeLocation.z });
+            updates[posField.name] = JSON.stringify({
+              x: activeLocation.x,
+              y: activeLocation.y,
+              z: activeLocation.z,
+            });
           }
 
           // 2. Individual Coordinate Fields
           // Check if tool has x, y, and z fields
-          const hasX = selectedTool.fields.some((f) => f.name === 'x');
-          const hasY = selectedTool.fields.some((f) => f.name === 'y');
-          const hasZ = selectedTool.fields.some((f) => f.name === 'z');
+          const hasX = selectedTool.fields.some((f) => f.name === "x");
+          const hasY = selectedTool.fields.some((f) => f.name === "y");
+          const hasZ = selectedTool.fields.some((f) => f.name === "z");
 
           if (hasX) updates.x = activeLocation.x.toString();
           if (hasY) updates.y = activeLocation.y.toString();
@@ -64,7 +81,9 @@ export function ChatActionToolbar({
 
           // 3. Path Field (Move Tool)
           // If tool has a 'path' field, we assume it's for movement and set a single step path to the target.
-          const pathField = selectedTool.fields.find((f) => f.name === 'path' && f.type === 'json');
+          const pathField = selectedTool.fields.find(
+            (f) => f.name === "path" && f.type === "json",
+          );
           if (pathField) {
             // We create a single-step path to the clicked location
             updates[pathField.name] = JSON.stringify([
@@ -84,8 +103,10 @@ export function ChatActionToolbar({
       // If the field is room_entity and we have an activeEntity, fill it?
       // Heuristic: If there is a field named 'attackerId', 'casterId', 'actorId', 'entityId'
       // and it is empty, fill it.
-      const actorFields = ['attackerId', 'casterId', 'actorId', 'entityId'];
-      const fieldToFill = selectedTool.fields.find((f) => actorFields.includes(f.name));
+      const actorFields = ["attackerId", "casterId", "actorId", "entityId"];
+      const fieldToFill = selectedTool.fields.find((f) =>
+        actorFields.includes(f.name),
+      );
 
       if (fieldToFill) {
         setTimeout(() => {
@@ -103,9 +124,11 @@ export function ChatActionToolbar({
   // Trigger search when activeSearchField changes or query changes
   useEffect(() => {
     if (activeSearchField && selectedTool) {
-      const field = selectedTool.fields.find((f) => f.name === activeSearchField);
-      if (field?.type === 'entity_search') {
-        let type = field.searchType || 'monster';
+      const field = selectedTool.fields.find(
+        (f) => f.name === activeSearchField,
+      );
+      if (field?.type === "entity_search") {
+        let type = field.searchType || "monster";
 
         // Handle Dependent Search Types (e.g. spawn type -> monster vs character)
         if (field.dependency) {
@@ -138,41 +161,43 @@ export function ChatActionToolbar({
     const args = selectedTool.fields
       .map((field) => {
         const rawVal = formData[field.name];
-        if (rawVal === undefined || rawVal === '') return null; // Skip empty optional
+        if (rawVal === undefined || rawVal === "") return null; // Skip empty optional
 
         // Formatting
-        if (field.type === 'number') {
+        if (field.type === "number") {
           return `${field.name}=${rawVal}`;
         }
-        if (field.type === 'json' || field.type === 'position') {
+        if (field.type === "json" || field.type === "position") {
           return `${field.name}='${rawVal}'`;
         }
         // Text, Select, Entity Search (returns ID), Room Entity (returns ID)
         return `${field.name}="${rawVal}"`;
       })
       .filter(Boolean)
-      .join(', ');
+      .join(", ");
 
     const fullCommand = `${selectedTool.actionPrefix}(${args})`;
 
     onCommandSelect({
       prefix: fullCommand,
-      id: 'manual',
+      id: "manual",
       name: selectedTool.label,
       label: selectedTool.label,
     });
   };
 
   const renderField = (field: ToolField) => {
-    const val = formData[field.name] || '';
+    const val = formData[field.name] || "";
 
     // 1. Room Entity Dropdown (Local Instances)
-    if (field.type === 'room_entity') {
+    if (field.type === "room_entity") {
       return (
         <select
           className="w-full h-8 bg-black/40 border border-midnight-700 rounded text-xs text-aurora-100 px-2"
           value={val}
-          onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, [field.name]: e.target.value })
+          }
         >
           <option value="">Select Entity...</option>
           {roomEntities?.map((entity) => (
@@ -185,7 +210,7 @@ export function ChatActionToolbar({
     }
 
     // 2. Library Search (Monsters, Spells, Characters)
-    if (field.type === 'entity_search') {
+    if (field.type === "entity_search") {
       const isSearching = activeSearchField === field.name;
 
       return (
@@ -197,7 +222,7 @@ export function ChatActionToolbar({
               onFocus={() => {
                 setActiveSearchField(field.name);
                 setSearchQuery(val);
-                if (val) setSearchQuery('');
+                if (val) setSearchQuery("");
               }}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 bg-black/40 border-midnight-700 text-xs text-aurora-100 placeholder:text-midnight-500 focus-visible:ring-aurora-500/50"
@@ -218,7 +243,7 @@ export function ChatActionToolbar({
                     onClick={() => {
                       setFormData({ ...formData, [field.name]: res.id });
                       setActiveSearchField(null);
-                      setSearchQuery('');
+                      setSearchQuery("");
                     }}
                   >
                     <span className="font-bold">{res.name}</span>
@@ -227,7 +252,7 @@ export function ChatActionToolbar({
                 ))
               ) : (
                 <div className="p-2 text-xs text-midnight-500 text-center">
-                  {searchQuery ? 'No results' : 'Type to search...'}
+                  {searchQuery ? "No results" : "Type to search..."}
                 </div>
               )}
               <button
@@ -244,7 +269,7 @@ export function ChatActionToolbar({
               <span>Selected: {val}</span>
               <X
                 className="w-3 h-3 cursor-pointer opacity-0 group-hover:opacity-100 text-red-400"
-                onClick={() => setFormData({ ...formData, [field.name]: '' })}
+                onClick={() => setFormData({ ...formData, [field.name]: "" })}
               />
             </div>
           )}
@@ -252,12 +277,14 @@ export function ChatActionToolbar({
       );
     }
 
-    if (field.type === 'select') {
+    if (field.type === "select") {
       return (
         <select
           className="w-full h-8 bg-black/40 border border-midnight-700 rounded text-xs text-aurora-100 px-2"
           value={val}
-          onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, [field.name]: e.target.value })
+          }
         >
           <option value="">Select...</option>
           {field.options?.map((opt) => (
@@ -269,25 +296,31 @@ export function ChatActionToolbar({
       );
     }
 
-    if (field.type === 'entity_action') {
+    if (field.type === "entity_action") {
       const dependencyField = field.dependency?.field;
       const actorId = dependencyField ? formData[dependencyField] : null;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const actor = roomEntities?.find((e: any) => e.id === actorId || e.documentId === actorId);
+      const actor = roomEntities?.find(
+        (e: any) => e.id === actorId || e.documentId === actorId,
+      );
 
       const actions = actor?.actions || [];
 
       return (
         <select
           className={cn(
-            'w-full h-8 bg-black/40 border border-midnight-700 rounded text-xs text-aurora-100 px-2',
-            !actorId && 'opacity-50 cursor-not-allowed'
+            "w-full h-8 bg-black/40 border border-midnight-700 rounded text-xs text-aurora-100 px-2",
+            !actorId && "opacity-50 cursor-not-allowed",
           )}
           value={val}
-          onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, [field.name]: e.target.value })
+          }
           disabled={!actorId}
         >
-          <option value="">{actorId ? 'Select Action...' : 'Select Attacker First...'}</option>
+          <option value="">
+            {actorId ? "Select Action..." : "Select Attacker First..."}
+          </option>
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {actions.map((action: any, idx: number) => (
             <option key={`${action.name}-${idx}`} value={action.name}>
@@ -298,51 +331,63 @@ export function ChatActionToolbar({
       );
     }
 
-    if (field.type === 'json' || field.type === 'position') {
+    if (field.type === "json" || field.type === "position") {
       return (
         <textarea
           className="w-full h-12 bg-black/40 border border-midnight-700 rounded text-[10px] font-mono p-2 text-aurora-200"
-          placeholder={field.placeholder || (field.type === 'position' ? '{"x":0,"y":0,"z":0}' : '{}')}
+          placeholder={
+            field.placeholder ||
+            (field.type === "position" ? '{"x":0,"y":0,"z":0}' : "{}")
+          }
           value={val}
-          onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, [field.name]: e.target.value })
+          }
         />
       );
     }
 
     return (
       <Input
-        type={field.type === 'number' ? 'number' : 'text'}
+        type={field.type === "number" ? "number" : "text"}
         placeholder={field.placeholder}
         value={val}
-        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, [field.name]: e.target.value })
+        }
         className="h-8 bg-black/40 border-midnight-700 text-xs text-aurora-100"
       />
     );
   };
 
   return (
-    <div className={cn('flex gap-2 w-full', orientation === 'vertical' ? 'flex-col h-full' : 'flex-col')}>
+    <div
+      className={cn(
+        "flex gap-2 w-full",
+        orientation === "vertical" ? "flex-col h-full" : "flex-col",
+      )}
+    >
       <div
         className={cn(
-          'flex gap-1 p-1 py-1 no-scrollbar shrink-0',
-          orientation === 'horizontal'
-            ? 'items-center overflow-x-auto mask-gradient-x'
-            : 'flex-col overflow-y-auto max-h-[40%] border-b border-midnight-800'
+          "flex gap-1 p-1 py-1 no-scrollbar shrink-0",
+          orientation === "horizontal"
+            ? "items-center overflow-x-auto mask-gradient-x"
+            : "flex-col overflow-y-auto max-h-[40%] border-b border-midnight-800",
         )}
       >
         {TOOLS.map((tool) => (
           <Button
             key={tool.id}
-            variant={selectedToolId === tool.id ? 'default' : 'ghost'}
+            variant={selectedToolId === tool.id ? "default" : "ghost"}
             size="sm"
             onClick={() => handleToolClick(tool)}
             disabled={disabled}
             className={cn(
-              'text-xs font-medium transition-all gap-2 shrink-0 border border-transparent justify-start px-3',
-              orientation === 'horizontal' ? 'h-8' : 'h-9 w-full',
+              "text-xs font-medium transition-all gap-2 shrink-0 border border-transparent justify-start px-3",
+              orientation === "horizontal" ? "h-8" : "h-9 w-full",
               selectedToolId === tool.id
-                ? 'bg-aurora-600 text-white shadow-lg shadow-aurora-900/20 border-aurora-500/50'
-                : 'text-aurora-200 hover:text-white hover:bg-midnight-800'
+                ? "bg-aurora-600 text-white shadow-lg shadow-aurora-900/20 border-aurora-500/50"
+                : "text-aurora-200 hover:text-white hover:bg-midnight-800",
             )}
           >
             {tool.icon}
@@ -363,13 +408,16 @@ export function ChatActionToolbar({
           <ScrollArea className="flex-1 p-3">
             <div className="space-y-3 pb-4">
               {selectedTool.description && (
-                <p className="text-[10px] text-midnight-400 italic mb-2">{selectedTool.description}</p>
+                <p className="text-[10px] text-midnight-400 italic mb-2">
+                  {selectedTool.description}
+                </p>
               )}
 
               {selectedTool.fields.map((field) => (
                 <div key={field.name} className="space-y-1">
                   <label className="text-[10px] uppercase font-bold text-aurora-500/80 tracking-wider">
-                    {field.label} {field.required && <span className="text-red-400">*</span>}
+                    {field.label}{" "}
+                    {field.required && <span className="text-red-400">*</span>}
                   </label>
                   {renderField(field)}
                 </div>

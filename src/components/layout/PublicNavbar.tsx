@@ -1,14 +1,20 @@
-import { useState, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import type { LucideIcon } from 'lucide-react';
-import { Compass, Home, LogIn } from 'lucide-react';
+import { useState, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
+import { Compass, Home, LogIn } from "lucide-react";
 
-import cn from '@/lib/utils';
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '@/components/ui/menubar';
+import cn from "@/lib/utils";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 
-import LanguageSelector from '../ui/LanguageSelector';
-import Logo from '../ui/Logo';
-import { useI18n } from '../../i18n';
+import LanguageSelector from "../ui/LanguageSelector";
+import Logo from "../ui/Logo";
+import { useI18n } from "../../i18n";
 
 /**
  * Public navigation bar component for unauthenticated users
@@ -33,27 +39,29 @@ export default function PublicNavbar() {
   const navLinks = useMemo(
     (): NavLink[] => [
       {
-        id: 'home',
-        label: 'Home',
-        path: '/',
+        id: "home",
+        label: "Home",
+        path: "/",
         icon: Home,
         className:
-          'border-shadow-500/40 bg-shadow-500/15 text-shadow-100 hover:bg-shadow-500/25 focus-visible:ring-shadow-300/40',
-        iconClassName: 'text-shadow-100',
-        mobileClassName: 'border-shadow-500/30 bg-shadow-500/15 text-shadow-100 hover:bg-shadow-500/25',
+          "border-shadow-500/40 bg-shadow-500/15 text-shadow-100 hover:bg-shadow-500/25 focus-visible:ring-shadow-300/40",
+        iconClassName: "text-shadow-100",
+        mobileClassName:
+          "border-shadow-500/30 bg-shadow-500/15 text-shadow-100 hover:bg-shadow-500/25",
       },
       {
-        id: 'explore',
-        label: t('navbar.links.explore'),
-        path: '/rules',
+        id: "explore",
+        label: t("navbar.links.explore"),
+        path: "/rules",
         icon: Compass,
         className:
-          'border-aurora-400/40 bg-aurora-500/10 text-aurora-100 hover:bg-aurora-400/15 focus-visible:ring-aurora-400/40',
-        iconClassName: 'text-aurora-200',
-        mobileClassName: 'border-aurora-400/30 bg-aurora-500/10 text-aurora-100 hover:bg-aurora-500/20',
+          "border-aurora-400/40 bg-aurora-500/10 text-aurora-100 hover:bg-aurora-400/15 focus-visible:ring-aurora-400/40",
+        iconClassName: "text-aurora-200",
+        mobileClassName:
+          "border-aurora-400/30 bg-aurora-500/10 text-aurora-100 hover:bg-aurora-500/20",
       },
     ],
-    [t]
+    [t],
   );
 
   const closeMenus = () => {
@@ -67,7 +75,7 @@ export default function PublicNavbar() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const brandButton = <Logo size="md" onClick={() => handleNavigate('/')} />;
+  const brandButton = <Logo size="md" onClick={() => handleNavigate("/")} />;
 
   return (
     <nav className="relative z-50 border-b border-midnight-500/70 bg-midnight-400/80 shadow-[0_18px_40px_rgba(4,7,12,0.45)] backdrop-blur-xl">
@@ -82,16 +90,20 @@ export default function PublicNavbar() {
               <MenubarMenu key={link.id}>
                 <MenubarTrigger
                   className={cn(
-                    'border px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.3em] transition-colors duration-200 focus-visible:ring-offset-0',
+                    "border px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.3em] transition-colors duration-200 focus-visible:ring-offset-0",
                     link.className,
-                    isActive(link.path) && 'ring-2 ring-offset-2 ring-offset-midnight-900'
+                    isActive(link.path) &&
+                      "ring-2 ring-offset-2 ring-offset-midnight-900",
                   )}
                   aria-label={link.label}
-                  aria-current={isActive(link.path) ? 'page' : undefined}
+                  aria-current={isActive(link.path) ? "page" : undefined}
                   onClick={() => handleNavigate(link.path)}
                   data-testid={`public-navbar-desktop-trigger-${link.id}`}
                 >
-                  <link.icon className={cn('h-4 w-4', link.iconClassName)} aria-hidden />
+                  <link.icon
+                    className={cn("h-4 w-4", link.iconClassName)}
+                    aria-hidden
+                  />
                   <span className="hidden xl:inline">{link.label}</span>
                   <span className="sr-only xl:hidden">{link.label}</span>
                 </MenubarTrigger>
@@ -105,7 +117,10 @@ export default function PublicNavbar() {
                     className="flex items-center gap-2 text-shadow-50"
                     data-testid={`public-navbar-desktop-item-${link.id}`}
                   >
-                    <link.icon className="h-4 w-4 text-aurora-200" aria-hidden />
+                    <link.icon
+                      className="h-4 w-4 text-aurora-200"
+                      aria-hidden
+                    />
                     <span>{link.label}</span>
                   </MenubarItem>
                 </MenubarContent>
@@ -116,16 +131,19 @@ export default function PublicNavbar() {
 
         {/* Right - Controls (Desktop) */}
         <div className="ml-auto hidden items-center gap-3 md:flex">
-          <LanguageSelector variant="compact" data-testid="public-navbar-language-selector" />
-          {!isActive('/') && (
+          <LanguageSelector
+            variant="compact"
+            data-testid="public-navbar-language-selector"
+          />
+          {!isActive("/") && (
             <button
               type="button"
-              onClick={() => handleNavigate('/')}
+              onClick={() => handleNavigate("/")}
               className="inline-flex items-center gap-2 rounded-lg border border-aurora-400/40 bg-aurora-500/10 px-4 py-2 text-sm font-semibold text-aurora-100 transition-colors hover:bg-aurora-400/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-400/40"
               data-testid="public-navbar-login-button"
             >
               <LogIn className="h-4 w-4" aria-hidden />
-              <span>{t('auth.login')}</span>
+              <span>{t("auth.login")}</span>
             </button>
           )}
         </div>
@@ -139,11 +157,26 @@ export default function PublicNavbar() {
             aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -159,11 +192,12 @@ export default function PublicNavbar() {
                 key={`mobile-${link.id}`}
                 type="button"
                 onClick={() => handleNavigate(link.path)}
-                aria-current={isActive(link.path) ? 'page' : undefined}
+                aria-current={isActive(link.path) ? "page" : undefined}
                 className={cn(
-                  'w-full rounded-lg border px-4 py-3 text-sm font-medium transition-colors',
+                  "w-full rounded-lg border px-4 py-3 text-sm font-medium transition-colors",
                   link.mobileClassName,
-                  isActive(link.path) && 'ring-2 ring-offset-2 ring-offset-midnight-900'
+                  isActive(link.path) &&
+                    "ring-2 ring-offset-2 ring-offset-midnight-900",
                 )}
                 data-testid={`public-navbar-mobile-link-${link.id}`}
               >
@@ -177,15 +211,15 @@ export default function PublicNavbar() {
                 className="w-full mb-3"
                 data-testid="public-navbar-mobile-language-selector"
               />
-              {!isActive('/') && (
+              {!isActive("/") && (
                 <button
                   type="button"
-                  onClick={() => handleNavigate('/')}
+                  onClick={() => handleNavigate("/")}
                   className="w-full px-4 py-3 bg-aurora-500 text-midnight-100 rounded-lg hover:bg-aurora-400 transition-colors font-medium flex items-center justify-center gap-2"
                   data-testid="public-navbar-mobile-login-button"
                 >
                   <LogIn className="h-4 w-4" />
-                  <span>{t('auth.login')}</span>
+                  <span>{t("auth.login")}</span>
                 </button>
               )}
             </div>

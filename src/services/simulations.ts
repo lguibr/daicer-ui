@@ -1,6 +1,9 @@
-import type { CombatSimulation, CombatSimulationSummary } from '../types/combat-sim';
+import type {
+  CombatSimulation,
+  CombatSimulationSummary,
+} from "../types/combat-sim";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 interface SimulationResponse {
   success: boolean;
@@ -16,12 +19,16 @@ interface SimulationListResponse {
 
 const simulationCache = new Map<string, CombatSimulation>();
 
-export async function fetchCombatSimulation(simulationId: string): Promise<CombatSimulation> {
+export async function fetchCombatSimulation(
+  simulationId: string,
+): Promise<CombatSimulation> {
   if (simulationCache.has(simulationId)) {
     return simulationCache.get(simulationId) as CombatSimulation;
   }
 
-  const response = await fetch(`${API_URL}/api/combat/simulations/${simulationId}`);
+  const response = await fetch(
+    `${API_URL}/api/combat/simulations/${simulationId}`,
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to load simulation (${response.status})`);
@@ -30,7 +37,7 @@ export async function fetchCombatSimulation(simulationId: string): Promise<Comba
   const payload = (await response.json()) as SimulationResponse;
 
   if (!payload.success || !payload.data) {
-    throw new Error(payload.error ?? 'Failed to load simulation');
+    throw new Error(payload.error ?? "Failed to load simulation");
   }
 
   simulationCache.set(simulationId, payload.data);
@@ -41,7 +48,9 @@ export function clearSimulationCache(): void {
   simulationCache.clear();
 }
 
-export async function fetchCombatSimulationSummaries(): Promise<CombatSimulationSummary[]> {
+export async function fetchCombatSimulationSummaries(): Promise<
+  CombatSimulationSummary[]
+> {
   const response = await fetch(`${API_URL}/api/combat/simulations`);
 
   if (!response.ok) {
@@ -51,7 +60,7 @@ export async function fetchCombatSimulationSummaries(): Promise<CombatSimulation
   const payload = (await response.json()) as SimulationListResponse;
 
   if (!payload.success || !payload.data) {
-    throw new Error(payload.error ?? 'Failed to list simulations');
+    throw new Error(payload.error ?? "Failed to list simulations");
   }
 
   return payload.data;

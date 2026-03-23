@@ -1,9 +1,13 @@
-import { useMemo } from 'react';
-import type { EntitySheet } from '@/types/contracts';
-import { SECTION_TITLE_CLASSES } from '../utils';
-import { SkillBadge } from './SharedComponents';
+import { useMemo } from "react";
+import type { EntitySheet } from "@/types/contracts";
+import { SECTION_TITLE_CLASSES } from "../utils";
+import { SkillBadge } from "./SharedComponents";
 
-export function SkillsPanel({ characterSheet }: { characterSheet?: EntitySheet | null }) {
+export function SkillsPanel({
+  characterSheet,
+}: {
+  characterSheet?: EntitySheet | null;
+}) {
   const sortedSkills = useMemo(() => {
     const skills = characterSheet?.skillDetails ?? [];
     return [...skills].sort((a, b) => a.name.localeCompare(b.name));
@@ -22,11 +26,15 @@ export function SkillsPanel({ characterSheet }: { characterSheet?: EntitySheet |
             ))}
           </div>
         ) : (
-          <p className="mt-3 text-sm text-shadow-300">Skills will populate once the character sheet is synced.</p>
+          <p className="mt-3 text-sm text-shadow-300">
+            Skills will populate once the character sheet is synced.
+          </p>
         )}
       </div>
       <div>
-        <h4 className="text-xs uppercase tracking-[0.3em] text-shadow-400 font-semibold">Expertises</h4>
+        <h4 className="text-xs uppercase tracking-[0.3em] text-shadow-400 font-semibold">
+          Expertises
+        </h4>
         {expertises.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-2">
             {expertises.map((expertise: string) => (
@@ -39,7 +47,9 @@ export function SkillsPanel({ characterSheet }: { characterSheet?: EntitySheet |
             ))}
           </div>
         ) : (
-          <p className="mt-2 text-sm text-shadow-300">No expertises recorded yet.</p>
+          <p className="mt-2 text-sm text-shadow-300">
+            No expertises recorded yet.
+          </p>
         )}
       </div>
     </div>

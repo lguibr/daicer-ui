@@ -3,16 +3,22 @@
  * Memoized action creators for modifying chunk state
  */
 
-import { useContext, useCallback, useRef } from 'react';
-import { InfiniteChunksContext } from './InfiniteChunksProvider';
-import type { InfiniteChunksActions } from './types';
-import { loadChunk, getChunksToLoad, getMaxConcurrentLoads } from './services/chunkLoader';
+import { useContext, useCallback, useRef } from "react";
+import { InfiniteChunksContext } from "./InfiniteChunksProvider";
+import type { InfiniteChunksActions } from "./types";
+import {
+  loadChunk,
+  getChunksToLoad,
+  getMaxConcurrentLoads,
+} from "./services/chunkLoader";
 
 export function useInfiniteChunksActions(): InfiniteChunksActions {
   const context = useContext(InfiniteChunksContext);
 
   if (!context) {
-    throw new Error('useInfiniteChunksActions must be used within InfiniteChunksProvider');
+    throw new Error(
+      "useInfiniteChunksActions must be used within InfiniteChunksProvider",
+    );
   }
 
   const { state, dispatch } = context;
@@ -31,7 +37,7 @@ export function useInfiniteChunksActions(): InfiniteChunksActions {
         state.config.chunkSize,
         state.config.loadRadius,
         new Set(state.chunks.keys()),
-        state.loading
+        state.loading,
       );
 
       console.info(
@@ -42,7 +48,7 @@ export function useInfiniteChunksActions(): InfiniteChunksActions {
           mode: state.config.mode,
           chunkSize: state.config.chunkSize,
           loadRadius: state.config.loadRadius,
-        }
+        },
       );
 
       if (chunksToLoad.length === 0) return;
@@ -60,7 +66,7 @@ export function useInfiniteChunksActions(): InfiniteChunksActions {
         loadingRequestsRef.current.add(chunkKey);
 
         dispatch({
-          type: 'CHUNK_LOAD_START',
+          type: "CHUNK_LOAD_START",
           payload: { chunkKey },
         });
 
@@ -69,14 +75,14 @@ export function useInfiniteChunksActions(): InfiniteChunksActions {
           .then((chunk) => {
             loadingRequestsRef.current.delete(chunkKey);
             dispatch({
-              type: 'CHUNK_LOAD_SUCCESS',
+              type: "CHUNK_LOAD_SUCCESS",
               payload: { chunk },
             });
           })
           .catch((error) => {
             loadingRequestsRef.current.delete(chunkKey);
             dispatch({
-              type: 'CHUNK_LOAD_ERROR',
+              type: "CHUNK_LOAD_ERROR",
               payload: { chunkKey, error },
             });
           });
@@ -92,34 +98,34 @@ export function useInfiniteChunksActions(): InfiniteChunksActions {
       state.chunkGenerator,
       // state.placementMap,
       dispatch,
-    ]
+    ],
   );
 
   // Memoized setLoadRadius function
   const setLoadRadius = useCallback(
     (radius: number) => {
       dispatch({
-        type: 'SET_LOAD_RADIUS',
+        type: "SET_LOAD_RADIUS",
         payload: { radius },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Memoized setLayer function
   const setLayer = useCallback(
     (layer: number) => {
       dispatch({
-        type: 'SET_LAYER',
+        type: "SET_LAYER",
         payload: { layer },
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
   // Memoized reset function
   const reset = useCallback(() => {
-    dispatch({ type: 'RESET' });
+    dispatch({ type: "RESET" });
   }, [dispatch]);
 
   // Return memoized actions object

@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import { ApolloProvider } from '@apollo/client/react';
-import { I18nProvider } from '../i18n';
-import { Toaster } from '../components/ui/sonner';
+import { ApolloProvider } from "@apollo/client/react";
+import { I18nProvider } from "../i18n";
+import { Toaster } from "../components/ui/sonner";
 
-import { apolloClient } from '../lib/apollo';
+import { apolloClient } from "../lib/apollo";
 
 interface AppProvidersProps {
   children: ReactNode;

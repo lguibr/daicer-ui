@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Button } from '@/components/ui/button';
-import cn from '@/lib/utils';
+import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Button } from "@/components/ui/button";
+import cn from "@/lib/utils";
 
 interface CodeBlockProps {
   code: string;
@@ -23,7 +23,13 @@ interface CodeBlockCopyButtonProps {
 /**
  * Copy button with success feedback
  */
-function CodeBlockCopyButtonComponent({ code, onCopy, onError, timeout = 2000, className }: CodeBlockCopyButtonProps) {
+function CodeBlockCopyButtonComponent({
+  code,
+  onCopy,
+  onError,
+  timeout = 2000,
+  className,
+}: CodeBlockCopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -36,7 +42,7 @@ function CodeBlockCopyButtonComponent({ code, onCopy, onError, timeout = 2000, c
         setCopied(false);
       }, timeout);
     } catch (error) {
-      console.error('Failed to copy code:', error);
+      console.error("Failed to copy code:", error);
       onError?.(error as Error);
     }
   };
@@ -47,22 +53,37 @@ function CodeBlockCopyButtonComponent({ code, onCopy, onError, timeout = 2000, c
       size="sm"
       variant="ghost"
       className={cn(
-        'h-8 px-3 bg-midnight-700/80 hover:bg-midnight-600/80 backdrop-blur-sm',
-        copied && 'bg-emerald-900/50 hover:bg-emerald-900/50',
-        className
+        "h-8 px-3 bg-midnight-700/80 hover:bg-midnight-600/80 backdrop-blur-sm",
+        copied && "bg-emerald-900/50 hover:bg-emerald-900/50",
+        className,
       )}
-      title={copied ? 'Copied!' : 'Copy code'}
+      title={copied ? "Copied!" : "Copy code"}
     >
       {copied ? (
         <>
-          <svg className="mr-1.5 h-4 w-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          <svg
+            className="mr-1.5 h-4 w-4 text-emerald-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
           </svg>
           <span className="text-xs text-emerald-300">Copied!</span>
         </>
       ) : (
         <>
-          <svg className="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="mr-1.5 h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -78,24 +99,32 @@ function CodeBlockCopyButtonComponent({ code, onCopy, onError, timeout = 2000, c
 }
 
 const CodeBlockCopyButton = CodeBlockCopyButtonComponent;
-CodeBlockCopyButtonComponent.displayName = 'CodeBlockCopyButton';
+CodeBlockCopyButtonComponent.displayName = "CodeBlockCopyButton";
 
 /**
  * Syntax-highlighted code block with copy functionality
  * Uses Prism for highlighting with oneDark theme
  */
-export function CodeBlock({ code, language = 'text', showLineNumbers = false, className, children }: CodeBlockProps) {
+export function CodeBlock({
+  code,
+  language = "text",
+  showLineNumbers = false,
+  className,
+  children,
+}: CodeBlockProps) {
   return (
     <div
       className={cn(
-        'group relative my-4 overflow-hidden rounded-2xl border border-midnight-600/60 bg-midnight-900',
-        className
+        "group relative my-4 overflow-hidden rounded-2xl border border-midnight-600/60 bg-midnight-900",
+        className,
       )}
     >
       {/* Language badge */}
-      {language && language !== 'text' && (
+      {language && language !== "text" && (
         <div className="flex items-center justify-between border-b border-midnight-600/40 bg-midnight-800/80 px-4 py-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-aurora-300">{language}</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-aurora-300">
+            {language}
+          </span>
           {children}
         </div>
       )}
@@ -108,10 +137,10 @@ export function CodeBlock({ code, language = 'text', showLineNumbers = false, cl
           showLineNumbers={showLineNumbers}
           customStyle={{
             margin: 0,
-            padding: '1rem',
-            background: 'transparent',
-            fontSize: '0.875rem',
-            lineHeight: '1.5',
+            padding: "1rem",
+            background: "transparent",
+            fontSize: "0.875rem",
+            lineHeight: "1.5",
           }}
           codeTagProps={{
             style: {
@@ -134,6 +163,6 @@ export function CodeBlock({ code, language = 'text', showLineNumbers = false, cl
   );
 }
 
-CodeBlock.displayName = 'CodeBlock';
+CodeBlock.displayName = "CodeBlock";
 
 export { CodeBlockCopyButton };

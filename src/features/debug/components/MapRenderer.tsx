@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import type { Coordinates, Chunk, ZLevel } from '../utils/types';
+import React, { useRef, useEffect } from "react";
+import type { Coordinates, Chunk, ZLevel } from "../utils/types";
 
 interface ChunkProvider {
   getChunk: (x: number, y: number) => Chunk | null | undefined;
@@ -69,33 +69,36 @@ export function MapRenderer({
   const startPosRef = useRef({ x: 0, y: 0 });
 
   // Use provided entities if live, or timeFrame entities if in history
-  const renderEntities = !isLive && currentTimeFrame ? currentTimeFrame.gameState.entities : entities;
+  const renderEntities =
+    !isLive && currentTimeFrame
+      ? currentTimeFrame.gameState.entities
+      : entities;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     if (!ctx) return;
     console.info(
-      'MapRenderer Debug: Rendering started. Size:',
+      "MapRenderer Debug: Rendering started. Size:",
       width,
-      'x',
+      "x",
       height,
-      'center:',
+      "center:",
       center,
-      'viewZ:',
+      "viewZ:",
       viewZ,
-      'scale:',
-      scale
+      "scale:",
+      scale,
     );
 
     // Clear
-    ctx.fillStyle = '#0a0a0a';
+    ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(0, 0, width, height);
 
     // DEBUG: Draw giant red cross to verify canvas is viewing
-    ctx.strokeStyle = 'red';
+    ctx.strokeStyle = "red";
     ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.moveTo(0, 0);
@@ -126,7 +129,10 @@ export function MapRenderer({
 
         // Visibility Check
         if (!godMode) {
-          if ((restrictView && !isExplored && !isVisible) || (!isExplored && !isVisible && exploredTiles.size > 0)) {
+          if (
+            (restrictView && !isExplored && !isVisible) ||
+            (!isExplored && !isVisible && exploredTiles.size > 0)
+          ) {
             // Unexplored (Fog of War)
             continue;
           }
@@ -138,10 +144,14 @@ export function MapRenderer({
         const chunk = chunkProvider.getChunk(chunkX, chunkY);
         // Debug: Log first chunk found to verify structure
         if (chunk && wx === center.x && wy === center.y) {
-          console.info('MapRenderer Debug: Center Chunk:', chunk);
-          console.info('MapRenderer Debug: Chunk Tiles Z=3:', chunk.tiles[3]);
+          console.info("MapRenderer Debug: Center Chunk:", chunk);
+          console.info("MapRenderer Debug: Chunk Tiles Z=3:", chunk.tiles[3]);
         } else if (!chunk && wx === center.x && wy === center.y) {
-          console.info('MapRenderer Debug: MISSING Center Chunk at', chunkX, chunkY);
+          console.info(
+            "MapRenderer Debug: MISSING Center Chunk at",
+            chunkX,
+            chunkY,
+          );
         }
 
         const lx = ((wx % 32) + 32) % 32;
@@ -153,39 +163,49 @@ export function MapRenderer({
         if (!tile) continue;
 
         // Draw Tile
-        let color = '#222';
+        let color = "#222";
         // Simple visualization
-        if (tile.block === 'water') color = '#1e3a8a';
-        else if (tile.block === 'grass') color = '#14532d';
-        else if (tile.block === 'stone') color = '#44403c';
-        else if (tile.block === 'sand') color = '#d97706';
-        else if (tile.block === 'snow') color = '#e5e7eb';
-        else if (tile.block === 'stairs_up') color = '#22d3ee';
-        else if (tile.block === 'stairs_down') color = '#d946ef';
+        if (tile.block === "water") color = "#1e3a8a";
+        else if (tile.block === "grass") color = "#14532d";
+        else if (tile.block === "stone") color = "#44403c";
+        else if (tile.block === "sand") color = "#d97706";
+        else if (tile.block === "snow") color = "#e5e7eb";
+        else if (tile.block === "stairs_up") color = "#22d3ee";
+        else if (tile.block === "stairs_down") color = "#d946ef";
 
         // Structures
-        if (tile.block.startsWith('wall')) color = '#78716c';
-        if (tile.block.startsWith('floor')) color = '#57534e';
-        if (tile.block.includes('door')) color = '#854d0e';
+        if (tile.block.startsWith("wall")) color = "#78716c";
+        if (tile.block.startsWith("floor")) color = "#57534e";
+        if (tile.block.includes("door")) color = "#854d0e";
 
         if (wx === 0 && wy === 0) {
-          console.info('MapRenderer Debug: Drawing tile 0,0', tile, 'color:', color);
+          console.info(
+            "MapRenderer Debug: Drawing tile 0,0",
+            tile,
+            "color:",
+            color,
+          );
         }
 
         ctx.fillStyle = color;
         // Calculate screen position
         const screenX = (wx - center.x) * TILE_SIZE + width / 2 - TILE_SIZE / 2;
-        const screenY = (wy - center.y) * TILE_SIZE + height / 2 - TILE_SIZE / 2;
+        const screenY =
+          (wy - center.y) * TILE_SIZE + height / 2 - TILE_SIZE / 2;
 
         if (wx === 0 && wy === 0) {
-          console.info('MapRenderer Debug: Tile 0,0 coords:', { screenX, screenY, TILE_SIZE });
+          console.info("MapRenderer Debug: Tile 0,0 coords:", {
+            screenX,
+            screenY,
+            TILE_SIZE,
+          });
         }
 
         ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
 
         // Fog Overlay (Explored but not visible)
         if (!isVisible && isExplored && !godMode) {
-          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillStyle = "rgba(0,0,0,0.6)";
           ctx.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
         }
 
@@ -202,17 +222,17 @@ export function MapRenderer({
         }
 
         // Grid
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.strokeStyle = "rgba(255,255,255,0.05)";
         ctx.strokeRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
       }
     }
 
     // Draw Preview Path
     if (previewPath && previewPath.length > 0) {
-      ctx.strokeStyle = '#fbbf24'; // Amber-400
+      ctx.strokeStyle = "#fbbf24"; // Amber-400
       ctx.lineWidth = 3 * scale;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.setLineDash([5 * scale, 5 * scale]); // Dashed line
 
       ctx.beginPath();
@@ -250,7 +270,7 @@ export function MapRenderer({
       ctx.fill();
 
       // Stroke for active?
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = "#fff";
       ctx.lineWidth = 2;
       ctx.stroke();
     });
@@ -265,12 +285,12 @@ export function MapRenderer({
 
       ctx.save();
       ctx.globalAlpha = 0.6;
-      ctx.fillStyle = ent.color || '#eab308';
+      ctx.fillStyle = ent.color || "#eab308";
       ctx.beginPath();
       ctx.arc(screenX, screenY, TILE_SIZE * 0.4, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = "#fff";
       ctx.lineWidth = 2;
       ctx.setLineDash([4, 4]);
       ctx.stroke();
@@ -324,7 +344,10 @@ export function MapRenderer({
 
       // Check threshold if not yet panning
       if (!isPanningRef.current) {
-        const dist = Math.sqrt((e.clientX - startPosRef.current.x) ** 2 + (e.clientY - startPosRef.current.y) ** 2);
+        const dist = Math.sqrt(
+          (e.clientX - startPosRef.current.x) ** 2 +
+            (e.clientY - startPosRef.current.y) ** 2,
+        );
         if (dist > 5) {
           isPanningRef.current = true;
         }
@@ -393,7 +416,7 @@ export function MapRenderer({
       // eslint-disable-next-line jsx-a11y/no-interactive-element-to-noninteractive-role
       role="application"
       aria-label="Game Map"
-      className={`block touch-none bg-pink-500 ${isDragging ? 'cursor-grabbing' : 'cursor-crosshair'}`}
+      className={`block touch-none bg-pink-500 ${isDragging ? "cursor-grabbing" : "cursor-crosshair"}`}
     />
   );
 }

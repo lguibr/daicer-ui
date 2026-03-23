@@ -3,7 +3,7 @@
  * Smart progress bar with percentage and ETA calculation
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from "react";
 
 interface ProgressBarProps {
   current: number;
@@ -13,12 +13,19 @@ interface ProgressBarProps {
   showETA?: boolean;
 }
 
-export function ProgressBar({ current, target, className, showPercentage = true, showETA = true }: ProgressBarProps) {
+export function ProgressBar({
+  current,
+  target,
+  className,
+  showPercentage = true,
+  showETA = true,
+}: ProgressBarProps) {
   const [eta, setEta] = useState<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const firstProgressRef = useRef<number | null>(null);
 
-  const percentage = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+  const percentage =
+    target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
 
   useEffect(() => {
     // Start timing when progress moves from 0
@@ -28,7 +35,11 @@ export function ProgressBar({ current, target, className, showPercentage = true,
     }
 
     // Calculate ETA based on progress rate
-    if (current > 0 && firstProgressRef.current !== null && startTimeRef.current !== null) {
+    if (
+      current > 0 &&
+      firstProgressRef.current !== null &&
+      startTimeRef.current !== null
+    ) {
       const elapsed = (Date.now() - startTimeRef.current) / 1000; // seconds
       const progressMade = current - firstProgressRef.current;
       const remaining = target - current;
@@ -52,7 +63,7 @@ export function ProgressBar({ current, target, className, showPercentage = true,
   }, [target]);
 
   const formatETA = (seconds: number) => {
-    if (seconds === 0) return 'Complete';
+    if (seconds === 0) return "Complete";
     if (seconds < 60) return `~${seconds}s`;
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;

@@ -1,7 +1,7 @@
-import { Sparkles } from 'lucide-react';
+import { Sparkles } from "lucide-react";
 
-import cn from '@/lib/utils';
-import type { SpotlightCarouselItem } from '../ui';
+import cn from "@/lib/utils";
+import type { SpotlightCarouselItem } from "../ui";
 
 interface JoinHeroSlideProps {
   item: SpotlightCarouselItem;
@@ -9,12 +9,16 @@ interface JoinHeroSlideProps {
   slideIndex: number;
 }
 
-export function JoinHeroSlide({ item, isActive, slideIndex }: JoinHeroSlideProps) {
+export function JoinHeroSlide({
+  item,
+  isActive,
+  slideIndex,
+}: JoinHeroSlideProps) {
   return (
     <article
       className={cn(
-        'flex w-full flex-col gap-8 lg:flex-row lg:items-center',
-        isActive ? 'opacity-100' : 'opacity-60 transition-opacity duration-300'
+        "flex w-full flex-col gap-8 lg:flex-row lg:items-center",
+        isActive ? "opacity-100" : "opacity-60 transition-opacity duration-300",
       )}
       data-slide-index={slideIndex}
     >
@@ -30,14 +34,21 @@ export function JoinHeroSlide({ item, isActive, slideIndex }: JoinHeroSlideProps
         {item.eyebrow ? (
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.36em] text-aurora-100/80">
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-aurora-400/25 bg-midnight-700/70">
-              <Sparkles className="h-3 w-3 text-nebula-200" aria-hidden="true" />
+              <Sparkles
+                className="h-3 w-3 text-nebula-200"
+                aria-hidden="true"
+              />
             </span>
             {item.eyebrow}
           </p>
         ) : null}
 
-        <h3 className="font-display text-3xl uppercase tracking-[0.14em] text-aurora-50 sm:text-4xl">{item.title}</h3>
-        <p className="max-w-xl text-base leading-relaxed text-shadow-200 sm:text-lg sm:leading-8">{item.description}</p>
+        <h3 className="font-display text-3xl uppercase tracking-[0.14em] text-aurora-50 sm:text-4xl">
+          {item.title}
+        </h3>
+        <p className="max-w-xl text-base leading-relaxed text-shadow-200 sm:text-lg sm:leading-8">
+          {item.description}
+        </p>
 
         {item.accent ? (
           <span className="inline-flex items-center justify-center rounded-xl border border-aurora-400/30 px-5 py-2 text-[0.72rem] font-semibold uppercase tracking-[0.3em] text-aurora-100/90">
@@ -55,7 +66,11 @@ export function JoinHeroSlide({ item, isActive, slideIndex }: JoinHeroSlideProps
         ) : null}
       </div>
 
-      {item.media ? <div className="flex flex-1 items-center justify-center">{item.media}</div> : null}
+      {item.media ? (
+        <div className="flex flex-1 items-center justify-center">
+          {item.media}
+        </div>
+      ) : null}
     </article>
   );
 }

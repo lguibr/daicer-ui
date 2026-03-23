@@ -1,11 +1,16 @@
-import { useQuery } from '@apollo/client/react';
-import { Plus, Users, ScrollText, Calendar, Loader2 } from 'lucide-react';
-import { LIST_ROOMS_QUERY } from '@/graphql/queries';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { gildedTokens } from '@/theme/gildedTokens';
-import cn from '@/lib/utils';
-import Logo from '@/components/ui/Logo';
-import { Button } from '@/components/ui/button';
+import { useQuery } from "@apollo/client/react";
+import { Plus, Users, ScrollText, Calendar, Loader2 } from "lucide-react";
+import { LIST_ROOMS_QUERY } from "@/graphql/queries";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { gildedTokens } from "@/theme/gildedTokens";
+import cn from "@/lib/utils";
+import Logo from "@/components/ui/Logo";
+import { Button } from "@/components/ui/button";
 
 interface RoomSelectionProps {
   onSelect: (roomId: string) => void;
@@ -52,13 +57,19 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
     <div className="w-full space-y-10 animate-in fade-in duration-500">
       <header className="flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in-95 duration-1000">
         <div className="relative animate-float mb-4">
-          <Logo size="xl" noShadow className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]" />
+          <Logo
+            size="xl"
+            noShadow
+            className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+          />
           <div className="absolute inset-0 bg-aurora-500/20 blur-[50px] -z-10 rounded-full scale-150 pointer-events-none" />
         </div>
 
         <div className="space-y-4">
           <p className={gildedTokens.heroEyebrow}>Campaign Select</p>
-          <h1 className={`${gildedTokens.heroTitle} !text-5xl sm:!text-6xl text-shadow-100 leading-tight`}>
+          <h1
+            className={`${gildedTokens.heroTitle} !text-5xl sm:!text-6xl text-shadow-100 leading-tight`}
+          >
             Game Lobby
           </h1>
           <p className={`${gildedTokens.heroBody} text-aurora-100/80`}>
@@ -66,7 +77,10 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
           </p>
         </div>
 
-        <Button onClick={onCreate} className={cn(gildedTokens.primaryAction, 'mt-4')}>
+        <Button
+          onClick={onCreate}
+          className={cn(gildedTokens.primaryAction, "mt-4")}
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Campaign
         </Button>
@@ -81,13 +95,15 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
           onClick={onCreate}
           className={cn(
             gildedTokens.glassPanelInteractive,
-            'flex flex-col items-center justify-center p-8 cursor-pointer min-h-[280px] group border-dashed border-aurora-500/30 hover:border-aurora-400'
+            "flex flex-col items-center justify-center p-8 cursor-pointer min-h-[280px] group border-dashed border-aurora-500/30 hover:border-aurora-400",
           )}
         >
           <div className="mb-6 rounded-full bg-midnight-900/80 p-5 shadow-[0_0_30px_rgba(211,143,31,0.1)] group-hover:scale-110 group-hover:shadow-[0_0_50px_rgba(211,143,31,0.25)] transition-all duration-300 border border-aurora-500/20">
             <Plus className="h-8 w-8 text-aurora-300" />
           </div>
-          <h3 className="font-display text-xl uppercase tracking-[0.15em] text-aurora-200">New Campaign</h3>
+          <h3 className="font-display text-xl uppercase tracking-[0.15em] text-aurora-200">
+            New Campaign
+          </h3>
           <p className="mt-3 text-center text-sm text-shadow-300 max-w-[200px]">
             Configure a new world with custom AI settings
           </p>
@@ -99,7 +115,7 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
             key={room.documentId}
             className={cn(
               gildedTokens.glassPanelInteractive,
-              'p-0 overflow-hidden flex flex-col cursor-pointer border-midnight-700/50 bg-midnight-900/40' // Override base p-8
+              "p-0 overflow-hidden flex flex-col cursor-pointer border-midnight-700/50 bg-midnight-900/40", // Override base p-8
             )}
             onClick={() => onSelect(room.documentId)}
           >
@@ -109,12 +125,12 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
             <CardHeader className="p-6 pb-2 space-y-4">
               <div className="flex justify-between items-start gap-4">
                 <h3 className="font-display text-xl leading-tight uppercase tracking-wider text-shadow-100 group-hover:text-aurora-300 transition-colors line-clamp-2">
-                  {room.roomId || 'Untitled Room'}
+                  {room.roomId || "Untitled Room"}
                 </h3>
               </div>
               <div className="flex items-center gap-2">
                 <span className="rounded bg-midnight-950/50 px-2 py-1 font-mono text-xs tracking-widest text-shadow-400 border border-white/5">
-                  {room.code || 'NO-CODE'}
+                  {room.code || "NO-CODE"}
                 </span>
                 {room.dmSettings?.theme && (
                   <span className="rounded bg-aurora-500/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-aurora-300 border border-aurora-500/20">
@@ -136,7 +152,12 @@ export function RoomSelection({ onSelect, onCreate }: RoomSelectionProps) {
                 </div>
                 <div className="flex items-center gap-2 col-span-2 pt-2 border-t border-white/5 mt-1">
                   <Calendar className="w-3.5 h-3.5 text-aurora-500/60" />
-                  <span>Updated {room.createdAt ? new Date(room.createdAt).toLocaleDateString() : 'Unknown'}</span>
+                  <span>
+                    Updated{" "}
+                    {room.createdAt
+                      ? new Date(room.createdAt).toLocaleDateString()
+                      : "Unknown"}
+                  </span>
                 </div>
               </div>
             </CardContent>

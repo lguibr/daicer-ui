@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, type ReactNode } from 'react';
-import * as Collapsible from '@radix-ui/react-collapsible';
-import cn from '@/lib/utils';
+import { useState, useEffect, useRef, type ReactNode } from "react";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import cn from "@/lib/utils";
 
 interface ReasoningProps {
   children: ReactNode;
@@ -37,7 +37,8 @@ export function Reasoning({
   // Determine if controlled or uncontrolled
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
-  const duration = controlledDuration !== undefined ? controlledDuration : internalDuration;
+  const duration =
+    controlledDuration !== undefined ? controlledDuration : internalDuration;
 
   // Handle open state change
   const handleOpenChange = (newOpen: boolean) => {
@@ -93,7 +94,10 @@ export function Reasoning({
     <Collapsible.Root
       open={isOpen}
       onOpenChange={handleOpenChange}
-      className={cn('rounded-2xl border border-aurora-500/30 bg-aurora-900/10 overflow-hidden', className)}
+      className={cn(
+        "rounded-2xl border border-aurora-500/30 bg-aurora-900/10 overflow-hidden",
+        className,
+      )}
     >
       <Collapsible.Trigger asChild>
         <button
@@ -102,7 +106,12 @@ export function Reasoning({
         >
           <div className="flex items-center gap-3">
             {/* Brain icon */}
-            <svg className="h-5 w-5 text-aurora-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-5 w-5 text-aurora-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -112,28 +121,42 @@ export function Reasoning({
             </svg>
 
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-aurora-200">{isStreaming ? 'Thinking...' : 'Reasoning'}</span>
+              <span className="text-sm font-semibold text-aurora-200">
+                {isStreaming ? "Thinking..." : "Reasoning"}
+              </span>
               {duration > 0 && !isStreaming && (
-                <span className="text-xs text-aurora-400">Thought for {duration.toFixed(1)} seconds</span>
+                <span className="text-xs text-aurora-400">
+                  Thought for {duration.toFixed(1)} seconds
+                </span>
               )}
             </div>
           </div>
 
           {/* Chevron */}
           <svg
-            className={cn('h-4 w-4 text-aurora-400 transition-transform duration-200', isOpen && 'rotate-180')}
+            className={cn(
+              "h-4 w-4 text-aurora-400 transition-transform duration-200",
+              isOpen && "rotate-180",
+            )}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
       </Collapsible.Trigger>
 
       <Collapsible.Content className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
         <div className="border-t border-aurora-500/20 bg-midnight-900/20 px-4 py-3">
-          <div className="prose prose-invert max-w-none text-sm text-shadow-200">{children}</div>
+          <div className="prose prose-invert max-w-none text-sm text-shadow-200">
+            {children}
+          </div>
         </div>
       </Collapsible.Content>
 
@@ -147,4 +170,4 @@ export function Reasoning({
   );
 }
 
-Reasoning.displayName = 'Reasoning';
+Reasoning.displayName = "Reasoning";

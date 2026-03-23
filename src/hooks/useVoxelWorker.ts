@@ -3,9 +3,9 @@
  * Offloads 3D voxel rendering to prevent UI blocking
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { createVoxelWorker } from '../workers/WorkerManager';
-import type { WorkerManager } from '../workers/WorkerManager';
+import { useEffect, useRef, useCallback, useState } from "react";
+import { createVoxelWorker } from "../workers/WorkerManager";
+import type { WorkerManager } from "../workers/WorkerManager";
 
 interface Voxel {
   x: number;
@@ -41,7 +41,7 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
       const success = worker.initialize({
         canvas,
         onError: (error) => {
-          console.error('[useVoxelWorker] Worker error:', error);
+          console.error("[useVoxelWorker] Worker error:", error);
         },
       });
 
@@ -52,17 +52,19 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
 
         // Start animation if auto-animate is enabled
         if (options.autoAnimate) {
-          worker.postMessage({ type: 'start-animation' });
+          worker.postMessage({ type: "start-animation" });
         }
 
-        console.info('[useVoxelWorker] Worker initialized successfully');
+        console.info("[useVoxelWorker] Worker initialized successfully");
         return true;
       }
 
-      console.warn('[useVoxelWorker] Worker initialization failed, using main thread');
+      console.warn(
+        "[useVoxelWorker] Worker initialization failed, using main thread",
+      );
       return false;
     },
-    [options.autoAnimate]
+    [options.autoAnimate],
   );
 
   /**
@@ -74,7 +76,7 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
     }
 
     workerRef.current.postMessage({
-      type: 'load-model',
+      type: "load-model",
       voxels,
     });
 
@@ -84,18 +86,21 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
   /**
    * Update camera position (OrbitControls proxy)
    */
-  const updateCamera = useCallback((delta: { theta?: number; phi?: number; distance?: number }) => {
-    if (!workerRef.current || !isWorkerActiveRef.current) {
-      return false;
-    }
+  const updateCamera = useCallback(
+    (delta: { theta?: number; phi?: number; distance?: number }) => {
+      if (!workerRef.current || !isWorkerActiveRef.current) {
+        return false;
+      }
 
-    workerRef.current.postMessage({
-      type: 'update-camera',
-      ...delta,
-    });
+      workerRef.current.postMessage({
+        type: "update-camera",
+        ...delta,
+      });
 
-    return true;
-  }, []);
+      return true;
+    },
+    [],
+  );
 
   /**
    * Start idle animation
@@ -105,7 +110,7 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
       return false;
     }
 
-    workerRef.current.postMessage({ type: 'start-animation' });
+    workerRef.current.postMessage({ type: "start-animation" });
     return true;
   }, []);
 
@@ -117,7 +122,7 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
       return false;
     }
 
-    workerRef.current.postMessage({ type: 'stop-animation' });
+    workerRef.current.postMessage({ type: "stop-animation" });
     return true;
   }, []);
 
@@ -130,7 +135,7 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
     }
 
     workerRef.current.postMessage({
-      type: 'resize',
+      type: "resize",
       width,
       height,
     });
@@ -148,10 +153,10 @@ export function useVoxelWorker(options: UseVoxelWorkerOptions = {}) {
         workerRef.current = null;
         isWorkerActiveRef.current = false;
         setIsWorkerActive(false);
-        console.info('[useVoxelWorker] Worker terminated');
+        console.info("[useVoxelWorker] Worker terminated");
       }
     },
-    []
+    [],
   );
 
   return {

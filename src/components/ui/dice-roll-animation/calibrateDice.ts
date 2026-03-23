@@ -1,18 +1,20 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import { createDie } from '../dice-loader/createDie';
-import type { DieType } from '../dice-loader/types';
+import { createDie } from "../dice-loader/createDie";
+import type { DieType } from "../dice-loader/types";
 
 /**
  * Extract face normal vectors from a die by analyzing the number planes attached to each face
  */
-export function extractFaceNormalsFromDie(dieType: DieType): Map<number, THREE.Vector3> {
+export function extractFaceNormalsFromDie(
+  dieType: DieType,
+): Map<number, THREE.Vector3> {
   let die: THREE.Group;
 
   try {
-    die = createDie(dieType, '#ffffff');
+    die = createDie(dieType, "#ffffff");
   } catch (err) {
-    console.warn('Failed to save calibration:', err); // In test environment or when canvas is unavailable, return empty map
+    console.warn("Failed to save calibration:", err); // In test environment or when canvas is unavailable, return empty map
     return new Map();
   }
 
@@ -34,7 +36,10 @@ export function extractFaceNormalsFromDie(dieType: DieType): Map<number, THREE.V
 
   // Traverse to find number planes
   die.traverse((child) => {
-    if (child instanceof THREE.Mesh && child.geometry instanceof THREE.PlaneGeometry) {
+    if (
+      child instanceof THREE.Mesh &&
+      child.geometry instanceof THREE.PlaneGeometry
+    ) {
       if (planeIndex < faceNumbers.length) {
         // Get the plane's world position and die center
         const planeWorldPos = new THREE.Vector3();
@@ -59,7 +64,9 @@ export function extractFaceNormalsFromDie(dieType: DieType): Map<number, THREE.V
  * Calculate the rotation needed to point a given normal vector at the camera
  * Camera is at (0, 0, 7.5) looking at origin, so faces should point toward +Z
  */
-export function calculateRotationFromNormal(normal: THREE.Vector3): THREE.Euler {
+export function calculateRotationFromNormal(
+  normal: THREE.Vector3,
+): THREE.Euler {
   // Target direction: face should point TOWARD camera at +Z
   const targetDirection = new THREE.Vector3(0, 0, 1);
 
@@ -69,7 +76,7 @@ export function calculateRotationFromNormal(normal: THREE.Vector3): THREE.Euler 
 
   // Convert to Euler angles
   const euler = new THREE.Euler();
-  euler.setFromQuaternion(quaternion, 'XYZ');
+  euler.setFromQuaternion(quaternion, "XYZ");
 
   return euler;
 }
@@ -77,7 +84,9 @@ export function calculateRotationFromNormal(normal: THREE.Vector3): THREE.Euler 
 /**
  * Calibrate all face rotations for a die type by extracting normals and calculating rotations
  */
-export function calibrateDieRotations(dieType: DieType): Record<number, { x: number; y: number; z: number }> {
+export function calibrateDieRotations(
+  dieType: DieType,
+): Record<number, { x: number; y: number; z: number }> {
   const faceNormals = extractFaceNormalsFromDie(dieType);
   const rotations: Record<number, { x: number; y: number; z: number }> = {};
 
@@ -96,7 +105,10 @@ export function calibrateDieRotations(dieType: DieType): Record<number, { x: num
 /**
  * Generate calibrated rotations for ALL die types
  */
-export function generateAllCalibrations(): Record<DieType, Record<number, { x: number; y: number; z: number }>> {
+export function generateAllCalibrations(): Record<
+  DieType,
+  Record<number, { x: number; y: number; z: number }>
+> {
   const allDieTypes: DieType[] = [2, 4, 6, 8, 10, 12, 20];
 
   const calibrations: any = {};

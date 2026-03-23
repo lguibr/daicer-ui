@@ -11,9 +11,17 @@ import type {
   CombatLogEntry,
   CombatState,
   CombatHistory,
-} from '../../types/combat';
+} from "../../types/combat";
 
-export type { Position, Condition, CombatCharacter, DiceRollResult, CombatLogEntry, CombatState, CombatHistory };
+export type {
+  Position,
+  Condition,
+  CombatCharacter,
+  DiceRollResult,
+  CombatLogEntry,
+  CombatState,
+  CombatHistory,
+};
 
 /**
  * Character card display props

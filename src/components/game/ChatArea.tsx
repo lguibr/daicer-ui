@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
-import type { Message } from '@/types/contracts';
-import MarkdownMessage from './MarkdownMessage';
-import useAuth from '../../hooks/useAuth';
-import { useI18n } from '../../i18n';
-import cn from '../../lib/utils';
-import { DiceLoader } from '../ui/dice-loader';
+import { useEffect, useMemo, useRef } from "react";
+import type { Message } from "@/types/contracts";
+import MarkdownMessage from "./MarkdownMessage";
+import useAuth from "../../hooks/useAuth";
+import { useI18n } from "../../i18n";
+import cn from "../../lib/utils";
+import { DiceLoader } from "../ui/dice-loader";
 
 interface ChatAreaProps {
   messages: Message[];
@@ -17,15 +17,22 @@ interface ChatAreaProps {
  * @param props - Component props
  * @returns Chat UI
  */
-export default function ChatArea({ messages, worldDescription, isProcessing }: ChatAreaProps) {
+export default function ChatArea({
+  messages,
+  worldDescription,
+  isProcessing,
+}: ChatAreaProps) {
   const { user } = useAuth();
   const { t } = useI18n();
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Filter messages to show public and user-specific private messages
   const visibleMessages = useMemo(
-    () => messages.filter((msg) => !msg.recipientId || msg.recipientId === user?.uid),
-    [messages, user?.uid]
+    () =>
+      messages.filter(
+        (msg) => !msg.recipientId || msg.recipientId === user?.uid,
+      ),
+    [messages, user?.uid],
   );
 
   useEffect(() => {
@@ -33,7 +40,7 @@ export default function ChatArea({ messages, worldDescription, isProcessing }: C
       const node = containerRef.current;
       node.scrollTo({
         top: node.scrollHeight,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
   }, [visibleMessages.length, isProcessing]);
@@ -48,7 +55,9 @@ export default function ChatArea({ messages, worldDescription, isProcessing }: C
       {/* World Description */}
       {worldDescription && (
         <div className="rounded-3xl border border-midnight-600/70 bg-midnight-800/60 p-6 shadow-[0_22px_44px_rgba(5,9,18,0.45)]">
-          <h3 className="text-lg font-bold text-aurora-300 mb-2">{t('gameplay.worldTitle')}</h3>
+          <h3 className="text-lg font-bold text-aurora-300 mb-2">
+            {t("gameplay.worldTitle")}
+          </h3>
           <div className="text-shadow-200">
             <MarkdownMessage content={worldDescription} />
           </div>
@@ -57,45 +66,55 @@ export default function ChatArea({ messages, worldDescription, isProcessing }: C
 
       {/* Messages */}
       {visibleMessages.map((msg) => {
-        const isDM = msg.sender === 'DM';
+        const isDM = msg.sender === "DM";
         const isPrivate = !!msg.recipientId;
 
         return (
-          <div key={msg.id} className={cn('flex w-full', isDM ? 'justify-start' : 'justify-end')}>
+          <div
+            key={msg.id}
+            className={cn(
+              "flex w-full",
+              isDM ? "justify-start" : "justify-end",
+            )}
+          >
             <div
               className={cn(
-                'relative flex w-full max-w-4xl flex-col gap-3 rounded-3xl border px-5 py-4 shadow-[0_24px_38px_rgba(6,10,18,0.45)] backdrop-blur-sm transition',
+                "relative flex w-full max-w-4xl flex-col gap-3 rounded-3xl border px-5 py-4 shadow-[0_24px_38px_rgba(6,10,18,0.45)] backdrop-blur-sm transition",
                 isPrivate
-                  ? 'border-nebula-500/40 bg-nebula-900/60'
+                  ? "border-nebula-500/40 bg-nebula-900/60"
                   : isDM
-                    ? 'border-midnight-600/60 bg-midnight-700/80'
-                    : 'border-aurora-500/30 bg-aurora-900/35'
+                    ? "border-midnight-600/60 bg-midnight-700/80"
+                    : "border-aurora-500/30 bg-aurora-900/35",
               )}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <p
                     className={cn(
-                      'text-sm font-semibold uppercase tracking-[0.22em]',
-                      isDM ? 'text-aurora-200' : 'text-shadow-100'
+                      "text-sm font-semibold uppercase tracking-[0.22em]",
+                      isDM ? "text-aurora-200" : "text-shadow-100",
                     )}
                   >
-                    {msg.sender || 'Unknown'}
+                    {msg.sender || "Unknown"}
                   </p>
                   {isPrivate && (
                     <span className="flex items-center gap-1 rounded-full bg-nebula-500/25 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-nebula-200">
-                      🔒 {t('gameplay.privatePerspective')}
+                      🔒 {t("gameplay.privatePerspective")}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-shadow-500">{new Date(msg.timestamp).toLocaleTimeString()}</p>
+                <p className="text-xs text-shadow-500">
+                  {new Date(msg.timestamp).toLocaleTimeString()}
+                </p>
               </div>
 
               <div className="prose prose-invert max-w-none text-shadow-50 break-words">
                 {isDM ? (
-                  <MarkdownMessage content={msg.text || ''} />
+                  <MarkdownMessage content={msg.text || ""} />
                 ) : (
-                  <p className="whitespace-pre-wrap leading-relaxed break-words">{msg.text || ''}</p>
+                  <p className="whitespace-pre-wrap leading-relaxed break-words">
+                    {msg.text || ""}
+                  </p>
                 )}
               </div>
 
@@ -121,7 +140,11 @@ export default function ChatArea({ messages, worldDescription, isProcessing }: C
           <DiceLoader
             size="medium"
             diceCount={3}
-            message={isProcessing ? t('gameplay.processing') : t('gameplay.adventureBegins')}
+            message={
+              isProcessing
+                ? t("gameplay.processing")
+                : t("gameplay.adventureBegins")
+            }
             maxDiceCount={5}
           />
         </div>

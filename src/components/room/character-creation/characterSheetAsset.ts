@@ -14,5 +14,5 @@ export interface CharacterSheetAsset {
   };
   // Metadata about the asset
   createdAt?: string;
-  source?: 'user_created' | 'system_preset';
+  source?: "user_created" | "system_preset";
 }

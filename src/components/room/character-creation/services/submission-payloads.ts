@@ -1,4 +1,4 @@
-import { addCharacter } from '../../../../services/api';
+import { addCharacter } from "../../../../services/api";
 
 export const createCharacterPayload = (
   formData: any,
@@ -9,10 +9,14 @@ export const createCharacterPayload = (
   equippedItems: any,
 
   equipmentItems: any[],
-  equipmentGold: number
+  equipmentGold: number,
 ) => {
-  const conModifier = Math.floor(((formData.attributes?.Constitution ?? 10) - 10) / 2);
-  const dexModifier = Math.floor(((formData.attributes?.Dexterity ?? 10) - 10) / 2);
+  const conModifier = Math.floor(
+    ((formData.attributes?.Constitution ?? 10) - 10) / 2,
+  );
+  const dexModifier = Math.floor(
+    ((formData.attributes?.Dexterity ?? 10) - 10) / 2,
+  );
   const proficiencyBonus = 2;
 
   // Inventory mapping
@@ -20,7 +24,14 @@ export const createCharacterPayload = (
 
     .map((i: any) => {
       const item = equipmentItems.find((e: any) => e.index === i.itemIndex);
-      return item ? { item: item.id, quantity: i.quantity, slot: 'backpack', isEquipped: false } : null;
+      return item
+        ? {
+            item: item.id,
+            quantity: i.quantity,
+            slot: "backpack",
+            isEquipped: false,
+          }
+        : null;
     })
     .filter(Boolean);
 
@@ -32,15 +43,16 @@ export const createCharacterPayload = (
       const item = equipmentItems.find((e: any) => e.index === itemIndex);
       if (!item) return null;
 
-      let backendSlot = 'backpack';
+      let backendSlot = "backpack";
       let isEquipped = true;
       // Simple mapping
-      if (uiSlot === 'mainHand') backendSlot = 'main_hand';
-      else if (uiSlot === 'offHand' || uiSlot === 'shield') backendSlot = 'off_hand';
-      else if (uiSlot === 'armor') backendSlot = 'armor';
+      if (uiSlot === "mainHand") backendSlot = "main_hand";
+      else if (uiSlot === "offHand" || uiSlot === "shield")
+        backendSlot = "off_hand";
+      else if (uiSlot === "armor") backendSlot = "armor";
       // ... others ...
       else {
-        backendSlot = 'backpack';
+        backendSlot = "backpack";
         isEquipped = false;
       }
 
@@ -72,12 +84,20 @@ export const createCharacterPayload = (
     attacks: [],
     equipment: [...mappedInventory, ...mappedEquipped],
     currency: { cp: 0, sp: 0, ep: 0, gp: equipmentGold, pp: 0 },
-    proficienciesAndLanguages: '',
-    features: '',
+    proficienciesAndLanguages: "",
+    features: "",
     backstory: formData.background,
-    alliesAndOrganizations: '',
-    treasure: '',
-    spellcasting: { class: '', ability: '', saveDC: 0, attackBonus: 0, cantrips: [], spellsKnown: [], slots: [] },
+    alliesAndOrganizations: "",
+    treasure: "",
+    spellcasting: {
+      class: "",
+      ability: "",
+      saveDC: 0,
+      attackBonus: 0,
+      cantrips: [],
+      spellsKnown: [],
+      slots: [],
+    },
   };
 };
 
@@ -93,7 +113,7 @@ export const submitCharacter = async (
 
   _onCharacterCreated: any,
 
-  _effectiveLevel: number
+  _effectiveLevel: number,
 ) => {
   // if (assetMode) { ... } logic removed as we no longer create assets this way.
   // The 'assetMode' generally referred to creating a standalone JSON asset.

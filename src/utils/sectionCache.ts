@@ -4,12 +4,19 @@
  * Enables page refresh recovery and backward navigation
  */
 
-import type { HistoricalPeriod, WorldCondition, Structure, Road, CharacterSheet } from '@/types/contracts';
+import type {
+  HistoricalPeriod,
+  WorldCondition,
+  Structure,
+  Road,
+  CharacterSheet,
+} from "@/types/contracts";
 
 const CACHE_KEYS = {
   section1: (roomId: string) => `daice-graph-section-1-${roomId}`,
   section2: (roomId: string) => `daice-graph-section-2-${roomId}`,
-  section3: (roomId: string, playerId: string) => `daice-graph-section-3-${roomId}-${playerId}`,
+  section3: (roomId: string, playerId: string) =>
+    `daice-graph-section-3-${roomId}-${playerId}`,
   section3Prefix: (roomId: string) => `daice-graph-section-3-${roomId}-`,
 };
 
@@ -48,7 +55,10 @@ export interface Section3Output {
  * Cache Section 1 output to localStorage
  * NO-OP: Caching disabled to avoid quota issues. Data persists in Firestore.
  */
-export function cacheSection1Output(_roomId: string, _output: Section1Output): void {
+export function cacheSection1Output(
+  _roomId: string,
+  _output: Section1Output,
+): void {
   // No-op - caching disabled
 }
 
@@ -60,7 +70,7 @@ export function getSection1Output(roomId: string): Section1Output | null {
     const cached = localStorage.getItem(CACHE_KEYS.section1(roomId));
     return cached ? JSON.parse(cached) : null;
   } catch (error) {
-    console.error('[SectionCache] Failed to read Section 1 cache:', error);
+    console.error("[SectionCache] Failed to read Section 1 cache:", error);
     return null;
   }
 }
@@ -69,7 +79,10 @@ export function getSection1Output(roomId: string): Section1Output | null {
  * Cache Section 2 output to localStorage
  * NO-OP: Caching disabled to avoid quota issues. Data persists in Firestore.
  */
-export function cacheSection2Output(_roomId: string, _output: Section2Output): void {
+export function cacheSection2Output(
+  _roomId: string,
+  _output: Section2Output,
+): void {
   // No-op - caching disabled
 }
 
@@ -81,7 +94,7 @@ export function getSection2Output(roomId: string): Section2Output | null {
     const cached = localStorage.getItem(CACHE_KEYS.section2(roomId));
     return cached ? JSON.parse(cached) : null;
   } catch (error) {
-    console.error('[SectionCache] Failed to read Section 2 cache:', error);
+    console.error("[SectionCache] Failed to read Section 2 cache:", error);
     return null;
   }
 }
@@ -89,23 +102,33 @@ export function getSection2Output(roomId: string): Section2Output | null {
 /**
  * Cache Section 3 output for a specific player
  */
-export function cacheSection3Output(roomId: string, playerId: string, output: Section3Output): void {
+export function cacheSection3Output(
+  roomId: string,
+  playerId: string,
+  output: Section3Output,
+): void {
   try {
-    localStorage.setItem(CACHE_KEYS.section3(roomId, playerId), JSON.stringify(output));
+    localStorage.setItem(
+      CACHE_KEYS.section3(roomId, playerId),
+      JSON.stringify(output),
+    );
   } catch (error) {
-    console.error('[SectionCache] Failed to cache Section 3:', error);
+    console.error("[SectionCache] Failed to cache Section 3:", error);
   }
 }
 
 /**
  * Get cached Section 3 output for a specific player
  */
-export function getSection3Output(roomId: string, playerId: string): Section3Output | null {
+export function getSection3Output(
+  roomId: string,
+  playerId: string,
+): Section3Output | null {
   try {
     const cached = localStorage.getItem(CACHE_KEYS.section3(roomId, playerId));
     return cached ? JSON.parse(cached) : null;
   } catch (error) {
-    console.error('[SectionCache] Failed to read Section 3 cache:', error);
+    console.error("[SectionCache] Failed to read Section 3 cache:", error);
     return null;
   }
 }
@@ -131,7 +154,7 @@ export function getAllSection3Outputs(roomId: string): Section3Output[] {
 
     return outputs;
   } catch (error) {
-    console.error('[SectionCache] Failed to read all Section 3 cache:', error);
+    console.error("[SectionCache] Failed to read all Section 3 cache:", error);
     return [];
   }
 }
@@ -163,7 +186,7 @@ export function clearSectionCache(roomId: string): void {
 
     console.info(`[SectionCache] Cleared all caches for room ${roomId}`);
   } catch (error) {
-    console.error('[SectionCache] Failed to clear cache:', error);
+    console.error("[SectionCache] Failed to clear cache:", error);
   }
 }
 
@@ -194,6 +217,6 @@ export function clearSection3Cache(roomId: string): void {
 
     console.info(`[SectionCache] Cleared Section 3 cache for room ${roomId}`);
   } catch (error) {
-    console.error('[SectionCache] Failed to clear Section 3 cache:', error);
+    console.error("[SectionCache] Failed to clear Section 3 cache:", error);
   }
 }

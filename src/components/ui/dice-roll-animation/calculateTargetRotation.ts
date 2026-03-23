@@ -1,15 +1,24 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import type { DieType } from '../dice-loader/types';
-import { calibrateDieRotations } from './calibrateDice';
+import type { DieType } from "../dice-loader/types";
+import { calibrateDieRotations } from "./calibrateDice";
 
 // Cache calibrated rotations on first use
-let calibratedRotations: Record<DieType, Record<number, { x: number; y: number; z: number }>> | null = null;
+let calibratedRotations: Record<
+  DieType,
+  Record<number, { x: number; y: number; z: number }>
+> | null = null;
 
-function getCalibratedRotations(): Record<DieType, Record<number, { x: number; y: number; z: number }>> {
+function getCalibratedRotations(): Record<
+  DieType,
+  Record<number, { x: number; y: number; z: number }>
+> {
   if (!calibratedRotations) {
     const dieTypes: DieType[] = [2, 4, 6, 8, 10, 12, 20];
-    calibratedRotations = {} as Record<DieType, Record<number, { x: number; y: number; z: number }>>;
+    calibratedRotations = {} as Record<
+      DieType,
+      Record<number, { x: number; y: number; z: number }>
+    >;
 
     dieTypes.forEach((dieType) => {
       calibratedRotations![dieType] = calibrateDieRotations(dieType);
@@ -23,7 +32,10 @@ function getCalibratedRotations(): Record<DieType, Record<number, { x: number; y
  * Get the target rotation needed to face a specific number DIRECTLY towards the camera.
  * Uses calibrated rotations calculated from actual die geometry for perfect orientation.
  */
-export function getTargetRotationForFace(dieType: DieType, targetNumber: number): { x: number; y: number; z: number } {
+export function getTargetRotationForFace(
+  dieType: DieType,
+  targetNumber: number,
+): { x: number; y: number; z: number } {
   const calibrations = getCalibratedRotations();
   const typeRotations = calibrations[dieType];
 
@@ -46,13 +58,13 @@ export function getTargetRotationForFace(dieType: DieType, targetNumber: number)
  */
 export function validateFaceOrientation(
   rotation: { x: number; y: number; z: number },
-  threshold: number = 0.9
+  threshold: number = 0.9,
 ): boolean {
   // Create a vector pointing outward from the face (initially pointing at camera: 0, 0, 1)
   const faceNormal = new THREE.Vector3(0, 0, 1);
 
   // Apply the rotation
-  const euler = new THREE.Euler(rotation.x, rotation.y, rotation.z, 'XYZ');
+  const euler = new THREE.Euler(rotation.x, rotation.y, rotation.z, "XYZ");
   faceNormal.applyEuler(euler);
 
   // Check if the normal is pointing towards the camera (positive Z)

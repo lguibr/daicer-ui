@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import cn from '@/lib/utils';
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import cn from "@/lib/utils";
 
 interface ConversationProps {
   children: ReactNode;
@@ -21,10 +21,17 @@ interface ConversationScrollButtonProps {
  * Auto-scrolling conversation container with stick-to-bottom behavior
  * Inspired by AI Elements but styled with Daicer's midnight/aurora theme
  */
-export function Conversation({ children, className, style }: ConversationProps) {
+export function Conversation({
+  children,
+  className,
+  style,
+}: ConversationProps) {
   return (
     <div
-      className={cn('relative flex h-full w-full flex-col overflow-hidden', className)}
+      className={cn(
+        "relative flex h-full w-full flex-col overflow-hidden",
+        className,
+      )}
       style={style}
       role="log"
       aria-live="polite"
@@ -39,7 +46,10 @@ export function Conversation({ children, className, style }: ConversationProps) 
  * Scrollable content area for messages
  * Manages auto-scroll behavior and scroll detection
  */
-export function ConversationContent({ children, className }: ConversationContentProps) {
+export function ConversationContent({
+  children,
+  className,
+}: ConversationContentProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -53,12 +63,13 @@ export function ConversationContent({ children, className }: ConversationContent
 
     // Only scroll if content changed (new messages)
     if (node.scrollHeight !== prevScrollHeightRef.current) {
-      const isNearBottom = node.scrollHeight - node.scrollTop - node.clientHeight < 100;
+      const isNearBottom =
+        node.scrollHeight - node.scrollTop - node.clientHeight < 100;
 
       if (isNearBottom || autoScroll) {
         node.scrollTo({
           top: node.scrollHeight,
-          behavior: 'smooth',
+          behavior: "smooth",
         });
       }
 
@@ -71,7 +82,8 @@ export function ConversationContent({ children, className }: ConversationContent
     if (!containerRef.current) return;
 
     const node = containerRef.current;
-    const isNearBottom = node.scrollHeight - node.scrollTop - node.clientHeight < 50;
+    const isNearBottom =
+      node.scrollHeight - node.scrollTop - node.clientHeight < 50;
 
     setAutoScroll(isNearBottom);
     setShowScrollButton(!isNearBottom);
@@ -84,22 +96,22 @@ export function ConversationContent({ children, className }: ConversationContent
     const node = containerRef.current;
 
     switch (e.key) {
-      case 'Home':
+      case "Home":
         e.preventDefault();
-        node.scrollTo({ top: 0, behavior: 'smooth' });
+        node.scrollTo({ top: 0, behavior: "smooth" });
         break;
-      case 'End':
+      case "End":
         e.preventDefault();
-        node.scrollTo({ top: node.scrollHeight, behavior: 'smooth' });
+        node.scrollTo({ top: node.scrollHeight, behavior: "smooth" });
         setAutoScroll(true);
         break;
-      case 'PageUp':
+      case "PageUp":
         e.preventDefault();
-        node.scrollBy({ top: -node.clientHeight, behavior: 'smooth' });
+        node.scrollBy({ top: -node.clientHeight, behavior: "smooth" });
         break;
-      case 'PageDown':
+      case "PageDown":
         e.preventDefault();
-        node.scrollBy({ top: node.clientHeight, behavior: 'smooth' });
+        node.scrollBy({ top: node.clientHeight, behavior: "smooth" });
         break;
       default:
         break;
@@ -114,10 +126,10 @@ export function ConversationContent({ children, className }: ConversationContent
         onKeyDown={handleKeyDown}
         tabIndex={0}
         className={cn(
-          'flex-1 overflow-y-auto overflow-x-hidden',
-          'focus:outline-none focus:ring-2 focus:ring-aurora-500/30',
-          'scrollbar-thin scrollbar-thumb-midnight-600 scrollbar-track-midnight-900',
-          className
+          "flex-1 overflow-y-auto overflow-x-hidden",
+          "focus:outline-none focus:ring-2 focus:ring-aurora-500/30",
+          "scrollbar-thin scrollbar-thumb-midnight-600 scrollbar-track-midnight-900",
+          className,
         )}
       >
         {children}
@@ -133,39 +145,51 @@ export function ConversationContent({ children, className }: ConversationContent
  * Floating button to scroll back to bottom
  * Appears when user has scrolled up
  */
-export function ConversationScrollButton({ className }: ConversationScrollButtonProps) {
+export function ConversationScrollButton({
+  className,
+}: ConversationScrollButtonProps) {
   const handleClick = () => {
     // Find the parent ConversationContent
     const content = document.querySelector('[role="log"] > div');
     if (content) {
       content.scrollTo({
         top: content.scrollHeight,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
   };
 
   return (
-    <div className={cn('absolute bottom-4 right-4 z-10', className)}>
+    <div className={cn("absolute bottom-4 right-4 z-10", className)}>
       <Button
         onClick={handleClick}
         variant="outline"
         size="icon"
         className={cn(
-          'h-8 w-8 rounded-full shadow-lg',
-          'bg-midnight-800 border-aurora-500/30 text-aurora-400',
-          'hover:bg-midnight-700 hover:text-aurora-300 hover:border-aurora-400/50',
-          'backdrop-blur-sm transition-all duration-300 animate-in fade-in zoom-in'
+          "h-8 w-8 rounded-full shadow-lg",
+          "bg-midnight-800 border-aurora-500/30 text-aurora-400",
+          "hover:bg-midnight-700 hover:text-aurora-300 hover:border-aurora-400/50",
+          "backdrop-blur-sm transition-all duration-300 animate-in fade-in zoom-in",
         )}
       >
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
         </svg>
       </Button>
     </div>
   );
 }
 
-Conversation.displayName = 'Conversation';
-ConversationContent.displayName = 'ConversationContent';
-ConversationScrollButton.displayName = 'ConversationScrollButton';
+Conversation.displayName = "Conversation";
+ConversationContent.displayName = "ConversationContent";
+ConversationScrollButton.displayName = "ConversationScrollButton";

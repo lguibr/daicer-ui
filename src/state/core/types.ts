@@ -3,13 +3,16 @@
  * @description Base types for universal state engine (frontend copy)
  */
 
-import type { Draft, Patch } from 'immer';
+import type { Draft, Patch } from "immer";
 
 export interface StateEngine<T> {
   getState(): Readonly<T>;
   subscribe(listener: (s: T) => void): () => void;
   apply(partial: Partial<T>, meta?: UpdateMeta): T;
-  transaction(mutator: (draft: Draft<T>) => void): { state: T; patches: Patch[] };
+  transaction(mutator: (draft: Draft<T>) => void): {
+    state: T;
+    patches: Patch[];
+  };
 }
 
 export interface UpdateMeta {

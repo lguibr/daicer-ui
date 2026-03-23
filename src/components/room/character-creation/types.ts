@@ -1,8 +1,13 @@
-import type { Attribute, CharacterSheet, ResourcePool, Talent } from '@/types/contracts';
+import type {
+  Attribute,
+  CharacterSheet,
+  ResourcePool,
+  Talent,
+} from "@/types/contracts";
 
 export interface CharacterCreationProps {
-  room?: import('@/types/contracts').Room;
-  players?: import('@/types/contracts').Player[];
+  room?: import("@/types/contracts").Room;
+  players?: import("@/types/contracts").Player[];
   assetMode?: boolean;
   settings?: {
     startingLevel: number;
@@ -10,7 +15,7 @@ export interface CharacterCreationProps {
   };
 
   onAssetCreated?: (asset: any) => void;
-  onCharacterCreated?: (player?: import('@/types/contracts').Player) => void;
+  onCharacterCreated?: (player?: import("@/types/contracts").Player) => void;
 }
 
 export type CharacterFormState = {
@@ -25,7 +30,7 @@ export type CharacterFormState = {
   proficienciesAndLanguages: string;
   features: string;
   treasure: string;
-  currency: CharacterSheet['currency'];
+  currency: CharacterSheet["currency"];
   resourcePools: ResourcePool[];
   talents: Talent[];
   expertises: string[];

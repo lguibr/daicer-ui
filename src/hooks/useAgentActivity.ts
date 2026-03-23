@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import { useQuery } from '@apollo/client/react';
-import { gql } from '@apollo/client';
-import { AgentLog } from '@/types/contracts';
+import { useMemo } from "react";
+import { useQuery } from "@apollo/client/react";
+import { gql } from "@apollo/client";
+import { AgentLog } from "@/types/contracts";
 
 const GET_AGENT_LOGS = gql`
   query GetAgentLogs($roomId: ID!) {
@@ -21,14 +21,14 @@ export interface StreamState {
   roomId: string;
   content: string;
   reasoning: string;
-  status: 'active' | 'completed' | 'error';
+  status: "active" | "completed" | "error";
   tools: Array<{
     name: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     input?: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     output?: any;
-    status: 'running' | 'completed';
+    status: "running" | "completed";
   }>;
   error?: string;
 }
@@ -43,7 +43,7 @@ export function useAgentActivity(roomId?: string, _socketInstance?: any) {
     variables: { roomId },
     skip: !roomId,
     pollInterval: 2000,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
   });
 
   return useMemo(() => {
@@ -65,17 +65,19 @@ export function useAgentActivity(roomId?: string, _socketInstance?: any) {
       // Let's create a synthetic stream for the "Room Activity"
       if (roomId) {
         newStreams[roomId] = {
-          id: 'activity-feed',
+          id: "activity-feed",
           roomId,
-          content: latestLogs.map((l) => `[${l.type}] ${JSON.stringify(l.payload)}`).join('\n'),
-          reasoning: '',
-          status: 'completed',
+          content: latestLogs
+            .map((l) => `[${l.type}] ${JSON.stringify(l.payload)}`)
+            .join("\n"),
+          reasoning: "",
+          status: "completed",
           tools: latestLogs
-            .filter((l) => l.type === 'TOOL_EXECUTION')
+            .filter((l) => l.type === "TOOL_EXECUTION")
             .map((l) => ({
-              name: l.payload?.tool || 'unknown',
+              name: l.payload?.tool || "unknown",
               input: l.payload?.args,
-              status: 'completed',
+              status: "completed",
             })),
         };
       }

@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import type { Player, Room } from '@/types/contracts';
-import cn from '@/lib/utils';
-import { gildedTokens } from '@/theme/gildedTokens';
-import Logo from '@/components/ui/Logo';
-import JuicyLayout from '@/components/layout/JuicyLayout';
-import useAuth from '../hooks/useAuth';
-import { listRooms, leaveRoom } from '../services/api';
-import { Button } from '../components/ui/button';
-import { useI18n } from '../i18n';
-import EntitySheetPanel from '../components/game/EntitySheetPanel';
-import { DiceLoader } from '../components/ui/dice-loader';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { Player, Room } from "@/types/contracts";
+import cn from "@/lib/utils";
+import { gildedTokens } from "@/theme/gildedTokens";
+import Logo from "@/components/ui/Logo";
+import JuicyLayout from "@/components/layout/JuicyLayout";
+import useAuth from "../hooks/useAuth";
+import { listRooms, leaveRoom } from "../services/api";
+import { Button } from "../components/ui/button";
+import { useI18n } from "../i18n";
+import EntitySheetPanel from "../components/game/EntitySheetPanel";
+import { DiceLoader } from "../components/ui/dice-loader";
 
 interface RoomMembership {
   room: Room;
@@ -27,8 +27,8 @@ interface MembershipState {
 function formatTimestamp(timestamp: number, locale: string): string {
   try {
     return new Intl.DateTimeFormat(locale, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
+      dateStyle: "medium",
+      timeStyle: "short",
     }).format(new Date(timestamp));
   } catch {
     return new Date(timestamp).toLocaleString();
@@ -44,20 +44,27 @@ export default function RoomsPage() {
     loading: true,
     error: null,
   });
-  const [selectedContext, setSelectedContext] = useState<{ player: Player; roomId: string } | null>(null);
+  const [selectedContext, setSelectedContext] = useState<{
+    player: Player;
+    roomId: string;
+  } | null>(null);
   const [processingRoomId, setProcessingRoomId] = useState<string | null>(null);
 
   const sortedMemberships = useMemo(
     () =>
       [...state.items].sort((a, b) => {
-        const dateA = a.room.updatedAt ? new Date(a.room.updatedAt).getTime() : 0;
-        const dateB = b.room.updatedAt ? new Date(b.room.updatedAt).getTime() : 0;
+        const dateA = a.room.updatedAt
+          ? new Date(a.room.updatedAt).getTime()
+          : 0;
+        const dateB = b.room.updatedAt
+          ? new Date(b.room.updatedAt).getTime()
+          : 0;
         return dateB - dateA;
       }),
-    [state.items]
+    [state.items],
   );
 
-  const errorMessage = t('rooms.messages.error');
+  const errorMessage = t("rooms.messages.error");
 
   const fetchMemberships = useCallback(async () => {
     // If no user yet, don't fetch or just wait
@@ -65,19 +72,26 @@ export default function RoomsPage() {
 
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const roomsRaw = (await listRooms()) as unknown as (Room & { players: Player[]; documentId: string })[];
+      const roomsRaw = (await listRooms()) as unknown as (Room & {
+        players: Player[];
+        documentId: string;
+      })[];
 
       // Map rooms to RoomMembership
       const memberships: RoomMembership[] = roomsRaw.map((room) => {
         const isOwner =
           (room.owner?.documentId &&
-            (room.owner.documentId === user.documentId || room.owner.documentId === String(user.id))) ||
+            (room.owner.documentId === user.documentId ||
+              room.owner.documentId === String(user.id))) ||
           // Fallback if legacy ownerId exists
           room.ownerId === String(user.id) ||
           room.ownerId === String(user.uid);
         const player =
-          room.players?.find((p) => String(p.userId) === String(user.id) || String(p.userId) === String(user.uid)) ||
-          null;
+          room.players?.find(
+            (p) =>
+              String(p.userId) === String(user.id) ||
+              String(p.userId) === String(user.uid),
+          ) || null;
         return {
           room,
           isOwner,
@@ -98,7 +112,7 @@ export default function RoomsPage() {
   useEffect(() => {
     if (user) {
       fetchMemberships().catch((err: unknown) => {
-        console.error('Failed to fetch memberships:', err);
+        console.error("Failed to fetch memberships:", err);
       });
     }
   }, [fetchMemberships, user]);
@@ -145,7 +159,7 @@ export default function RoomsPage() {
         setProcessingRoomId(null);
       }
     },
-    [errorMessage, processingRoomId]
+    [errorMessage, processingRoomId],
   );
 
   return (
@@ -154,19 +168,33 @@ export default function RoomsPage() {
       <div className="flex w-full flex-col gap-10">
         <header className="flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in-95 duration-1000 pt-12">
           <div className="relative animate-float mb-4">
-            <Logo size="xl" noShadow className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]" />
+            <Logo
+              size="xl"
+              noShadow
+              className="filter drop-shadow-[0_0_15px_rgba(234,179,8,0.2)]"
+            />
             <div className="absolute inset-0 bg-aurora-500/20 blur-[50px] -z-10 rounded-full scale-150 pointer-events-none" />
           </div>
 
           <div className="space-y-4">
-            <h1 className={`${gildedTokens.heroTitle} !text-5xl sm:!text-6xl text-shadow-100`}>{t('rooms.title')}</h1>
-            <p className={`${gildedTokens.heroBody} text-aurora-100/80`}>{t('rooms.subtitle')}</p>
+            <h1
+              className={`${gildedTokens.heroTitle} !text-5xl sm:!text-6xl text-shadow-100`}
+            >
+              {t("rooms.title")}
+            </h1>
+            <p className={`${gildedTokens.heroBody} text-aurora-100/80`}>
+              {t("rooms.subtitle")}
+            </p>
           </div>
         </header>
 
         {state.loading ? (
           <div className="flex flex-1 items-center justify-center">
-            <DiceLoader size="medium" maxDiceCount={3} message={t('rooms.messages.loading') || 'Loading rooms...'} />
+            <DiceLoader
+              size="medium"
+              maxDiceCount={3}
+              message={t("rooms.messages.loading") || "Loading rooms..."}
+            />
           </div>
         ) : state.error ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
@@ -178,15 +206,23 @@ export default function RoomsPage() {
                 fetchMemberships().catch(() => {});
               }}
             >
-              {t('rooms.actions.retry')}
+              {t("rooms.actions.retry")}
             </Button>
           </div>
         ) : sortedMemberships.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
-            <h2 className="text-2xl font-semibold text-shadow-50">{t('rooms.empty.title')}</h2>
-            <p className="max-w-xl text-sm text-shadow-300">{t('rooms.empty.description')}</p>
-            <Button type="button" variant="default" onClick={() => navigate('/')}>
-              {t('rooms.empty.cta')}
+            <h2 className="text-2xl font-semibold text-shadow-50">
+              {t("rooms.empty.title")}
+            </h2>
+            <p className="max-w-xl text-sm text-shadow-300">
+              {t("rooms.empty.description")}
+            </p>
+            <Button
+              type="button"
+              variant="default"
+              onClick={() => navigate("/")}
+            >
+              {t("rooms.empty.cta")}
             </Button>
           </div>
         ) : (
@@ -203,7 +239,7 @@ export default function RoomsPage() {
                   key={room.id}
                   className={cn(
                     gildedTokens.glassPanelInteractive,
-                    'p-8 animate-in fade-in slide-in-from-bottom-4 duration-700'
+                    "p-8 animate-in fade-in slide-in-from-bottom-4 duration-700",
                   )}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
@@ -211,23 +247,31 @@ export default function RoomsPage() {
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
                         <span className="rounded-full border border-aurora-400/50 bg-aurora-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-aurora-100">
-                          {t(isOwner ? 'rooms.status.owner' : 'rooms.status.player')}
+                          {t(
+                            isOwner
+                              ? "rooms.status.owner"
+                              : "rooms.status.player",
+                          )}
                         </span>
                         <span className="text-xs uppercase tracking-[0.38em] text-shadow-400">
-                          {t('rooms.labels.code')}
+                          {t("rooms.labels.code")}
                         </span>
-                        <span className="font-mono text-lg tracking-[0.35em] text-aurora-200">{room.code}</span>
+                        <span className="font-mono text-lg tracking-[0.35em] text-aurora-200">
+                          {room.code}
+                        </span>
                       </div>
                       <div className="grid gap-2 text-sm text-shadow-300 sm:grid-cols-2">
                         <div>
                           <span className="block text-xs uppercase tracking-[0.35em] text-shadow-500">
-                            {t('rooms.labels.phase')}
+                            {t("rooms.labels.phase")}
                           </span>
-                          <span className="font-semibold text-shadow-50">{phaseLabel}</span>
+                          <span className="font-semibold text-shadow-50">
+                            {phaseLabel}
+                          </span>
                         </div>
                         <div>
                           <span className="block text-xs uppercase tracking-[0.35em] text-shadow-500">
-                            {t('rooms.labels.lastUpdated')}
+                            {t("rooms.labels.lastUpdated")}
                           </span>
                           <span className="font-semibold text-shadow-50">
                             {formatTimestamp(room.updatedAt, language)}
@@ -235,22 +279,30 @@ export default function RoomsPage() {
                         </div>
                       </div>
                       {room.worldDescription ? (
-                        <p className="line-clamp-3 text-sm leading-relaxed text-shadow-200">{room.worldDescription}</p>
+                        <p className="line-clamp-3 text-sm leading-relaxed text-shadow-200">
+                          {room.worldDescription}
+                        </p>
                       ) : null}
                     </div>
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                      <Button type="button" variant="default" onClick={() => navigate(`/play/${room.code}`)}>
-                        {t('rooms.actions.open')}
+                      <Button
+                        type="button"
+                        variant="default"
+                        onClick={() => navigate(`/play/${room.code}`)}
+                      >
+                        {t("rooms.actions.open")}
                       </Button>
                       {player?.character ? (
                         <Button
                           type="button"
                           variant="secondary"
-                          onClick={() => setSelectedContext({ player, roomId: room.id })}
+                          onClick={() =>
+                            setSelectedContext({ player, roomId: room.id })
+                          }
                           className="sm:min-w-[160px]"
                         >
-                          {t('rooms.actions.viewSheet')}
+                          {t("rooms.actions.viewSheet")}
                         </Button>
                       ) : null}
                       {(!isOwner || player) && (
@@ -263,7 +315,9 @@ export default function RoomsPage() {
                           }}
                           className="sm:min-w-[140px]"
                         >
-                          {isProcessing ? t('rooms.actions.leaving') : t('rooms.actions.leave')}
+                          {isProcessing
+                            ? t("rooms.actions.leaving")
+                            : t("rooms.actions.leave")}
                         </Button>
                       )}
                     </div>
@@ -274,17 +328,20 @@ export default function RoomsPage() {
                       <div className="grid gap-4 text-sm text-shadow-200 sm:grid-cols-2 lg:grid-cols-3">
                         <div>
                           <span className="block text-xs uppercase tracking-[0.35em] text-shadow-500">
-                            {t('rooms.character.name')}
+                            {t("rooms.character.name")}
                           </span>
-                          <span className="font-semibold text-shadow-50">{player.character.name}</span>
+                          <span className="font-semibold text-shadow-50">
+                            {player.character.name}
+                          </span>
                         </div>
                         <div>
                           <span className="block text-xs uppercase tracking-[0.35em] text-shadow-500">
-                            {t('rooms.character.identity')}
+                            {t("rooms.character.identity")}
                           </span>
                           <span className="font-semibold text-shadow-50">
                             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {(player.character.class as any)?.name || 'Unknown Class'}
+                            {(player.character.class as any)?.name ||
+                              "Unknown Class"}
                           </span>
                         </div>
                         {/* Level removed from Character schema, hiding for now or defaulted */}
@@ -296,9 +353,13 @@ export default function RoomsPage() {
                         </div> */}
                       </div>
                     ) : isOwner ? (
-                      <p className="text-sm text-shadow-300">{t('rooms.status.ownerNoCharacter')}</p>
+                      <p className="text-sm text-shadow-300">
+                        {t("rooms.status.ownerNoCharacter")}
+                      </p>
                     ) : (
-                      <p className="text-sm text-shadow-300">{t('rooms.status.noCharacter')}</p>
+                      <p className="text-sm text-shadow-300">
+                        {t("rooms.status.noCharacter")}
+                      </p>
                     )}
                   </div>
                 </article>

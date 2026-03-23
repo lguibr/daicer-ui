@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import clsx from "clsx";
 
 interface CrestIconProps {
   size?: number;
@@ -10,14 +10,19 @@ interface CrestIconProps {
 /**
  * Ornamental crest icon for branding and hero treatments.
  */
-export default function CrestIcon({ size = 120, className, title = 'D20 Crest', glow = true }: CrestIconProps) {
+export default function CrestIcon({
+  size = 120,
+  className,
+  title = "D20 Crest",
+  glow = true,
+}: CrestIconProps) {
   return (
     <span
       className={clsx(
-        'relative inline-flex items-center justify-center rounded-full',
+        "relative inline-flex items-center justify-center rounded-full",
         glow &&
           'before:absolute before:inset-[-18%] before:rounded-full before:bg-gradient-to-br before:from-aurora-400/40 before:via-aurora-500/20 before:to-transparent before:blur-3xl before:content-[""]',
-        className
+        className,
       )}
       style={{ width: size, height: size }}
       aria-hidden
@@ -31,7 +36,13 @@ export default function CrestIcon({ size = 120, className, title = 'D20 Crest', 
         className="relative drop-shadow-[0_8px_24px_rgba(12,16,24,0.45)]"
       >
         <defs>
-          <linearGradient id="crest-gradient" x1="16%" y1="0%" x2="84%" y2="100%">
+          <linearGradient
+            id="crest-gradient"
+            x1="16%"
+            y1="0%"
+            x2="84%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#2f3b4a" />
             <stop offset="45%" stopColor="#1c242f" />
             <stop offset="100%" stopColor="#0f141a" />
@@ -61,13 +72,32 @@ export default function CrestIcon({ size = 120, className, title = 'D20 Crest', 
             fill="#1c242f"
             opacity={0.7}
           />
-          <circle cx="72" cy="63" r="14" stroke="#d38f1f" strokeWidth="3" fill="none" />
-          <path d="M72 51c-6.6 0-12 5.4-12 12h6c0-3.3 2.7-6 6-6s6 2.7 6 6h6c0-6.6-5.4-12-12-12Z" fill="#e7b258" />
-          <path d="M72 70.5c-6 0-11 4.5-11 10.5h22c0-6-5-10.5-11-10.5Z" fill="#b67c17" opacity={0.55} />
+          <circle
+            cx="72"
+            cy="63"
+            r="14"
+            stroke="#d38f1f"
+            strokeWidth="3"
+            fill="none"
+          />
+          <path
+            d="M72 51c-6.6 0-12 5.4-12 12h6c0-3.3 2.7-6 6-6s6 2.7 6 6h6c0-6.6-5.4-12-12-12Z"
+            fill="#e7b258"
+          />
+          <path
+            d="M72 70.5c-6 0-11 4.5-11 10.5h22c0-6-5-10.5-11-10.5Z"
+            fill="#b67c17"
+            opacity={0.55}
+          />
         </g>
         <defs>
           <filter id="shadow-soft">
-            <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="rgba(12,16,24,0.45)" />
+            <feDropShadow
+              dx="0"
+              dy="6"
+              stdDeviation="6"
+              floodColor="rgba(12,16,24,0.45)"
+            />
           </filter>
         </defs>
       </svg>

@@ -3,10 +3,15 @@
  * Pure reducer function for managing infinite chunk state
  */
 
-import type { InfiniteChunksState, InfiniteChunksAction } from './types';
+import type { InfiniteChunksState, InfiniteChunksAction } from "./types";
 // Helper to merge chunk into grid (Inlined from deleted gridExpander)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mergeChunkIntoGrid(grid: any[][], _chunk: any, offset: { x: number; y: number }, _chunkSize: number) {
+function mergeChunkIntoGrid(
+  grid: any[][],
+  _chunk: any,
+  offset: { x: number; y: number },
+  _chunkSize: number,
+) {
   // Simplified implementation for now - just returning current grid to avoid breakages
   // Real implementation would expand grid array keying off chunk.worldOffsetX/Y
   // For now, we rely on the Store-based rendering which uses the Map<string, Chunk>
@@ -22,24 +27,30 @@ export function createInitialState(): InfiniteChunksState {
     loading: new Set(),
     initialized: false,
     config: {
-      roomId: '',
+      roomId: "",
       chunkSize: 4,
       loadRadius: 5,
       enabled: false,
-      mode: 'generator',
+      mode: "generator",
       layer: 0,
     },
   };
 }
 
 // Pure reducer function
-export function infiniteChunksReducer(state: InfiniteChunksState, action: InfiniteChunksAction): InfiniteChunksState {
+export function infiniteChunksReducer(
+  state: InfiniteChunksState,
+  action: InfiniteChunksAction,
+): InfiniteChunksState {
   switch (action.type) {
-    case 'INITIALIZE': {
-      const { initialGrid, config, chunkGenerator /* placementMap */ } = action.payload;
+    case "INITIALIZE": {
+      const { initialGrid, config, chunkGenerator /* placementMap */ } =
+        action.payload;
 
       // Determine mode based on presence of generator
-      const mode: 'backend' | 'generator' = chunkGenerator ? 'generator' : 'backend';
+      const mode: "backend" | "generator" = chunkGenerator
+        ? "generator"
+        : "backend";
 
       return {
         ...state,
@@ -53,7 +64,7 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'CHUNK_LOAD_START': {
+    case "CHUNK_LOAD_START": {
       const { chunkKey } = action.payload;
       const newLoading = new Set(state.loading);
       newLoading.add(chunkKey);
@@ -64,14 +75,17 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'CHUNK_LOAD_SUCCESS': {
+    case "CHUNK_LOAD_SUCCESS": {
       const { chunk } = action.payload;
       const chunkKey = `${chunk.chunkX},${chunk.chunkY}`;
-      console.info(`[InfiniteChunks] Reducer: CHUNK_LOAD_SUCCESS for ${chunkKey}`, {
-        chunkTiles: chunk.tiles?.length,
-        chunkBiomes: chunk.biomes?.length,
-        chunkSize: state.config.chunkSize,
-      });
+      console.info(
+        `[InfiniteChunks] Reducer: CHUNK_LOAD_SUCCESS for ${chunkKey}`,
+        {
+          chunkTiles: chunk.tiles?.length,
+          chunkBiomes: chunk.biomes?.length,
+          chunkSize: state.config.chunkSize,
+        },
+      );
 
       // Remove from loading
       const newLoading = new Set(state.loading);
@@ -86,12 +100,12 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
         state.expandedGrid,
         chunk,
         state.gridWorldOffset,
-        state.config.chunkSize
+        state.config.chunkSize,
       );
 
       console.info(
         `[InfiniteChunks] Reducer: Grid expanded. New size: ${newGrid[0]?.length}x${newGrid.length}, Offset:`,
-        newOffset
+        newOffset,
       );
 
       return {
@@ -103,12 +117,15 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'CHUNK_LOAD_ERROR': {
+    case "CHUNK_LOAD_ERROR": {
       const { chunkKey } = action.payload;
       const newLoading = new Set(state.loading);
       newLoading.delete(chunkKey);
 
-      console.error(`[InfiniteChunks] Failed to load chunk ${chunkKey}:`, action.payload.error);
+      console.error(
+        `[InfiniteChunks] Failed to load chunk ${chunkKey}:`,
+        action.payload.error,
+      );
 
       return {
         ...state,
@@ -116,7 +133,7 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'SET_LOAD_RADIUS': {
+    case "SET_LOAD_RADIUS": {
       const { radius } = action.payload;
 
       return {
@@ -128,7 +145,7 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'SET_LAYER': {
+    case "SET_LAYER": {
       const { layer } = action.payload;
 
       // If layer hasn't changed, do nothing
@@ -147,7 +164,7 @@ export function infiniteChunksReducer(state: InfiniteChunksState, action: Infini
       };
     }
 
-    case 'RESET': {
+    case "RESET": {
       return createInitialState();
     }
 

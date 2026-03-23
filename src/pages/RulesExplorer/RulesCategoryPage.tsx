@@ -1,16 +1,16 @@
-import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import cn from '@/lib/utils';
-import { gildedTokens } from '@/theme/gildedTokens';
-import { RulesResourceList } from './RulesResourceList';
+import { useParams, Link } from "react-router-dom";
+import { ChevronLeft, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import cn from "@/lib/utils";
+import { gildedTokens } from "@/theme/gildedTokens";
+import { RulesResourceList } from "./RulesResourceList";
 
 export function RulesCategoryPage() {
   const { category } = useParams<{ category: string }>();
 
   if (!category) return <div>Invalid Category</div>;
 
-  const formattedTitle = category.replace(/-/g, ' ');
+  const formattedTitle = category.replace(/-/g, " ");
 
   return (
     <div className="h-full flex flex-col gap-8">
@@ -36,7 +36,10 @@ export function RulesCategoryPage() {
 
       {/* Content Area - Using glass panel for list */}
       <div
-        className={cn(gildedTokens.glassPanel, 'flex-1 overflow-hidden p-0 border-midnight-600/30 bg-midnight-900/30')}
+        className={cn(
+          gildedTokens.glassPanel,
+          "flex-1 overflow-hidden p-0 border-midnight-600/30 bg-midnight-900/30",
+        )}
       >
         <RulesResourceList category={category} />
       </div>

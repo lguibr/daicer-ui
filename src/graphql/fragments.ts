@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const FULL_CONTEXT_FRAGMENT = gql`
   fragment FullRoomContext on Room {

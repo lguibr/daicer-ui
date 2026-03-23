@@ -1,19 +1,24 @@
-import { useState, useEffect, useMemo } from 'react';
-import useGamePolling from '@/hooks/useGamePolling';
-import { TimeFrameProvider, useTimeFrame } from '@/contexts/TimeFrameContext';
-import { getRoomState } from '@/services/api';
-import { Room, Message } from '@/types/contracts';
-import { WorldConfig as OldWorldConfig, Coordinates, DebugEntity, ZLevel } from '../utils/types';
-import { GodModeChat, type GodModeMessage } from './GodModeChat';
-import { TimeControls } from './TimeControls';
+import { useState, useEffect, useMemo } from "react";
+import useGamePolling from "@/hooks/useGamePolling";
+import { TimeFrameProvider, useTimeFrame } from "@/contexts/TimeFrameContext";
+import { getRoomState } from "@/services/api";
+import { Room, Message } from "@/types/contracts";
+import {
+  WorldConfig as OldWorldConfig,
+  Coordinates,
+  DebugEntity,
+  ZLevel,
+} from "../utils/types";
+import { GodModeChat, type GodModeMessage } from "./GodModeChat";
+import { TimeControls } from "./TimeControls";
 
-import { GameDebugInspector } from './GameDebugInspector';
-import { GameDebugMap } from './GameDebugMap';
-import { GameEventsPanel } from './GameEventsPanel';
+import { GameDebugInspector } from "./GameDebugInspector";
+import { GameDebugMap } from "./GameDebugMap";
+import { GameEventsPanel } from "./GameEventsPanel";
 
 // Default config
 const DEFAULT_CONFIG: OldWorldConfig = {
-  seed: 'debug-seed',
+  seed: "debug-seed",
   chunkSize: 32,
   globalScale: 0.01,
   seaLevel: 0,
@@ -41,7 +46,9 @@ function GameDebugInner({
   room: Room & { features?: unknown[]; messages?: Message[] };
 }) {
   // Config State
-  const [activeTab, setActiveTab] = useState<'tools' | 'inspector' | 'entropy'>('tools');
+  const [activeTab, setActiveTab] = useState<"tools" | "inspector" | "entropy">(
+    "tools",
+  );
   // ... (snip) ...
 
   // Sync Entities... (omitted)
@@ -57,14 +64,19 @@ function GameDebugInner({
         chunkSize: room.world.chunkSize || DEFAULT_CONFIG.chunkSize,
         globalScale: room.world.globalScale || DEFAULT_CONFIG.globalScale,
         seaLevel: room.world.seaLevel || DEFAULT_CONFIG.seaLevel,
-        elevationScale: room.world.elevationScale || DEFAULT_CONFIG.elevationScale,
+        elevationScale:
+          room.world.elevationScale || DEFAULT_CONFIG.elevationScale,
         roughness: room.world.roughness || DEFAULT_CONFIG.roughness,
         detail: room.world.detail || DEFAULT_CONFIG.detail,
         moistureScale: room.world.moistureScale || DEFAULT_CONFIG.moistureScale,
-        temperatureOffset: room.world.temperatureOffset || DEFAULT_CONFIG.temperatureOffset,
-        structureChance: room.world.structureChance || DEFAULT_CONFIG.structureChance,
-        structureSpacing: room.world.structureSpacing || DEFAULT_CONFIG.structureSpacing,
-        structureSizeAvg: room.world.structureSizeAvg || DEFAULT_CONFIG.structureSizeAvg,
+        temperatureOffset:
+          room.world.temperatureOffset || DEFAULT_CONFIG.temperatureOffset,
+        structureChance:
+          room.world.structureChance || DEFAULT_CONFIG.structureChance,
+        structureSpacing:
+          room.world.structureSpacing || DEFAULT_CONFIG.structureSpacing,
+        structureSizeAvg:
+          room.world.structureSizeAvg || DEFAULT_CONFIG.structureSizeAvg,
         roadDensity: room.world.roadDensity || DEFAULT_CONFIG.roadDensity,
         fogRadius: room.world.fogRadius || DEFAULT_CONFIG.fogRadius,
       };
@@ -94,36 +106,50 @@ function GameDebugInner({
       } else if (room && room.entities) {
         sourceData = room.entities;
       }
-    } else if (currentTimeFrame && currentTimeFrame.gameState && currentTimeFrame.gameState.entities) {
+    } else if (
+      currentTimeFrame &&
+      currentTimeFrame.gameState &&
+      currentTimeFrame.gameState.entities
+    ) {
       sourceData = currentTimeFrame.gameState.entities;
     }
 
     if (sourceData) {
       setEntities((prevEntities) =>
         sourceData.map((c) => {
-          const id = c.id || c.documentId || 'unknown';
+          const id = c.id || c.documentId || "unknown";
           const prev = prevEntities.find((p) => p.id === id);
 
           let updatedPos = c.position
             ? { ...c.position, z: (c.position.z as ZLevel) || 0 }
             : { x: 0, y: 0, z: 0 as ZLevel };
-          const isZero = updatedPos.x === 0 && updatedPos.y === 0 && updatedPos.z === 0;
+          const isZero =
+            updatedPos.x === 0 && updatedPos.y === 0 && updatedPos.z === 0;
 
           // GUARD: If new pos is 0,0,0 but old pos was valid different, keep old pos
-          if (isZero && prev && (prev.position.x !== 0 || prev.position.y !== 0 || prev.position.z !== 0)) {
-            console.warn(`[GameDebugView] Ignored 0,0,0 reset for entity ${c.name} (${id}). Kept at`, prev.position);
+          if (
+            isZero &&
+            prev &&
+            (prev.position.x !== 0 ||
+              prev.position.y !== 0 ||
+              prev.position.z !== 0)
+          ) {
+            console.warn(
+              `[GameDebugView] Ignored 0,0,0 reset for entity ${c.name} (${id}). Kept at`,
+              prev.position,
+            );
             updatedPos = prev.position;
           }
 
           return {
             id,
-            name: c.name || 'Unknown Entity',
-            type: (c.type as 'player' | 'monster') || 'monster',
+            name: c.name || "Unknown Entity",
+            type: (c.type as "player" | "monster") || "monster",
             position: updatedPos,
             speed: c.speed || 30,
-            parsedSpeed: typeof c.speed === 'number' ? c.speed : 30,
+            parsedSpeed: typeof c.speed === "number" ? c.speed : 30,
             visionRadius: 10,
-            color: c.type === 'player' ? '#4ade80' : '#f87171',
+            color: c.type === "player" ? "#4ade80" : "#f87171",
             exploredTiles: new Set<string>(),
             pendingPath: undefined,
             currentHp: c.currentHp,
@@ -134,11 +160,13 @@ function GameDebugInner({
             stats: c.stats,
             features: c.features,
             equipment: c.equipment || (c.sheet && c.sheet.inventory), // Try direct or sheet inventory
-            proficiencies: c.proficiencies || (c.sheet && c.sheet.class && c.sheet.class.proficiencies),
+            proficiencies:
+              c.proficiencies ||
+              (c.sheet && c.sheet.class && c.sheet.class.proficiencies),
 
             raw: c,
           };
-        })
+        }),
       );
     }
   }, [socketCreatures, currentTimeFrame, isLive, room]);
@@ -166,19 +194,20 @@ function GameDebugInner({
   const [activeEntityId, setActiveEntityId] = useState<string | null>(null);
   const activeEntity = useMemo(
     () => entities.find((e) => e.id === activeEntityId) || entities[0] || null,
-    [entities, activeEntityId]
+    [entities, activeEntityId],
   );
 
   // God Mode Chat State
   const [chatMessages, setChatMessages] = useState<GodModeMessage[]>([
     {
-      id: 'system-welcome',
-      role: 'system',
-      content: 'God Mode Initialized. You have omnipotent control over this world.',
+      id: "system-welcome",
+      role: "system",
+      content:
+        "God Mode Initialized. You have omnipotent control over this world.",
       timestamp: Date.now(),
     },
   ]);
-  const [chatInput, setChatInput] = useState('');
+  const [chatInput, setChatInput] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Sync Room Messages to Chat
@@ -186,11 +215,12 @@ function GameDebugInner({
     if (room && room.messages) {
       const historicalMessages = (room.messages || []).map((m: Message) => ({
         id: m.documentId || m.id,
-        role: (m.type === 'narration' ? 'assistant' : m.sender === 'system' ? 'system' : 'user') as
-          | 'system'
-          | 'user'
-          | 'assistant', // Approximate mapping
-        content: m.text || (m as { content?: string }).content || '', // Fallback if schema differs from API (MessageSchema uses 'text')
+        role: (m.type === "narration"
+          ? "assistant"
+          : m.sender === "system"
+            ? "system"
+            : "user") as "system" | "user" | "assistant", // Approximate mapping
+        content: m.text || (m as { content?: string }).content || "", // Fallback if schema differs from API (MessageSchema uses 'text')
         timestamp: new Date(m.timestamp).getTime(),
       }));
 
@@ -203,7 +233,9 @@ function GameDebugInner({
       if (!isLive && currentTimeFrame) {
         const frameTime = new Date(currentTimeFrame.timestamp).getTime();
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        visibleMessages = historicalMessages.filter((m: any) => m.timestamp <= frameTime);
+        visibleMessages = historicalMessages.filter(
+          (m: any) => m.timestamp <= frameTime,
+        );
       }
 
       setChatMessages(visibleMessages);
@@ -216,7 +248,12 @@ function GameDebugInner({
   }, [isLive]);
 
   // Map & View State - activeLocation moved here for coordination
-  const [activeLocation, setActiveLocation] = useState<{ label: string; x: number; y: number; z: number } | null>(null);
+  const [activeLocation, setActiveLocation] = useState<{
+    label: string;
+    x: number;
+    y: number;
+    z: number;
+  } | null>(null);
 
   // Handle Interactions (Callbacks)
   const handleTileSingleClick = (target: Coordinates) => {
@@ -247,25 +284,30 @@ function GameDebugInner({
 
   // Revised Strategy: Move pathfinding to GameDebugMap and expose onPathPlanned.
   const handlePathPlanned = (entityId: string, path: Coordinates[]) => {
-    setEntities((prev) => prev.map((e) => (e.id === entityId ? { ...e, pendingPath: path } : e)));
+    setEntities((prev) =>
+      prev.map((e) => (e.id === entityId ? { ...e, pendingPath: path } : e)),
+    );
   };
 
   // Chat Handler
-  const handleGodModeCommand = async (message: string, mode: 'chat' | 'direct' = 'chat') => {
+  const handleGodModeCommand = async (
+    message: string,
+    mode: "chat" | "direct" = "chat",
+  ) => {
     // Optimistic UI for User Message
     const userMsg: GodModeMessage = {
       id: `msg-${Date.now()}`,
-      role: 'user',
-      content: mode === 'direct' ? `[DIRECT] ${message}` : message,
+      role: "user",
+      content: mode === "direct" ? `[DIRECT] ${message}` : message,
       timestamp: Date.now(),
     };
     setChatMessages((prev) => [...prev, userMsg]);
     setIsProcessing(true);
 
     try {
-      if (mode === 'direct') {
+      if (mode === "direct") {
         // Direct Tool Execution (Bypass LLM)
-        const { executeDirectTool } = await import('@/services/api');
+        const { executeDirectTool } = await import("@/services/api");
         const response = await executeDirectTool(roomId, message);
 
         // Response logic
@@ -274,7 +316,7 @@ function GameDebugInner({
             ...prev,
             {
               id: `sys-${Date.now()}`,
-              role: 'system',
+              role: "system",
               content: `✅ Execution Successful: ${response.message}`,
               timestamp: Date.now(),
             },
@@ -282,7 +324,7 @@ function GameDebugInner({
         }
       } else {
         // Chat / LLM Mode
-        const { sendGodModeCommand } = await import('@/services/api');
+        const { sendGodModeCommand } = await import("@/services/api");
         const response = await sendGodModeCommand(roomId, message);
 
         if (response && response.message) {
@@ -290,7 +332,7 @@ function GameDebugInner({
             ...prev,
             {
               id: `sys-${Date.now()}`,
-              role: 'assistant',
+              role: "assistant",
               content: response.message,
               timestamp: Date.now(),
             },
@@ -303,8 +345,8 @@ function GameDebugInner({
         ...prev,
         {
           id: `err-${Date.now()}`,
-          role: 'system',
-          content: `Error: ${err instanceof Error ? err.message : 'Unknown'}`,
+          role: "system",
+          content: `Error: ${err instanceof Error ? err.message : "Unknown"}`,
           timestamp: Date.now(),
         },
       ]);
@@ -420,8 +462,12 @@ export function GameDebugView({ roomId }: GameDebugViewProps) {
   }, [roomId]);
 
   if (loading) return <div className="text-white p-10">Loading Room...</div>;
-  if (error) return <div className="text-red-500 p-10">Error loading room: {error}</div>;
-  if (!room) return <div className="text-yellow-500 p-10">Room not found (ID: {roomId})</div>;
+  if (error)
+    return <div className="text-red-500 p-10">Error loading room: {error}</div>;
+  if (!room)
+    return (
+      <div className="text-yellow-500 p-10">Room not found (ID: {roomId})</div>
+    );
 
   return (
     <TimeFrameProvider room={room}>

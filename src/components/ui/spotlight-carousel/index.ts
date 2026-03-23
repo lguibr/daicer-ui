@@ -3,5 +3,5 @@ export type {
   SpotlightCarouselLayout,
   SpotlightCarouselProps,
   SpotlightCarouselSize,
-} from './SpotlightCarousel';
-export { SpotlightCarousel } from './SpotlightCarousel';
+} from "./SpotlightCarousel";
+export { SpotlightCarousel } from "./SpotlightCarousel";

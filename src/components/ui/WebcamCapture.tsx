@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { Camera, Check, RefreshCw } from 'lucide-react';
-import { Button } from './button';
-import { Modal } from './modal';
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Camera, Check, RefreshCw } from "lucide-react";
+import { Button } from "./button";
+import { Modal } from "./modal";
 
 interface WebcamCaptureProps {
   open: boolean;
@@ -9,7 +9,11 @@ interface WebcamCaptureProps {
   onCapture: (imageSrc: string) => void;
 }
 
-export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCaptureProps) {
+export function WebcamCapture({
+  open,
+  onOpenChange,
+  onCapture,
+}: WebcamCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -19,7 +23,11 @@ export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCapturePr
   const startCamera = useCallback(async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
         audio: false,
       });
       setStream(mediaStream);
@@ -28,8 +36,8 @@ export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCapturePr
       }
       setError(null);
     } catch (err) {
-      console.error('Error accessing camera:', err);
-      setError('Could not access camera. Please check permissions.');
+      console.error("Error accessing camera:", err);
+      setError("Could not access camera. Please check permissions.");
     }
   }, []);
 
@@ -58,13 +66,13 @@ export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCapturePr
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
+      const context = canvas.getContext("2d");
 
       if (context) {
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
+        const imageSrc = canvas.toDataURL("image/jpeg", 0.8);
         setCapturedImage(imageSrc);
       }
     }
@@ -82,10 +90,17 @@ export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCapturePr
   };
 
   return (
-    <Modal isOpen={open} onClose={() => onOpenChange(false)} title="Take Photo" maxWidth="md">
+    <Modal
+      isOpen={open}
+      onClose={() => onOpenChange(false)}
+      title="Take Photo"
+      maxWidth="md"
+    >
       <div className="flex flex-col items-center gap-4 py-4">
         {error ? (
-          <div className="text-red-400 text-center p-4 bg-red-900/20 rounded-lg">{error}</div>
+          <div className="text-red-400 text-center p-4 bg-red-900/20 rounded-lg">
+            {error}
+          </div>
         ) : (
           <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden border border-midnight-600">
             {!capturedImage ? (
@@ -120,7 +135,10 @@ export function WebcamCapture({ open, onOpenChange, onCapture }: WebcamCapturePr
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Retake
               </Button>
-              <Button onClick={confirm} className="flex-1 bg-emerald-600 hover:bg-emerald-700">
+              <Button
+                onClick={confirm}
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+              >
                 <Check className="mr-2 h-4 w-4" />
                 Confirm
               </Button>

@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
-import * as Collapsible from '@radix-ui/react-collapsible';
-import cn from '@/lib/utils';
+import { type ReactNode } from "react";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import cn from "@/lib/utils";
 
 interface SourcesProps {
   children: ReactNode;
@@ -32,7 +32,10 @@ export function Sources({ children, className }: SourcesProps) {
   return (
     <Collapsible.Root
       defaultOpen={false}
-      className={cn('rounded-2xl border border-nebula-500/30 bg-nebula-900/10 overflow-hidden', className)}
+      className={cn(
+        "rounded-2xl border border-nebula-500/30 bg-nebula-900/10 overflow-hidden",
+        className,
+      )}
     >
       {children}
     </Collapsible.Root>
@@ -42,12 +45,21 @@ export function Sources({ children, className }: SourcesProps) {
 /**
  * Trigger button showing source count
  */
-export function SourcesTrigger({ count, children, className }: SourcesTriggerProps) {
+export function SourcesTrigger({
+  count,
+  children,
+  className,
+}: SourcesTriggerProps) {
   // Extract hostname from first source if count is undefined
   const defaultContent =
     count !== undefined ? (
       <>
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -56,7 +68,7 @@ export function SourcesTrigger({ count, children, className }: SourcesTriggerPro
           />
         </svg>
         <span className="text-sm font-semibold">
-          Used {count} {count === 1 ? 'source' : 'sources'}
+          Used {count} {count === 1 ? "source" : "sources"}
         </span>
       </>
     ) : null;
@@ -66,11 +78,13 @@ export function SourcesTrigger({ count, children, className }: SourcesTriggerPro
       <button
         type="button"
         className={cn(
-          'flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-nebula-500/5',
-          className
+          "flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-nebula-500/5",
+          className,
         )}
       >
-        <div className="flex items-center gap-2 text-nebula-200">{children || defaultContent}</div>
+        <div className="flex items-center gap-2 text-nebula-200">
+          {children || defaultContent}
+        </div>
 
         {/* Chevron */}
         <svg
@@ -79,7 +93,12 @@ export function SourcesTrigger({ count, children, className }: SourcesTriggerPro
           stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 9l-7 7-7-7"
+          />
         </svg>
       </button>
     </Collapsible.Trigger>
@@ -92,7 +111,12 @@ export function SourcesTrigger({ count, children, className }: SourcesTriggerPro
 export function SourcesContent({ children, className }: SourcesContentProps) {
   return (
     <Collapsible.Content className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
-      <div className={cn('border-t border-nebula-500/20 bg-midnight-900/20 px-4 py-3 space-y-2', className)}>
+      <div
+        className={cn(
+          "border-t border-nebula-500/20 bg-midnight-900/20 px-4 py-3 space-y-2",
+          className,
+        )}
+      >
         {children}
       </div>
     </Collapsible.Content>
@@ -107,7 +131,7 @@ export function Source({ href, title, children, className }: SourceProps) {
   let hostname = href;
   try {
     const url = new URL(href);
-    hostname = url.hostname.replace('www.', '');
+    hostname = url.hostname.replace("www.", "");
   } catch {
     // Invalid URL, use as-is
   }
@@ -118,9 +142,9 @@ export function Source({ href, title, children, className }: SourceProps) {
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        'flex items-start gap-3 rounded-lg border border-nebula-500/20 bg-nebula-900/20 px-3 py-2',
-        'text-sm text-nebula-100 transition hover:border-nebula-500/40 hover:bg-nebula-900/30',
-        className
+        "flex items-start gap-3 rounded-lg border border-nebula-500/20 bg-nebula-900/20 px-3 py-2",
+        "text-sm text-nebula-100 transition hover:border-nebula-500/40 hover:bg-nebula-900/30",
+        className,
       )}
     >
       {/* Book icon */}
@@ -141,14 +165,21 @@ export function Source({ href, title, children, className }: SourceProps) {
       <div className="flex-1 min-w-0">
         {children || (
           <>
-            <p className="font-medium text-nebula-100 truncate">{title || hostname}</p>
+            <p className="font-medium text-nebula-100 truncate">
+              {title || hostname}
+            </p>
             <p className="text-xs text-nebula-400 truncate">{hostname}</p>
           </>
         )}
       </div>
 
       {/* External link icon */}
-      <svg className="h-3 w-3 flex-shrink-0 mt-1 text-nebula-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className="h-3 w-3 flex-shrink-0 mt-1 text-nebula-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -160,7 +191,7 @@ export function Source({ href, title, children, className }: SourceProps) {
   );
 }
 
-Sources.displayName = 'Sources';
-SourcesTrigger.displayName = 'SourcesTrigger';
-SourcesContent.displayName = 'SourcesContent';
-Source.displayName = 'Source';
+Sources.displayName = "Sources";
+SourcesTrigger.displayName = "SourcesTrigger";
+SourcesContent.displayName = "SourcesContent";
+Source.displayName = "Source";

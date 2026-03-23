@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import type { CSSProperties } from "react";
 
 export type DieType = 2 | 4 | 6 | 8 | 10 | 12 | 20;
 
@@ -11,7 +11,7 @@ export interface DieRoll {
 
 export interface DiceRollAnimationProps {
   dice: DieRoll[];
-  size?: 'small' | 'medium' | 'large';
+  size?: "small" | "medium" | "large";
   onComplete?: () => void;
   showAxes?: boolean;
   className?: string;
@@ -21,7 +21,7 @@ export interface DiceRollAnimationProps {
 }
 
 export interface DieAnimationState {
-  phase: 'rolling' | 'decelerating' | 'displaying' | 'complete';
+  phase: "rolling" | "decelerating" | "displaying" | "complete";
   startTime: number;
   completionDelay: number;
   currentRotation: { x: number; y: number; z: number };

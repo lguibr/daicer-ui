@@ -3,23 +3,23 @@
  * @description Spell types for frontend (mirrors backend)
  */
 
-import type { DiceRollResult } from './combat';
+import type { DiceRollResult } from "./combat";
 
 export enum SpellEffectShape {
-  MELEE_TOUCH = 'melee_touch',
-  RANGED_SINGLE = 'ranged_single',
-  PROJECTILE_STRAIGHT = 'projectile_straight',
-  CONE = 'cone',
-  LINE = 'line',
-  SPHERE = 'sphere',
-  CYLINDER = 'cylinder',
-  CUBE = 'cube',
-  HEMISPHERE = 'hemisphere',
-  SELF_ONLY = 'self_only',
-  SELF_AURA = 'self_aura',
-  WALL = 'wall',
-  CHAIN = 'chain',
-  CUSTOM = 'custom',
+  MELEE_TOUCH = "melee_touch",
+  RANGED_SINGLE = "ranged_single",
+  PROJECTILE_STRAIGHT = "projectile_straight",
+  CONE = "cone",
+  LINE = "line",
+  SPHERE = "sphere",
+  CYLINDER = "cylinder",
+  CUBE = "cube",
+  HEMISPHERE = "hemisphere",
+  SELF_ONLY = "self_only",
+  SELF_AURA = "self_aura",
+  WALL = "wall",
+  CHAIN = "chain",
+  CUSTOM = "custom",
 }
 
 export interface GridPosition {

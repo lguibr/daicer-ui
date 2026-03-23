@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { CheckCircle2Icon, InfoIcon, Loader2Icon, XCircleIcon, AlertTriangleIcon } from 'lucide-react';
-import { Toaster as Sonner, type ToasterProps } from 'sonner';
+import {
+  CheckCircle2Icon,
+  InfoIcon,
+  Loader2Icon,
+  XCircleIcon,
+  AlertTriangleIcon,
+} from "lucide-react";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 function Toaster({ ...props }: ToasterProps) {
   return (
@@ -16,10 +22,10 @@ function Toaster({ ...props }: ToasterProps) {
       }}
       style={
         {
-          '--normal-bg': 'hsl(var(--popover))',
-          '--normal-text': 'hsl(var(--popover-foreground))',
-          '--normal-border': 'hsl(var(--border))',
-          '--border-radius': 'var(--radius)',
+          "--normal-bg": "hsl(var(--popover))",
+          "--normal-text": "hsl(var(--popover-foreground))",
+          "--normal-border": "hsl(var(--border))",
+          "--border-radius": "var(--radius)",
         } as React.CSSProperties
       }
       {...props}

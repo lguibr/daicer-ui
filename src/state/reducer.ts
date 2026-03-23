@@ -1,12 +1,12 @@
-import { GamePhase, type Message } from '@/types/contracts';
-import { AppState } from './types';
-import { AppAction, ActionType } from './actions';
+import { GamePhase, type Message } from "@/types/contracts";
+import { AppState } from "./types";
+import { AppAction, ActionType } from "./actions";
 
 export const initialState: AppState = {
-  language: 'en',
+  language: "en",
   gamePhase: GamePhase.SETUP,
   worldSettings: null,
-  worldDescription: '',
+  worldDescription: "",
   players: [],
   messages: [],
   creatures: [],
@@ -41,16 +41,18 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         players: state.players.map((p) =>
-          p.id === action.payload.playerId ? { ...p, action: action.payload.action } : p
+          p.id === action.payload.playerId
+            ? { ...p, action: action.payload.action }
+            : p,
         ),
       };
 
     case ActionType.PROCESS_TURN_START: {
       const playerActionMessages: Message[] = state.players.map((p) => ({
         id: `msg-${Date.now()}-${p.id}`,
-        sender: p.character?.name || 'Unknown',
-        content: p.action || 'does nothing.',
-        text: p.action || 'does nothing.',
+        sender: p.character?.name || "Unknown",
+        content: p.action || "does nothing.",
+        text: p.action || "does nothing.",
         timestamp: Date.now(),
       }));
       return {
@@ -72,9 +74,14 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       // Process all state updates from the DM's function calls
       action.payload.updates.forEach((update) => {
         if (update.type === ActionType.CREATE_CREATURE) {
-          const existing = newState.creatures.find((c) => c.name === update.payload.name);
+          const existing = newState.creatures.find(
+            (c) => c.name === update.payload.name,
+          );
           if (!existing) {
-            newState.creatures.push({ ...update.payload, maxHp: update.payload.hp });
+            newState.creatures.push({
+              ...update.payload,
+              maxHp: update.payload.hp,
+            });
           }
         }
         if (update.type === ActionType.UPDATE_CHARACTER_ATTRIBUTE) {

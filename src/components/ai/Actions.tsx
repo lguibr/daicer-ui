@@ -1,6 +1,6 @@
-import { useState, type ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import cn from '@/lib/utils';
+import { useState, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import cn from "@/lib/utils";
 
 interface ActionsProps {
   children: ReactNode;
@@ -41,7 +41,10 @@ interface ActionDeleteProps {
 export function Actions({ children, className }: ActionsProps) {
   return (
     <div
-      className={cn('flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100', className)}
+      className={cn(
+        "flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100",
+        className,
+      )}
       role="toolbar"
       aria-label="Message actions"
     >
@@ -66,7 +69,7 @@ export function ActionCopy({ text, onCopy, className }: ActionCopyProps) {
         setCopied(false);
       }, 2000);
     } catch (error) {
-      console.error('Failed to copy text:', error);
+      console.error("Failed to copy text:", error);
     }
   };
 
@@ -75,15 +78,30 @@ export function ActionCopy({ text, onCopy, className }: ActionCopyProps) {
       onClick={handleCopy}
       size="sm"
       variant="ghost"
-      className={cn('h-8 w-8 p-0', className)}
-      title={copied ? 'Copied!' : 'Copy message'}
+      className={cn("h-8 w-8 p-0", className)}
+      title={copied ? "Copied!" : "Copy message"}
     >
       {copied ? (
-        <svg className="h-4 w-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        <svg
+          className="h-4 w-4 text-emerald-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
         </svg>
       ) : (
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -100,7 +118,12 @@ export function ActionCopy({ text, onCopy, className }: ActionCopyProps) {
  * Regenerate AI response
  * DM only
  */
-export function ActionRegenerate({ messageId, onRegenerate, disabled, className }: ActionRegenerateProps) {
+export function ActionRegenerate({
+  messageId,
+  onRegenerate,
+  disabled,
+  className,
+}: ActionRegenerateProps) {
   const [isRegenerating, setIsRegenerating] = useState(false);
 
   const handleRegenerate = () => {
@@ -119,11 +142,11 @@ export function ActionRegenerate({ messageId, onRegenerate, disabled, className 
       size="sm"
       variant="ghost"
       disabled={disabled || isRegenerating}
-      className={cn('h-8 w-8 p-0', className)}
+      className={cn("h-8 w-8 p-0", className)}
       title="Regenerate response"
     >
       <svg
-        className={cn('h-4 w-4', isRegenerating && 'animate-spin')}
+        className={cn("h-4 w-4", isRegenerating && "animate-spin")}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -142,7 +165,12 @@ export function ActionRegenerate({ messageId, onRegenerate, disabled, className 
 /**
  * Edit player message
  */
-export function ActionEdit({ messageId, onEdit, disabled, className }: ActionEditProps) {
+export function ActionEdit({
+  messageId,
+  onEdit,
+  disabled,
+  className,
+}: ActionEditProps) {
   const handleEdit = () => {
     onEdit?.(messageId);
   };
@@ -153,10 +181,15 @@ export function ActionEdit({ messageId, onEdit, disabled, className }: ActionEdi
       size="sm"
       variant="ghost"
       disabled={disabled}
-      className={cn('h-8 w-8 p-0', className)}
+      className={cn("h-8 w-8 p-0", className)}
       title="Edit message"
     >
-      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg
+        className="h-4 w-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -172,7 +205,12 @@ export function ActionEdit({ messageId, onEdit, disabled, className }: ActionEdi
  * Delete message
  * DM only
  */
-export function ActionDelete({ messageId, onDelete, disabled, className }: ActionDeleteProps) {
+export function ActionDelete({
+  messageId,
+  onDelete,
+  disabled,
+  className,
+}: ActionDeleteProps) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const handleDelete = () => {
@@ -192,11 +230,20 @@ export function ActionDelete({ messageId, onDelete, disabled, className }: Actio
       size="sm"
       variant="ghost"
       disabled={disabled}
-      className={cn('h-8 w-8 p-0', confirmDelete && 'text-red-400 hover:text-red-300', className)}
-      title={confirmDelete ? 'Click again to confirm' : 'Delete message'}
+      className={cn(
+        "h-8 w-8 p-0",
+        confirmDelete && "text-red-400 hover:text-red-300",
+        className,
+      )}
+      title={confirmDelete ? "Click again to confirm" : "Delete message"}
     >
       {confirmDelete ? (
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -205,7 +252,12 @@ export function ActionDelete({ messageId, onDelete, disabled, className }: Actio
           />
         </svg>
       ) : (
-        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -218,8 +270,8 @@ export function ActionDelete({ messageId, onDelete, disabled, className }: Actio
   );
 }
 
-Actions.displayName = 'Actions';
-ActionCopy.displayName = 'ActionCopy';
-ActionRegenerate.displayName = 'ActionRegenerate';
-ActionEdit.displayName = 'ActionEdit';
-ActionDelete.displayName = 'ActionDelete';
+Actions.displayName = "Actions";
+ActionCopy.displayName = "ActionCopy";
+ActionRegenerate.displayName = "ActionRegenerate";
+ActionEdit.displayName = "ActionEdit";
+ActionDelete.displayName = "ActionDelete";

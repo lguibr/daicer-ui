@@ -1,7 +1,11 @@
-import type { EntitySheet } from '@/types/contracts';
-import { SECTION_TITLE_CLASSES } from '../utils';
+import type { EntitySheet } from "@/types/contracts";
+import { SECTION_TITLE_CLASSES } from "../utils";
 
-export function FeaturesPanel({ characterSheet }: { characterSheet?: EntitySheet | null }) {
+export function FeaturesPanel({
+  characterSheet,
+}: {
+  characterSheet?: EntitySheet | null;
+}) {
   // Features are now the primary list.
   const features = characterSheet?.features ?? [];
 
@@ -17,14 +21,18 @@ export function FeaturesPanel({ characterSheet }: { characterSheet?: EntitySheet
                 className="rounded-xl border border-shadow-800 bg-shadow-950/40 p-3 space-y-1"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-semibold text-shadow-50">{feature.name}</span>
+                  <span className="text-sm font-semibold text-shadow-50">
+                    {feature.name}
+                  </span>
                   {feature.usage && (
                     <span className="text-xs uppercase tracking-wide text-aurora-300">
                       {feature.usage.max} / {feature.usage.per}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-shadow-300 leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-shadow-300 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>

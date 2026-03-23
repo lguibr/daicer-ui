@@ -4,10 +4,10 @@
  * Inspired by DiscreteSlider theme
  */
 
-import { X } from 'lucide-react';
-import { DiceLoader } from './dice-loader';
-import { ProgressBar } from './progress-bar';
-import { Button } from './button';
+import { X } from "lucide-react";
+import { DiceLoader } from "./dice-loader";
+import { ProgressBar } from "./progress-bar";
+import { Button } from "./button";
 
 interface LoadingFooterProps {
   message: string;
@@ -16,7 +16,12 @@ interface LoadingFooterProps {
   onCancel?: () => void;
 }
 
-export function LoadingFooter({ message, current, total, onCancel }: LoadingFooterProps) {
+export function LoadingFooter({
+  message,
+  current,
+  total,
+  onCancel,
+}: LoadingFooterProps) {
   if (total === 0) return null;
 
   return (
@@ -27,8 +32,15 @@ export function LoadingFooter({ message, current, total, onCancel }: LoadingFoot
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="mb-1 text-sm font-medium text-white sm:text-base">{message}</p>
-          <ProgressBar current={current} target={total} showETA showPercentage />
+          <p className="mb-1 text-sm font-medium text-white sm:text-base">
+            {message}
+          </p>
+          <ProgressBar
+            current={current}
+            target={total}
+            showETA
+            showPercentage
+          />
         </div>
 
         {onCancel && (

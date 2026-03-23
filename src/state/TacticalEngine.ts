@@ -3,30 +3,35 @@
  * @description Frontend tactical state engine with Immer + validation
  */
 
-import { GraphEngine } from './core/engine';
-import type { TacticalState } from '../types/tactical';
-import { ReducerRegistry, appendDedupe, upsertById, replace } from './core/registry';
+import { GraphEngine } from "./core/engine";
+import type { TacticalState } from "../types/tactical";
+import {
+  ReducerRegistry,
+  appendDedupe,
+  upsertById,
+  replace,
+} from "./core/registry";
 
 // Tactical reducer registry
 const tacticalRegistry = new ReducerRegistry<TacticalState>()
-  .register('log', appendDedupe)
-  .register('diceHistory', appendDedupe)
-  .register('units', upsertById)
-  .register('turnOrder', replace)
-  .register('arena', replace)
-  .register('parsedCommand', replace)
-  .register('actionPlan', replace)
-  .register('phase', replace)
-  .register('round', replace)
-  .register('activeUnitId', replace)
-  .register('pendingCommand', replace)
-  .register('isCombatOver', replace)
-  .register('winner', replace)
-  .register('encounterId', replace)
-  .register('arenaId', replace)
-  .register('diceRollerSeed', replace)
-  .register('version', replace)
-  .register('lastEventId', replace);
+  .register("log", appendDedupe)
+  .register("diceHistory", appendDedupe)
+  .register("units", upsertById)
+  .register("turnOrder", replace)
+  .register("arena", replace)
+  .register("parsedCommand", replace)
+  .register("actionPlan", replace)
+  .register("phase", replace)
+  .register("round", replace)
+  .register("activeUnitId", replace)
+  .register("pendingCommand", replace)
+  .register("isCombatOver", replace)
+  .register("winner", replace)
+  .register("encounterId", replace)
+  .register("arenaId", replace)
+  .register("diceRollerSeed", replace)
+  .register("version", replace)
+  .register("lastEventId", replace);
 
 // Simple validation (just ensure required fields)
 
@@ -34,9 +39,9 @@ function validateTacticalState(state: any): TacticalState {
   return {
     version: state.version ?? 0,
     lastEventId: state.lastEventId ?? null,
-    encounterId: state.encounterId ?? 'new',
-    arenaId: state.arenaId ?? '',
-    phase: state.phase ?? 'setup',
+    encounterId: state.encounterId ?? "new",
+    arenaId: state.arenaId ?? "",
+    phase: state.phase ?? "setup",
     arena: state.arena ?? null,
     units: state.units ?? [],
     turnOrder: state.turnOrder ?? [],
@@ -60,8 +65,8 @@ function validateTacticalState(state: any): TacticalState {
 export class TacticalEngine extends GraphEngine<TacticalState> {
   constructor(initial: Partial<TacticalState>) {
     const withDefaults: Partial<TacticalState> = {
-      encounterId: 'new',
-      arenaId: '',
+      encounterId: "new",
+      arenaId: "",
       diceRollerSeed: Date.now(),
       ...initial,
     };
@@ -72,7 +77,7 @@ export class TacticalEngine extends GraphEngine<TacticalState> {
   /**
    * Helper: Add a unit to the encounter
    */
-  addUnit(unit: TacticalState['units'][0]): TacticalState {
+  addUnit(unit: TacticalState["units"][0]): TacticalState {
     return this.transaction((draft) => {
       draft.units.push(unit);
     }).state;
@@ -113,7 +118,7 @@ export class TacticalEngine extends GraphEngine<TacticalState> {
     return this.transaction((draft) => {
       if (!draft.turnOrder.length) return;
 
-      const currentIndex = draft.turnOrder.indexOf(draft.activeUnitId || '');
+      const currentIndex = draft.turnOrder.indexOf(draft.activeUnitId || "");
       const nextIndex = (currentIndex + 1) % draft.turnOrder.length;
 
       // If we've wrapped around, increment round
@@ -125,7 +130,9 @@ export class TacticalEngine extends GraphEngine<TacticalState> {
 
       // Reset action economy for active unit
 
-      const activeUnit = draft.units.find((u: any) => u.id === draft.activeUnitId);
+      const activeUnit = draft.units.find(
+        (u: any) => u.id === draft.activeUnitId,
+      );
       if (activeUnit) {
         activeUnit.hasAction = true;
         activeUnit.hasBonusAction = true;

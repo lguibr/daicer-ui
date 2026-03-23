@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface DebouncedBusyOptions {
   enterDelayMs?: number;
@@ -13,8 +13,14 @@ export interface DebouncedBusyResult {
 const DEFAULT_ENTER_DELAY = 350;
 const DEFAULT_MIN_VISIBLE = 333;
 
-export function useDebouncedBusy(active: boolean, options?: DebouncedBusyOptions): DebouncedBusyResult {
-  const { enterDelayMs = DEFAULT_ENTER_DELAY, minVisibleMs = DEFAULT_MIN_VISIBLE } = options ?? {};
+export function useDebouncedBusy(
+  active: boolean,
+  options?: DebouncedBusyOptions,
+): DebouncedBusyResult {
+  const {
+    enterDelayMs = DEFAULT_ENTER_DELAY,
+    minVisibleMs = DEFAULT_MIN_VISIBLE,
+  } = options ?? {};
 
   const [visible, setVisible] = useState(false);
   const enterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -120,7 +126,7 @@ export function useDebouncedBusy(active: boolean, options?: DebouncedBusyOptions
       clearEnterTimer();
       clearExitTimer();
     },
-    []
+    [],
   );
 
   const pending = useMemo(() => active || visible, [active, visible]);

@@ -3,9 +3,9 @@
  * Displays loading UI with progress when section graph is executing
  */
 
-import { AlertCircle } from 'lucide-react';
-import { DiceLoader } from '../ui';
-import { Button } from '../ui/button';
+import { AlertCircle } from "lucide-react";
+import { DiceLoader } from "../ui";
+import { Button } from "../ui/button";
 
 export interface SectionLoadingStateProps {
   sectionNumber: 1 | 2 | 3;
@@ -30,16 +30,25 @@ export function SectionLoadingState({
   // Error state
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 space-y-4" data-testid="section-loading-error">
+      <div
+        className="flex flex-col items-center justify-center p-8 space-y-4"
+        data-testid="section-loading-error"
+      >
         <div className="flex items-center gap-3 text-red-500">
           <AlertCircle className="w-8 h-8" />
           <h3 className="text-xl font-semibold">Generation Failed</h3>
         </div>
 
-        <p className="text-center text-gray-600 dark:text-gray-400 max-w-md">{error}</p>
+        <p className="text-center text-gray-600 dark:text-gray-400 max-w-md">
+          {error}
+        </p>
 
         {onRetry && (
-          <Button onClick={onRetry} variant="default" data-testid="retry-section-button">
+          <Button
+            onClick={onRetry}
+            variant="default"
+            data-testid="retry-section-button"
+          >
             Retry Section {sectionNumber}
           </Button>
         )}
@@ -49,11 +58,16 @@ export function SectionLoadingState({
 
   // Loading state
   return (
-    <div className="flex flex-col items-center justify-center p-8 space-y-6" data-testid="section-loading-active">
+    <div
+      className="flex flex-col items-center justify-center p-8 space-y-6"
+      data-testid="section-loading-active"
+    >
       <DiceLoader />
 
       <div className="text-center space-y-4 w-full max-w-md">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">{sectionName}</h3>
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
+          {sectionName}
+        </h3>
 
         {progress && (
           <div className="space-y-2">
@@ -66,7 +80,9 @@ export function SectionLoadingState({
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-aurora-500 to-accent transition-all duration-500 ease-out"
-                style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                style={{
+                  width: `${(progress.current / progress.total) * 100}%`,
+                }}
               />
             </div>
           </div>

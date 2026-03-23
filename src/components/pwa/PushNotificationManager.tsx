@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Bell, BellOff } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { Bell, BellOff } from "lucide-react";
+import { toast } from "sonner";
 
 export function PushNotificationManager() {
   const [permission, setPermission] = useState<NotificationPermission>(() => {
-    if (typeof window !== 'undefined' && 'Notification' in window) {
+    if (typeof window !== "undefined" && "Notification" in window) {
       return Notification.permission;
     }
-    return 'default';
+    return "default";
   });
-  const [subscription, setSubscription] = useState<PushSubscription | null>(null);
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null,
+  );
 
   const checkSubscription = async () => {
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       const ready = await navigator.serviceWorker.ready;
       const sub = await ready.pushManager.getSubscription();
       setSubscription(sub);
@@ -20,23 +22,23 @@ export function PushNotificationManager() {
   };
 
   useEffect(() => {
-    if ('Notification' in window) {
+    if ("Notification" in window) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       checkSubscription();
     }
   }, []);
 
   const requestPermission = async () => {
-    if (!('Notification' in window)) {
-      toast.error('Notifications not supported on this device.');
+    if (!("Notification" in window)) {
+      toast.error("Notifications not supported on this device.");
       return;
     }
 
     const result = await Notification.requestPermission();
     setPermission(result);
 
-    if (result === 'granted') {
-      toast.success('Notifications enabled!');
+    if (result === "granted") {
+      toast.success("Notifications enabled!");
       // Here we would subscribe to push manager
       // subscribeToPush();
     }
@@ -57,7 +59,7 @@ export function PushNotificationManager() {
   };
 */
 
-  if (permission === 'denied') {
+  if (permission === "denied") {
     return (
       <div className="flex items-center gap-2 text-xs text-muted-foreground opacity-50">
         <BellOff className="w-4 h-4" />

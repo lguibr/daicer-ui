@@ -1,20 +1,20 @@
-import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import type { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
-import { DiceLoader } from '../../components/ui/dice-loader/DiceLoader';
-import { DiceRollAnimation } from '../../components/ui/dice-roll-animation/DiceRollAnimation';
-import { Button, type ButtonProps } from '../../components/ui/button';
-import { useI18n } from '../../i18n';
-import cn from '../../lib/utils';
-import { useStatusDice } from './useStatusDice';
+import { DiceLoader } from "../../components/ui/dice-loader/DiceLoader";
+import { DiceRollAnimation } from "../../components/ui/dice-roll-animation/DiceRollAnimation";
+import { Button, type ButtonProps } from "../../components/ui/button";
+import { useI18n } from "../../i18n";
+import cn from "../../lib/utils";
+import { useStatusDice } from "./useStatusDice";
 
 interface StatusPageAction {
   labelKey: string;
   to?: string;
   href?: string;
   onClick?: () => void;
-  variant?: ButtonProps['variant'];
-  target?: '_blank' | '_self';
+  variant?: ButtonProps["variant"];
+  target?: "_blank" | "_self";
   rel?: string;
 }
 
@@ -36,20 +36,32 @@ function StatusActionButton({
   label,
 }: {
   action: StatusPageAction;
-  defaultVariant: ButtonProps['variant'];
+  defaultVariant: ButtonProps["variant"];
   label: string;
 }) {
   const { href, target, rel, onClick, variant } = action;
   if (action.to) {
     return (
-      <Button asChild size="lg" variant={variant ?? defaultVariant} onClick={onClick} className="min-w-[150px]">
+      <Button
+        asChild
+        size="lg"
+        variant={variant ?? defaultVariant}
+        onClick={onClick}
+        className="min-w-[150px]"
+      >
         <Link to={action.to}>{label}</Link>
       </Button>
     );
   }
   if (href) {
     return (
-      <Button asChild size="lg" variant={variant ?? defaultVariant} onClick={onClick} className="min-w-[150px]">
+      <Button
+        asChild
+        size="lg"
+        variant={variant ?? defaultVariant}
+        onClick={onClick}
+        className="min-w-[150px]"
+      >
         <a href={href} target={target} rel={rel}>
           {label}
         </a>
@@ -57,7 +69,12 @@ function StatusActionButton({
     );
   }
   return (
-    <Button size="lg" variant={variant ?? defaultVariant} onClick={onClick} className="min-w-[150px]">
+    <Button
+      size="lg"
+      variant={variant ?? defaultVariant}
+      onClick={onClick}
+      className="min-w-[150px]"
+    >
       {label}
     </Button>
   );
@@ -65,11 +82,11 @@ function StatusActionButton({
 
 export function StatusPageLayout({
   statusCode,
-  eyebrowKey = 'statusPages.generic.eyebrow',
+  eyebrowKey = "statusPages.generic.eyebrow",
   titleKey,
   descriptionKey,
   helperTextKey,
-  loaderMessageKey = 'statusPages.generic.loader',
+  loaderMessageKey = "statusPages.generic.loader",
   primaryAction,
   secondaryAction,
   children,
@@ -99,26 +116,40 @@ export function StatusPageLayout({
           </span>
 
           <div className="space-y-4">
-            <h1 className="text-4xl font-black leading-tight text-white lg:text-6xl">{title}</h1>
+            <h1 className="text-4xl font-black leading-tight text-white lg:text-6xl">
+              {title}
+            </h1>
             <p className="text-lg text-slate-300 lg:text-xl">{description}</p>
-            {helperText ? <p className="text-sm text-slate-400">{helperText}</p> : null}
-          </div>
-
-          <div className="flex flex-wrap gap-4">
-            <StatusActionButton action={primaryAction} defaultVariant="default" label={primaryLabel} />
-            {secondaryAction && secondaryLabel ? (
-              <StatusActionButton action={secondaryAction} defaultVariant="outline" label={secondaryLabel} />
+            {helperText ? (
+              <p className="text-sm text-slate-400">{helperText}</p>
             ) : null}
           </div>
 
-          {children ? <div className="space-y-4 text-sm text-slate-300">{children}</div> : null}
+          <div className="flex flex-wrap gap-4">
+            <StatusActionButton
+              action={primaryAction}
+              defaultVariant="default"
+              label={primaryLabel}
+            />
+            {secondaryAction && secondaryLabel ? (
+              <StatusActionButton
+                action={secondaryAction}
+                defaultVariant="outline"
+                label={secondaryLabel}
+              />
+            ) : null}
+          </div>
+
+          {children ? (
+            <div className="space-y-4 text-sm text-slate-300">{children}</div>
+          ) : null}
         </div>
 
         <div className="flex-1">
           <div
             className={cn(
-              'relative rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-950/80',
-              'p-8 shadow-[0_0_120px_rgba(14,116,144,0.35)]'
+              "relative rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/60 to-slate-950/80",
+              "p-8 shadow-[0_0_120px_rgba(14,116,144,0.35)]",
             )}
           >
             <div className="absolute right-10 top-[-14px] rounded-full border border-white/20 bg-slate-950 px-4 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-slate-200">
@@ -128,13 +159,21 @@ export function StatusPageLayout({
               {showLoader ? (
                 <DiceLoader size="large" message={loaderMessage} />
               ) : (
-                <DiceRollAnimation dice={dice} size="large" colorByResult={false} autoStart showAxes={false} />
+                <DiceRollAnimation
+                  dice={dice}
+                  size="large"
+                  colorByResult={false}
+                  autoStart
+                  showAxes={false}
+                />
               )}
             </div>
             <div className="mt-6 space-y-2 text-center text-sm text-slate-400">
-              <p>{t('statusPages.generic.prompt')}</p>
+              <p>{t("statusPages.generic.prompt")}</p>
               {showResult ? (
-                <p className="text-xs uppercase tracking-[0.35em] text-slate-500">{t('statusPages.generic.ready')}</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-slate-500">
+                  {t("statusPages.generic.ready")}
+                </p>
               ) : null}
             </div>
           </div>

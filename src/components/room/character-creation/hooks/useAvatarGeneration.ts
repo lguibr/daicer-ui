@@ -1,10 +1,18 @@
-import { useState } from 'react';
-import { GamePhase, type Room } from '@/types/contracts';
-import { generateAvatarPortrait, generateAvatarUpperBody, generateAvatarFullBody } from '../../../../services/api';
-import { buildAvatarPayload, appendReference, downscalePreviewImage } from '../avatarHelpers';
-import type { CharacterFormState } from '../types';
-import type { EquipmentItemData } from '../../../equipment/EquipmentItemCard';
-import type { AvatarPreviewImage } from '../../../../types/assets';
+import { useState } from "react";
+import { GamePhase, type Room } from "@/types/contracts";
+import {
+  generateAvatarPortrait,
+  generateAvatarUpperBody,
+  generateAvatarFullBody,
+} from "../../../../services/api";
+import {
+  buildAvatarPayload,
+  appendReference,
+  downscalePreviewImage,
+} from "../avatarHelpers";
+import type { CharacterFormState } from "../types";
+import type { EquipmentItemData } from "../../../equipment/EquipmentItemCard";
+import type { AvatarPreviewImage } from "../../../../types/assets";
 
 export function useAvatarGeneration(
   formData: CharacterFormState,
@@ -12,13 +20,19 @@ export function useAvatarGeneration(
   startingLevel: number,
   equippedItems: Record<string, string | null>,
   equipmentItems: EquipmentItemData[],
-  assetMode: boolean
+  assetMode: boolean,
 ) {
   const [avatarPreview, setAvatarPreview] = useState<any>({});
-  const [previewLoadState, setPreviewLoadState] = useState({ portrait: false, upperBody: false, fullBody: false });
+  const [previewLoadState, setPreviewLoadState] = useState({
+    portrait: false,
+    upperBody: false,
+    fullBody: false,
+  });
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerateAll = async (ensurePlaceholdersFn: () => Promise<any>) => {
+  const handleGenerateAll = async (
+    ensurePlaceholdersFn: () => Promise<any>,
+  ) => {
     setError(null);
     try {
       const refs = await ensurePlaceholdersFn();
@@ -26,20 +40,26 @@ export function useAvatarGeneration(
       const roomForPayload =
         assetMode || !room
           ? {
-              documentId: 'room-char-creation',
-              roomId: 'CHAR-CREATION',
-              id: 'room-char-creation',
-              code: 'CHAR-CREATION',
+              documentId: "room-char-creation",
+              roomId: "CHAR-CREATION",
+              id: "room-char-creation",
+              code: "CHAR-CREATION",
               phase: GamePhase.CHARACTER_CREATION,
-              worldDescription: 'Character sheet asset creation',
+              worldDescription: "Character sheet asset creation",
               settings: null,
-              ownerId: '',
+              ownerId: "",
               createdAt: Date.now(),
               updatedAt: Date.now(),
             }
           : room;
 
-      const payload = buildAvatarPayload(formData, roomForPayload, startingLevel, equippedItems, equipmentItems);
+      const payload = buildAvatarPayload(
+        formData,
+        roomForPayload,
+        startingLevel,
+        equippedItems,
+        equipmentItems,
+      );
 
       // Step 1: Portrait
       setPreviewLoadState((prev) => ({ ...prev, portrait: true }));
@@ -48,8 +68,13 @@ export function useAvatarGeneration(
         const userPortrait = avatarPreview.portrait
           ? `data:${avatarPreview.portrait.mimeType};base64,${avatarPreview.portrait.data}`
           : null;
-        const portraitPayload = userPortrait ? payload : appendReference(payload, refs?.portrait);
-        const portraitRaw = await generateAvatarPortrait(portraitPayload, userPortrait);
+        const portraitPayload = userPortrait
+          ? payload
+          : appendReference(payload, refs?.portrait);
+        const portraitRaw = await generateAvatarPortrait(
+          portraitPayload,
+          userPortrait,
+        );
         const tempPortrait = portraitRaw; // Keep raw or process?
         // generateAvatarPortrait likely returns AvatarPreviewImage (object) or string?
         // Assuming it matches downscale input.
@@ -57,7 +82,7 @@ export function useAvatarGeneration(
           portrait = await downscalePreviewImage(tempPortrait);
         } catch (e) {
           console.warn(e);
-          portrait = typeof tempPortrait === 'string' ? null : tempPortrait;
+          portrait = typeof tempPortrait === "string" ? null : tempPortrait;
         }
 
         setAvatarPreview((prev: any) => ({ ...prev, portrait }));
@@ -74,14 +99,20 @@ export function useAvatarGeneration(
         const userUpper = avatarPreview.upperBody
           ? `data:${avatarPreview.upperBody.mimeType};base64,${avatarPreview.upperBody.data}`
           : null;
-        const upperPayload = userUpper ? payload : appendReference(payload, refs?.upperBody);
-        const upperRaw = await generateAvatarUpperBody(upperPayload, portrait, userUpper);
+        const upperPayload = userUpper
+          ? payload
+          : appendReference(payload, refs?.upperBody);
+        const upperRaw = await generateAvatarUpperBody(
+          upperPayload,
+          portrait,
+          userUpper,
+        );
 
         try {
           upperBody = await downscalePreviewImage(upperRaw);
         } catch (e) {
           console.warn(e);
-          upperBody = typeof upperRaw === 'string' ? null : upperRaw;
+          upperBody = typeof upperRaw === "string" ? null : upperRaw;
         }
 
         setAvatarPreview((prev: any) => ({ ...prev, upperBody }));
@@ -97,8 +128,15 @@ export function useAvatarGeneration(
         const userFull = avatarPreview.fullBody
           ? `data:${avatarPreview.fullBody.mimeType};base64,${avatarPreview.fullBody.data}`
           : null;
-        const fullPayload = userFull ? payload : appendReference(payload, refs?.fullBody);
-        const fullRaw = await generateAvatarFullBody(fullPayload, portrait, upperBody, userFull);
+        const fullPayload = userFull
+          ? payload
+          : appendReference(payload, refs?.fullBody);
+        const fullRaw = await generateAvatarFullBody(
+          fullPayload,
+          portrait,
+          upperBody,
+          userFull,
+        );
 
         // let fullBody = fullRaw;
         let finalFullBody: AvatarPreviewImage | null = null;
@@ -106,7 +144,7 @@ export function useAvatarGeneration(
           finalFullBody = await downscalePreviewImage(fullRaw);
         } catch (e) {
           console.warn(e);
-          finalFullBody = typeof fullRaw === 'string' ? null : fullRaw;
+          finalFullBody = typeof fullRaw === "string" ? null : fullRaw;
         }
 
         setAvatarPreview((prev: any) => ({ ...prev, fullBody: finalFullBody }));
@@ -114,12 +152,19 @@ export function useAvatarGeneration(
         setPreviewLoadState((prev) => ({ ...prev, fullBody: false }));
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to generate portraits');
-      setPreviewLoadState({ portrait: false, upperBody: false, fullBody: false });
+      setError(err.message || "Failed to generate portraits");
+      setPreviewLoadState({
+        portrait: false,
+        upperBody: false,
+        fullBody: false,
+      });
     }
   };
 
-  const handleAvatarUpdate = (slot: 'portrait' | 'upperBody' | 'fullBody', base64Data: string) => {
+  const handleAvatarUpdate = (
+    slot: "portrait" | "upperBody" | "fullBody",
+    base64Data: string,
+  ) => {
     const matches = base64Data.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
     if (matches && matches.length === 3) {
       const mimeType = matches[1];
@@ -130,7 +175,7 @@ export function useAvatarGeneration(
         [slot]: {
           mimeType,
           data,
-          prompt: 'User Upload',
+          prompt: "User Upload",
           width: 512,
           height: 512,
         },
@@ -138,7 +183,10 @@ export function useAvatarGeneration(
     }
   };
 
-  const handleAvatarUpload = (slot: 'portrait' | 'upperBody' | 'fullBody', file: File) => {
+  const handleAvatarUpload = (
+    slot: "portrait" | "upperBody" | "fullBody",
+    file: File,
+  ) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;

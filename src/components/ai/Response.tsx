@@ -1,6 +1,6 @@
-import { type ReactNode } from 'react';
-import cn from '@/lib/utils';
-import MarkdownMessage from '../game/MarkdownMessage';
+import { type ReactNode } from "react";
+import cn from "@/lib/utils";
+import MarkdownMessage from "../game/MarkdownMessage";
 
 interface ResponseProps {
   children: string | ReactNode;
@@ -13,7 +13,7 @@ interface ResponseProps {
  * Handles **bold, *italic*, ~~strikethrough~~, and `code`
  */
 function autoCompleteMarkdown(text: string): string {
-  if (typeof text !== 'string') return '';
+  if (typeof text !== "string") return "";
 
   let result = text;
 
@@ -25,22 +25,22 @@ function autoCompleteMarkdown(text: string): string {
 
   // Auto-complete unclosed bold
   if (boldCount % 2 !== 0) {
-    result += '**';
+    result += "**";
   }
 
   // Auto-complete unclosed italic (but not if it's part of a bold)
-  if (italicCount % 2 !== 0 && !result.endsWith('***')) {
-    result += '*';
+  if (italicCount % 2 !== 0 && !result.endsWith("***")) {
+    result += "*";
   }
 
   // Auto-complete unclosed strikethrough
   if (strikeCount % 2 !== 0) {
-    result += '~~';
+    result += "~~";
   }
 
   // Auto-complete unclosed inline code (but not code blocks)
-  if (codeCount % 2 !== 0 && !result.includes('```')) {
-    result += '`';
+  if (codeCount % 2 !== 0 && !result.includes("```")) {
+    result += "`";
   }
 
   return result;
@@ -51,13 +51,13 @@ function autoCompleteMarkdown(text: string): string {
  * Shows them once the closing bracket appears
  */
 function hideIncompleteLinks(text: string): string {
-  if (typeof text !== 'string') return '';
+  if (typeof text !== "string") return "";
 
   // Hide incomplete markdown links: [text without closing bracket
-  let result = text.replace(/\[([^\]]+)$/g, '');
+  let result = text.replace(/\[([^\]]+)$/g, "");
 
   // Hide incomplete images: ![alt without closing bracket
-  result = result.replace(/!\[([^\]]+)$/g, '');
+  result = result.replace(/!\[([^\]]+)$/g, "");
 
   return result;
 }
@@ -84,10 +84,18 @@ function processStreamingMarkdown(text: string): string {
  * - Reuses existing MarkdownMessage component for rendering
  * - Preserves Daicer's custom markdown styling
  */
-export function Response({ children, className, parseIncompleteMarkdown = true }: ResponseProps) {
+export function Response({
+  children,
+  className,
+  parseIncompleteMarkdown = true,
+}: ResponseProps) {
   // Handle both string and ReactNode children
-  if (typeof children !== 'string') {
-    return <div className={cn('prose prose-invert max-w-none', className)}>{children}</div>;
+  if (typeof children !== "string") {
+    return (
+      <div className={cn("prose prose-invert max-w-none", className)}>
+        {children}
+      </div>
+    );
   }
 
   // Process markdown if parsing is enabled and content looks incomplete
@@ -95,11 +103,11 @@ export function Response({ children, className, parseIncompleteMarkdown = true }
   if (parseIncompleteMarkdown) {
     // Check if content looks incomplete (ends with partial formatting)
     const hasIncompleteFormatting =
-      content.endsWith('**') ||
-      content.endsWith('*') ||
-      content.endsWith('~~') ||
-      content.endsWith('`') ||
-      content.endsWith('[') ||
+      content.endsWith("**") ||
+      content.endsWith("*") ||
+      content.endsWith("~~") ||
+      content.endsWith("`") ||
+      content.endsWith("[") ||
       content.match(/\[[^\]]+$/);
 
     if (hasIncompleteFormatting) {
@@ -108,10 +116,15 @@ export function Response({ children, className, parseIncompleteMarkdown = true }
   }
 
   return (
-    <div className={cn('prose prose-invert max-w-none text-shadow-50 break-words', className)}>
+    <div
+      className={cn(
+        "prose prose-invert max-w-none text-shadow-50 break-words",
+        className,
+      )}
+    >
       <MarkdownMessage content={content} />
     </div>
   );
 }
 
-Response.displayName = 'Response';
+Response.displayName = "Response";

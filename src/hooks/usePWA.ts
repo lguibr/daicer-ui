@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 // @ts-expect-error - Virtual module
 // eslint-disable-next-line import/no-unresolved
-import { useRegisterSW } from 'virtual:pwa-register/react';
+import { useRegisterSW } from "virtual:pwa-register/react";
 
 export function usePWA() {
   const {
@@ -15,7 +15,7 @@ export function usePWA() {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onRegisterError(error: any) {
-      console.info('SW registration error', error);
+      console.info("SW registration error", error);
     },
   });
 
@@ -37,18 +37,21 @@ export function usePWA() {
       setInstallPrompt(null);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     // Check if already installed (standalone mode)
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia("(display-mode: standalone)").matches) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsInstalled(true);
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt,
+      );
+      window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
 
@@ -59,7 +62,7 @@ export function usePWA() {
 
     const { outcome } = await installPrompt.userChoice;
 
-    if (outcome === 'accepted') {
+    if (outcome === "accepted") {
       setInstallPrompt(null);
     }
   };

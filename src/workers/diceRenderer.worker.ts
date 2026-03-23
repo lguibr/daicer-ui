@@ -3,8 +3,8 @@
  * Renders 3D dice using Three.js in OffscreenCanvas to prevent UI blocking
  */
 
-import './utils/threeShim';
-import * as THREE from 'three';
+import "./utils/threeShim";
+import * as THREE from "three";
 
 let scene: THREE.Scene | null = null;
 let camera: THREE.PerspectiveCamera | null = null;
@@ -21,14 +21,16 @@ const DICE_SPACING = 1.5;
 function createD20Geometry(): THREE.PolyhedronGeometry {
   // D20 vertices
   const vertices = [
-    0, 1.618, 1, 0, 1.618, -1, 0, -1.618, 1, 0, -1.618, -1, 1.618, 1, 0, 1.618, -1, 0, -1.618, 1, 0, -1.618, -1, 0, 1,
-    0, 1.618, -1, 0, 1.618, 1, 0, -1.618, -1, 0, -1.618,
+    0, 1.618, 1, 0, 1.618, -1, 0, -1.618, 1, 0, -1.618, -1, 1.618, 1, 0, 1.618,
+    -1, 0, -1.618, 1, 0, -1.618, -1, 0, 1, 0, 1.618, -1, 0, 1.618, 1, 0, -1.618,
+    -1, 0, -1.618,
   ];
 
   // D20 faces (indices)
   const indices = [
-    0, 8, 4, 0, 4, 1, 0, 1, 6, 0, 6, 9, 0, 9, 8, 8, 2, 5, 8, 5, 4, 4, 5, 10, 4, 10, 1, 1, 10, 11, 1, 11, 6, 6, 11, 7, 6,
-    7, 9, 9, 7, 2, 9, 2, 8, 3, 11, 10, 3, 10, 5, 3, 5, 2, 3, 2, 7, 3, 7, 11,
+    0, 8, 4, 0, 4, 1, 0, 1, 6, 0, 6, 9, 0, 9, 8, 8, 2, 5, 8, 5, 4, 4, 5, 10, 4,
+    10, 1, 1, 10, 11, 1, 11, 6, 6, 11, 7, 6, 7, 9, 9, 7, 2, 9, 2, 8, 3, 11, 10,
+    3, 10, 5, 3, 5, 2, 3, 2, 7, 3, 7, 11,
   ];
 
   return new THREE.PolyhedronGeometry(vertices, indices, DICE_SIZE, 0);
@@ -62,20 +64,20 @@ function initScene(canvas: OffscreenCanvas, width: number, height: number) {
   directionalLight.position.set(5, 10, 5);
   scene.add(directionalLight);
 
-  console.info('[DiceWorker] Scene initialized');
+  console.info("[DiceWorker] Scene initialized");
 }
 
 /**
  * Add dice to scene
  */
-function addDice(count: number, type: 'd6' | 'd20') {
+function addDice(count: number, type: "d6" | "d20") {
   if (!scene) return;
 
   // Clear existing dice
   dice.forEach((die) => scene!.remove(die));
   dice = [];
 
-  const geometry = type === 'd6' ? createD6Geometry() : createD20Geometry();
+  const geometry = type === "d6" ? createD6Geometry() : createD20Geometry();
   const material = new THREE.MeshStandardMaterial({
     color: 0x4a90e2,
     metalness: 0.3,
@@ -120,7 +122,7 @@ function animate() {
  */
 function rollDice(results: number[]) {
   if (dice.length !== results.length) {
-    console.warn('[DiceWorker] Dice count mismatch');
+    console.warn("[DiceWorker] Dice count mismatch");
     return;
   }
 
@@ -149,7 +151,7 @@ function rollDice(results: number[]) {
     if (frame < SPIN_FRAMES) {
       self.requestAnimationFrame(spinAnimation);
     } else {
-      self.postMessage({ type: 'roll-complete', results });
+      self.postMessage({ type: "roll-complete", results });
     }
   };
 
@@ -200,7 +202,7 @@ function dispose() {
   scene = null;
   camera = null;
 
-  console.info('[DiceWorker] Resources disposed');
+  console.info("[DiceWorker] Resources disposed");
 }
 
 // Message handler
@@ -208,39 +210,39 @@ self.onmessage = (e: MessageEvent) => {
   const { type, data } = e.data;
 
   switch (type) {
-    case 'init':
+    case "init":
       initScene(data.canvas, data.width, data.height);
       if (data.autoStart) {
         animate();
       }
       break;
 
-    case 'add-dice':
-      addDice(data.count, data.diceType || 'd20');
+    case "add-dice":
+      addDice(data.count, data.diceType || "d20");
       break;
 
-    case 'start-animation':
+    case "start-animation":
       animate();
       break;
 
-    case 'stop-animation':
+    case "stop-animation":
       stopAnimation();
       break;
 
-    case 'roll':
+    case "roll":
       rollDice(data.results);
       break;
 
-    case 'resize':
+    case "resize":
       resize(data.width, data.height);
       break;
 
-    case 'dispose':
+    case "dispose":
       dispose();
       break;
 
     default:
-      console.warn('[DiceWorker] Unknown message type:', type);
+      console.warn("[DiceWorker] Unknown message type:", type);
   }
 };
 

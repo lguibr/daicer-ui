@@ -4,8 +4,8 @@
  * Enhanced with tile click details
  */
 
-import { useState } from 'react';
-import type { CombatCharacter, Position } from '../../types/combat';
+import { useState } from "react";
+import type { CombatCharacter, Position } from "../../types/combat";
 
 interface CombatGridProps {
   characters: CombatCharacter[];
@@ -30,12 +30,19 @@ export function CombatGrid({
 }: CombatGridProps) {
   const [clickedSquare, setClickedSquare] = useState<Position | null>(null);
 
-  const isSquareReachable = (x: number, y: number): boolean => reachableSquares.some((sq) => sq.x === x && sq.y === y);
+  const isSquareReachable = (x: number, y: number): boolean =>
+    reachableSquares.some((sq) => sq.x === x && sq.y === y);
 
   const getCharacterAt = (x: number, y: number): CombatCharacter | undefined =>
-    characters.find((c) => c.position.x === x && c.position.y === y && c.hp > 0);
+    characters.find(
+      (c) => c.position.x === x && c.position.y === y && c.hp > 0,
+    );
 
-  const handleSquareClick = (x: number, y: number, character?: CombatCharacter) => {
+  const handleSquareClick = (
+    x: number,
+    y: number,
+    character?: CombatCharacter,
+  ) => {
     if (character) {
       onCharacterClick(character.id);
       setClickedSquare({ x, y });
@@ -53,13 +60,13 @@ export function CombatGrid({
     const isClicked = clickedSquare?.x === x && clickedSquare?.y === y;
 
     const baseClasses =
-      'relative border border-shadow-700 aspect-square flex items-center justify-center cursor-pointer transition-all';
+      "relative border border-shadow-700 aspect-square flex items-center justify-center cursor-pointer transition-all";
     const reachableClasses = isReachable
-      ? 'bg-aurora-900/30 hover:bg-aurora-800/50 border-aurora-600'
-      : 'bg-shadow-900/50 hover:bg-shadow-800/70';
-    const activeClasses = isActive ? 'ring-2 ring-nebula-400' : '';
-    const selectedClasses = isSelected ? 'ring-2 ring-aurora-400' : '';
-    const clickedClasses = isClicked ? 'ring-2 ring-accent' : '';
+      ? "bg-aurora-900/30 hover:bg-aurora-800/50 border-aurora-600"
+      : "bg-shadow-900/50 hover:bg-shadow-800/70";
+    const activeClasses = isActive ? "ring-2 ring-nebula-400" : "";
+    const selectedClasses = isSelected ? "ring-2 ring-aurora-400" : "";
+    const clickedClasses = isClicked ? "ring-2 ring-accent" : "";
 
     const squareElement = (
       <div
@@ -69,7 +76,7 @@ export function CombatGrid({
         className={`${baseClasses} ${reachableClasses} ${activeClasses} ${selectedClasses} ${clickedClasses}`}
         onClick={() => handleSquareClick(x, y, character)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === "Enter" || e.key === " ") {
             handleSquareClick(x, y, character);
           }
         }}
@@ -79,7 +86,9 @@ export function CombatGrid({
           <div className="flex flex-col items-center gap-1">
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                character.isPlayer ? 'bg-aurora-500 text-white' : 'bg-red-600 text-white'
+                character.isPlayer
+                  ? "bg-aurora-500 text-white"
+                  : "bg-red-600 text-white"
               }`}
             >
               {character.name.charAt(0).toUpperCase()}
@@ -107,7 +116,7 @@ export function CombatGrid({
         }}
       >
         {Array.from({ length: gridHeight }, (_row, y) =>
-          Array.from({ length: gridWidth }, (_col, x) => renderSquare(x, y))
+          Array.from({ length: gridWidth }, (_col, x) => renderSquare(x, y)),
         )}
       </div>
     </div>

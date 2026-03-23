@@ -1,6 +1,6 @@
-import { Navigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
-import { DiceLoader } from '../ui/dice-loader';
+import { Navigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { DiceLoader } from "../ui/dice-loader";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

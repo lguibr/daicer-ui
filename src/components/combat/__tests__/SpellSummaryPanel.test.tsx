@@ -1,40 +1,45 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import { SpellSummaryPanel } from '../SpellSummaryPanel';
-import type { SpellData, SpellPreviewSnapshot, SpellResolutionSnapshot } from '../../../types/spells';
-import { SpellEffectShape } from '../../../types/spells';
-import type { CombatCharacter, DiceRollResult } from '../../../types/combat';
-import type { CombatDemoSpellScript } from 'daicer/backend/src/shared/spellLoadouts';
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { SpellSummaryPanel } from "../SpellSummaryPanel";
+import type {
+  SpellData,
+  SpellPreviewSnapshot,
+  SpellResolutionSnapshot,
+} from "../../../types/spells";
+import { SpellEffectShape } from "../../../types/spells";
+import type { CombatCharacter, DiceRollResult } from "../../../types/combat";
+import type { CombatDemoSpellScript } from "daicer/backend/src/shared/spellLoadouts";
 
 const mockSpell: SpellData = {
-  id: 'fireball',
-  name: 'Fireball',
+  id: "fireball",
+  name: "Fireball",
   level: 3,
-  school: 'evocation',
+  school: "evocation",
   imageUrl: null,
-  castingTime: '1 action',
-  range: '150 feet',
+  castingTime: "1 action",
+  range: "150 feet",
   components: {
     verbal: true,
     somatic: true,
-    material: 'a tiny ball of bat guano and sulfur',
+    material: "a tiny ball of bat guano and sulfur",
   },
-  duration: 'Instantaneous',
-  description: 'A bright streak flashes from your pointing finger to a point you choose.',
+  duration: "Instantaneous",
+  description:
+    "A bright streak flashes from your pointing finger to a point you choose.",
   isRitual: false,
   effectShape: SpellEffectShape.SPHERE,
   effectDimensions: { radius: 4 },
-  higherLevels: 'The damage increases by 1d6 for each slot level above 3rd.',
+  higherLevels: "The damage increases by 1d6 for each slot level above 3rd.",
 };
 
 const mockPreview: SpellPreviewSnapshot = {
-  spellId: 'fireball',
-  spellName: 'Fireball',
-  casterId: 'player-wizard',
+  spellId: "fireball",
+  spellName: "Fireball",
+  casterId: "player-wizard",
   spellLevel: 3,
-  school: 'evocation',
+  school: "evocation",
   effectShape: SpellEffectShape.SPHERE,
-  range: '150 feet',
+  range: "150 feet",
   casterPosition: { x: 3, y: 6 },
   targetPosition: { x: 7, y: 5 },
   affectedSquares: [
@@ -50,37 +55,41 @@ const mockPreview: SpellPreviewSnapshot = {
   obstacles: [],
 };
 
-const mockDiceRoll = (id: string, description: string, finalResult: number): DiceRollResult => ({
+const mockDiceRoll = (
+  id: string,
+  description: string,
+  finalResult: number,
+): DiceRollResult => ({
   id,
   timestamp: Date.now(),
-  rollType: 'damage',
-  diceType: 'd6',
+  rollType: "damage",
+  diceType: "d6",
   numberOfDice: 8,
   rawRolls: [5, 5, 6, 4, 2, 6, 3, 1],
   modifier: 3,
-  advantageType: 'normal',
+  advantageType: "normal",
   finalResult,
   description,
 });
 
 const mockResolution: SpellResolutionSnapshot = {
-  spellId: 'fireball',
-  casterId: 'player-wizard',
-  affectedCharacterIds: ['enemy-goblin-1', 'enemy-goblin-2'],
-  summary: 'Fireball detonates amid the goblins.',
-  damageRolls: [mockDiceRoll('damage-1', 'Fireball damage', 28)],
+  spellId: "fireball",
+  casterId: "player-wizard",
+  affectedCharacterIds: ["enemy-goblin-1", "enemy-goblin-2"],
+  summary: "Fireball detonates amid the goblins.",
+  damageRolls: [mockDiceRoll("damage-1", "Fireball damage", 28)],
   savingThrows: [
     {
-      id: 'save-1',
+      id: "save-1",
       timestamp: Date.now(),
-      rollType: 'save',
-      diceType: 'd20',
+      rollType: "save",
+      diceType: "d20",
       numberOfDice: 1,
       rawRolls: [12],
       modifier: 2,
-      advantageType: 'normal',
+      advantageType: "normal",
       finalResult: 14,
-      description: 'Goblin 1 Dexterity save',
+      description: "Goblin 1 Dexterity save",
     },
   ],
   attackRolls: [],
@@ -88,15 +97,15 @@ const mockResolution: SpellResolutionSnapshot = {
 };
 
 const mockCaster: CombatCharacter = {
-  id: 'player-wizard',
-  name: 'Lyra the Bright',
+  id: "player-wizard",
+  name: "Lyra the Bright",
   hp: 22,
   maxHp: 22,
   tempHp: 0,
   armorClass: 14,
   position: { x: 3, y: 6 },
   initiative: 15,
-  avatar: 'player-wizard',
+  avatar: "player-wizard",
   isPlayer: true,
   strength: 8,
   dexterity: 14,
@@ -117,15 +126,15 @@ const mockCaster: CombatCharacter = {
 
 const mockTargets: CombatCharacter[] = [
   {
-    id: 'enemy-goblin-1',
-    name: 'Goblin Skirmisher',
+    id: "enemy-goblin-1",
+    name: "Goblin Skirmisher",
     hp: 4,
     maxHp: 22,
     tempHp: 0,
     armorClass: 15,
     position: { x: 7, y: 5 },
     initiative: 12,
-    avatar: 'enemy-goblin-1',
+    avatar: "enemy-goblin-1",
     isPlayer: false,
     strength: 8,
     dexterity: 14,
@@ -144,15 +153,15 @@ const mockTargets: CombatCharacter[] = [
     conditions: [],
   },
   {
-    id: 'enemy-goblin-2',
-    name: 'Goblin Sneak',
+    id: "enemy-goblin-2",
+    name: "Goblin Sneak",
     hp: 0,
     maxHp: 18,
     tempHp: 0,
     armorClass: 15,
     position: { x: 8, y: 5 },
     initiative: 10,
-    avatar: 'enemy-goblin-2',
+    avatar: "enemy-goblin-2",
     isPlayer: false,
     strength: 8,
     dexterity: 14,
@@ -173,14 +182,14 @@ const mockTargets: CombatCharacter[] = [
 ];
 
 const mockScript: CombatDemoSpellScript = {
-  spellId: 'fireball',
-  casterId: 'player-wizard',
-  description: 'Lyra hurls a Fireball toward the clustered goblins.',
-  target: { type: 'point', x: 7, y: 5 },
+  spellId: "fireball",
+  casterId: "player-wizard",
+  description: "Lyra hurls a Fireball toward the clustered goblins.",
+  target: { type: "point", x: 7, y: 5 },
 };
 
-describe('SpellSummaryPanel', () => {
-  it('renders spell details, preview info, resolution, and loadout entries', () => {
+describe("SpellSummaryPanel", () => {
+  it("renders spell details, preview info, resolution, and loadout entries", () => {
     render(
       <SpellSummaryPanel
         spell={mockSpell}
@@ -190,12 +199,17 @@ describe('SpellSummaryPanel', () => {
         affectedCharacters={mockTargets}
         loadout={[{ script: mockScript, spell: mockSpell }]}
         activeSpellId="fireball"
-      />
+      />,
     );
 
-    expect(screen.getByText(/Level 3 · evocation · 150 feet/i)).toBeInTheDocument();
     expect(
-      screen.getByText((content, element) => element?.textContent === 'Cast by Lyra the Bright')
+      screen.getByText(/Level 3 · evocation · 150 feet/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content, element) =>
+          element?.textContent === "Cast by Lyra the Bright",
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText(/4 squares affected/i)).toBeInTheDocument();
     expect(screen.getByText(/2 targets affected/i)).toBeInTheDocument();
@@ -205,7 +219,9 @@ describe('SpellSummaryPanel', () => {
     expect(screen.getByText(/Dexterity save/i)).toBeInTheDocument();
     expect(screen.getByText(/Friendly fire risk/i)).toBeInTheDocument();
 
-    const activeChip = screen.getByTitle(/Lyra hurls a Fireball toward the clustered goblins/i);
-    expect(activeChip).toHaveClass('border-aurora-400');
+    const activeChip = screen.getByTitle(
+      /Lyra hurls a Fireball toward the clustered goblins/i,
+    );
+    expect(activeChip).toHaveClass("border-aurora-400");
   });
 });

@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { WorldConfigForm } from '@/features/debug/components/WorldConfigForm';
-import type { WorldConfig } from '@/features/debug/utils/types';
-import type { WorldSettings } from '@/types/contracts';
-import { createRoom } from '@/services/api';
-import { LoadingOverlay } from '@/components/ui/LoadingOverlay';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useWizard } from '../context/WizardContext';
-import { WorldPreview } from '../components/WorldPreview';
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { WorldConfigForm } from "@/features/debug/components/WorldConfigForm";
+import type { WorldConfig } from "@/features/debug/utils/types";
+import type { WorldSettings } from "@/types/contracts";
+import { createRoom } from "@/services/api";
+import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useWizard } from "../context/WizardContext";
+import { WorldPreview } from "../components/WorldPreview";
 
 export default function WorldConfigPage() {
   const { settings, setSettings } = useWizard();
@@ -16,18 +16,25 @@ export default function WorldConfigPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const config: WorldConfig = {
-    seed: settings.seed || 'default-seed',
+    seed: settings.seed || "default-seed",
     chunkSize: (settings.generationParams as WorldConfig)?.chunkSize ?? 32,
-    globalScale: (settings.generationParams as WorldConfig)?.globalScale ?? 0.01,
+    globalScale:
+      (settings.generationParams as WorldConfig)?.globalScale ?? 0.01,
     seaLevel: (settings.generationParams as WorldConfig)?.seaLevel ?? 0,
-    elevationScale: (settings.generationParams as WorldConfig)?.elevationScale ?? 1,
+    elevationScale:
+      (settings.generationParams as WorldConfig)?.elevationScale ?? 1,
     roughness: (settings.generationParams as WorldConfig)?.roughness ?? 0.5,
     detail: (settings.generationParams as WorldConfig)?.detail ?? 4,
-    moistureScale: (settings.generationParams as WorldConfig)?.moistureScale ?? 1,
-    temperatureOffset: (settings.generationParams as WorldConfig)?.temperatureOffset ?? 0,
-    structureChance: (settings.generationParams as WorldConfig)?.structureChance ?? 0.1,
-    structureSpacing: (settings.generationParams as WorldConfig)?.structureSpacing ?? 10,
-    structureSizeAvg: (settings.generationParams as WorldConfig)?.structureSizeAvg ?? 10,
+    moistureScale:
+      (settings.generationParams as WorldConfig)?.moistureScale ?? 1,
+    temperatureOffset:
+      (settings.generationParams as WorldConfig)?.temperatureOffset ?? 0,
+    structureChance:
+      (settings.generationParams as WorldConfig)?.structureChance ?? 0.1,
+    structureSpacing:
+      (settings.generationParams as WorldConfig)?.structureSpacing ?? 10,
+    structureSizeAvg:
+      (settings.generationParams as WorldConfig)?.structureSizeAvg ?? 10,
     roadDensity: (settings.generationParams as WorldConfig)?.roadDensity ?? 0.5,
     fogRadius: (settings.generationParams as WorldConfig)?.fogRadius ?? 10,
   };
@@ -56,23 +63,28 @@ export default function WorldConfigPage() {
 
       // Check for debug target
       const searchParams = new URLSearchParams(location.search);
-      const isDebug = searchParams.get('target') === 'debug';
+      const isDebug = searchParams.get("target") === "debug";
 
       if (isDebug) {
         navigate(`/debug/${room.code || room.documentId || room.id}`);
       } else {
         // Proceed to Character Selection
-        navigate(`/create/character-selection/${room.code || room.documentId || room.id}`, {
-          state: {
-            initialSeed: settings.seed,
-            initialStructures: [],
-            initialSettings: settings,
+        navigate(
+          `/create/character-selection/${room.code || room.documentId || room.id}`,
+          {
+            state: {
+              initialSeed: settings.seed,
+              initialStructures: [],
+              initialSettings: settings,
+            },
           },
-        });
+        );
       }
     } catch (err) {
       console.error(err);
-      console.error(`Failed to create room: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      console.error(
+        `Failed to create room: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
       setIsSubmitting(false);
     }
   };
@@ -80,8 +92,12 @@ export default function WorldConfigPage() {
   return (
     <div className="flex flex-col h-full animate-in fade-in duration-500">
       <div className="space-y-2 mb-6 text-center">
-        <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">World Configuration</h2>
-        <p className="text-sm text-shadow-300">Fine-tune the physical parameters of the world generation</p>
+        <h2 className="font-display text-lg uppercase tracking-[0.35em] text-aurora-300">
+          World Configuration
+        </h2>
+        <p className="text-sm text-shadow-300">
+          Fine-tune the physical parameters of the world generation
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
@@ -113,12 +129,22 @@ export default function WorldConfigPage() {
       <div className="flex justify-between pt-4 border-t border-midnight-800">
         <button
           type="button"
-          onClick={() => navigate({ pathname: '/create/dm-settings', search: location.search })}
+          onClick={() =>
+            navigate({
+              pathname: "/create/dm-settings",
+              search: location.search,
+            })
+          }
           className="btn-secondary min-w-[150px]"
         >
           Back
         </button>
-        <button type="button" onClick={handleSubmit} disabled={isSubmitting} className="btn-primary min-w-[200px]">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="btn-primary min-w-[200px]"
+        >
           Forging World
         </button>
       </div>

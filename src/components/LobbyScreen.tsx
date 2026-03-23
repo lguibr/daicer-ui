@@ -2,8 +2,8 @@
  * Lobby screen - create or join rooms
  */
 
-import { useState } from 'react';
-import { createRoom, joinRoom } from '../services/api';
+import { useState } from "react";
+import { createRoom, joinRoom } from "../services/api";
 
 interface LobbyScreenProps {
   onRoomJoined: (roomId: string) => void;
@@ -15,7 +15,7 @@ interface LobbyScreenProps {
  * @returns Lobby UI
  */
 export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
-  const [roomCode, setRoomCode] = useState('');
+  const [roomCode, setRoomCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +26,7 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
       const room = await createRoom();
       onRoomJoined(room.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create room');
+      setError(err instanceof Error ? err.message : "Failed to create room");
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,7 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
     e.preventDefault();
 
     if (!roomCode.trim()) {
-      setError('Please enter a room code');
+      setError("Please enter a room code");
       return;
     }
 
@@ -46,7 +46,7 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
       const room = await joinRoom(roomCode.toUpperCase());
       onRoomJoined(room.id);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to join room');
+      setError(err instanceof Error ? err.message : "Failed to join room");
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,9 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
     <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
       <div className="max-w-md w-full space-y-6">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-cyan-400 mb-2">DAIcer Lobby</h1>
+          <h1 className="text-4xl font-bold text-cyan-400 mb-2">
+            DAIcer Lobby
+          </h1>
           <p className="text-slate-300">Create or join a game</p>
         </div>
 
@@ -67,7 +69,7 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
             disabled={loading}
             className="w-full px-6 py-3 bg-cyan-600 text-white font-bold rounded-lg shadow-md hover:bg-cyan-700 transition-colors disabled:bg-slate-500 disabled:cursor-not-allowed"
           >
-            {loading ? 'Creating...' : 'Create New Room'}
+            {loading ? "Creating..." : "Create New Room"}
           </button>
 
           <div className="relative">
@@ -93,7 +95,7 @@ export default function LobbyScreen({ onRoomJoined }: LobbyScreenProps) {
               disabled={loading || !roomCode.trim()}
               className="w-full px-6 py-3 bg-slate-600 text-white font-bold rounded-lg shadow-md hover:bg-slate-700 transition-colors disabled:bg-slate-500 disabled:cursor-not-allowed"
             >
-              {loading ? 'Joining...' : 'Join Room'}
+              {loading ? "Joining..." : "Join Room"}
             </button>
           </form>
 

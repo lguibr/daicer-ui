@@ -1,13 +1,13 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
-import type { Room, Player } from '@/types/contracts';
-import cn from '@/lib/utils';
+import type { Room, Player } from "@/types/contracts";
+import cn from "@/lib/utils";
 
-import LanguageSelector from '../ui/LanguageSelector';
-import BaseLayout from './BaseLayout';
-import Navbar from './Navbar';
-import AppBreadcrumb from './AppBreadcrumb';
-import RoomInfoBar from './RoomInfoBar';
+import LanguageSelector from "../ui/LanguageSelector";
+import BaseLayout from "./BaseLayout";
+import Navbar from "./Navbar";
+import AppBreadcrumb from "./AppBreadcrumb";
+import RoomInfoBar from "./RoomInfoBar";
 
 interface PrivateLayoutProps {
   children: ReactNode;
@@ -31,7 +31,10 @@ export default function PrivateLayout({
   mainClassName,
 }: PrivateLayoutProps) {
   return (
-    <BaseLayout tone="private" contentClassName={cn('relative flex min-h-dvh flex-col', className)}>
+    <BaseLayout
+      tone="private"
+      contentClassName={cn("relative flex min-h-dvh flex-col", className)}
+    >
       {!showNavbar && (
         <div className="absolute right-6 top-6 z-20">
           <LanguageSelector />
@@ -39,12 +42,18 @@ export default function PrivateLayout({
       )}
       {showNavbar && (
         <>
-          <Navbar room={room} playerCount={playerCount} showRoomInfo={showRoomInfo} />
+          <Navbar
+            room={room}
+            playerCount={playerCount}
+            showRoomInfo={showRoomInfo}
+          />
           <AppBreadcrumb />
         </>
       )}
-      {showRoomInfo && room && players && <RoomInfoBar room={room} players={players} />}
-      <main className={cn('flex-1', mainClassName)}>{children}</main>
+      {showRoomInfo && room && players && (
+        <RoomInfoBar room={room} players={players} />
+      )}
+      <main className={cn("flex-1", mainClassName)}>{children}</main>
     </BaseLayout>
   );
 }

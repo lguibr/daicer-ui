@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import type { LucideIcon } from 'lucide-react';
-import { Compass, DoorOpen, Bug, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
+import { Compass, DoorOpen, Bug, Sparkles } from "lucide-react";
 
-import type { Room } from '@/types/contracts';
-import cn from '@/lib/utils';
+import type { Room } from "@/types/contracts";
+import cn from "@/lib/utils";
 import {
   Menubar,
   MenubarContent,
@@ -12,12 +12,12 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
-} from '@/components/ui/menubar';
+} from "@/components/ui/menubar";
 
-import useAuth from '../../hooks/useAuth';
-import LanguageSelector from '../ui/LanguageSelector';
-import Logo from '../ui/Logo';
-import { useI18n } from '../../i18n';
+import useAuth from "../../hooks/useAuth";
+import LanguageSelector from "../ui/LanguageSelector";
+import Logo from "../ui/Logo";
+import { useI18n } from "../../i18n";
 
 type NavbarAuthUser = {
   displayName?: string | null;
@@ -53,23 +53,23 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   {
-    id: 'rooms',
-    label: 'navbar.links.rooms',
-    path: '/room',
+    id: "rooms",
+    label: "navbar.links.rooms",
+    path: "/room",
     icon: DoorOpen,
   },
 
   {
-    id: 'explore',
-    label: 'navbar.links.explore',
-    path: '/rules',
+    id: "explore",
+    label: "navbar.links.explore",
+    path: "/rules",
     icon: Compass,
   },
 
   {
-    id: 'debug',
-    label: 'Debug',
-    path: '/debug',
+    id: "debug",
+    label: "Debug",
+    path: "/debug",
     icon: Bug,
   },
 ];
@@ -87,16 +87,21 @@ export default function Navbar({
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const avatarSrc = user?.photoURL && user.photoURL.trim().length > 0 ? user.photoURL : user ? '/face.png' : undefined;
+  const avatarSrc =
+    user?.photoURL && user.photoURL.trim().length > 0
+      ? user.photoURL
+      : user
+        ? "/face.png"
+        : undefined;
   const { t } = useI18n();
 
   const handleLeaveRoom = () => {
-    navigate('/');
+    navigate("/");
   };
 
   const handleLogout = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   const closeMenus = () => {
@@ -118,7 +123,7 @@ export default function Navbar({
             className="opacity-90 transition-opacity hover:opacity-100"
             onClick={() => {
               closeMenus();
-              navigate('/');
+              navigate("/");
             }}
           />
 
@@ -126,7 +131,10 @@ export default function Navbar({
           <div className="hidden h-8 w-px bg-gradient-to-b from-transparent via-midnight-500 to-transparent sm:block" />
 
           {/* Desktop Links */}
-          <div className="hidden flex-1 items-center gap-2 sm:flex" data-testid="navbar-desktop-links">
+          <div
+            className="hidden flex-1 items-center gap-2 sm:flex"
+            data-testid="navbar-desktop-links"
+          >
             {navLinks.map((link) => {
               const active = isActive(link.path);
               return (
@@ -138,8 +146,10 @@ export default function Navbar({
                     closeMenus();
                   }}
                   className={cn(
-                    'group relative flex items-center gap-2 rounded-lg px-4 py-2 transition-all duration-300',
-                    active ? 'text-aurora-200' : 'text-shadow-400 hover:text-shadow-100'
+                    "group relative flex items-center gap-2 rounded-lg px-4 py-2 transition-all duration-300",
+                    active
+                      ? "text-aurora-200"
+                      : "text-shadow-400 hover:text-shadow-100",
                   )}
                   data-testid={`navbar-desktop-link-${link.id}`}
                 >
@@ -150,18 +160,25 @@ export default function Navbar({
 
                   <link.icon
                     className={cn(
-                      'relative h-4 w-4 transition-transform duration-300 group-hover:scale-110',
-                      active ? 'text-aurora-300 blur-[0.5px]' : 'text-shadow-500 group-hover:text-aurora-200'
+                      "relative h-4 w-4 transition-transform duration-300 group-hover:scale-110",
+                      active
+                        ? "text-aurora-300 blur-[0.5px]"
+                        : "text-shadow-500 group-hover:text-aurora-200",
                     )}
                     aria-hidden
                   />
                   {/* Active icon duplicate for clarity over blur */}
-                  {active && <link.icon className="absolute h-4 w-4 text-aurora-100" aria-hidden />}
+                  {active && (
+                    <link.icon
+                      className="absolute h-4 w-4 text-aurora-100"
+                      aria-hidden
+                    />
+                  )}
 
                   <span
                     className={cn(
-                      'relative text-xs font-semibold uppercase tracking-[0.2em]',
-                      active ? 'font-bold text-shadow-100' : ''
+                      "relative text-xs font-semibold uppercase tracking-[0.2em]",
+                      active ? "font-bold text-shadow-100" : "",
                     )}
                   >
                     {t(link.label)}
@@ -179,7 +196,10 @@ export default function Navbar({
 
         {/* Right - Language & User Menu (Desktop) */}
         <div className="ml-auto hidden items-center gap-4 md:flex">
-          <LanguageSelector variant="compact" data-testid="navbar-desktop-language-selector" />
+          <LanguageSelector
+            variant="compact"
+            data-testid="navbar-desktop-language-selector"
+          />
 
           {user && (
             <Menubar className="border-none bg-transparent p-0 shadow-none">
@@ -194,7 +214,7 @@ export default function Navbar({
                       <div className="relative">
                         <img
                           src={avatarSrc}
-                          alt={user.displayName || user.email || 'User'}
+                          alt={user.displayName || user.email || "User"}
                           className="h-8 w-8 rounded-full border border-midnight-400 object-cover shadow-md transition-all group-hover:border-aurora-400/50"
                           loading="lazy"
                         />
@@ -203,7 +223,8 @@ export default function Navbar({
                     )}
                     <div className="flex flex-col items-start gap-0.5">
                       <span className="max-w-[8rem] truncate text-xs font-semibold text-shadow-200 group-hover:text-shadow-100">
-                        {user.displayName?.split(' ')[0] || user.email?.split('@')[0]}
+                        {user.displayName?.split(" ")[0] ||
+                          user.email?.split("@")[0]}
                       </span>
                       <span className="text-[10px] uppercase tracking-wider text-aurora-500/80 group-hover:text-aurora-400">
                         Online
@@ -217,7 +238,7 @@ export default function Navbar({
                   data-testid="navbar-desktop-user-menu"
                 >
                   <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-shadow-500">
-                    {t('navbar.labels.account')}
+                    {t("navbar.labels.account")}
                   </div>
 
                   {showRoomInfo && (
@@ -228,7 +249,7 @@ export default function Navbar({
                         data-testid="navbar-leave-room"
                       >
                         <DoorOpen className="h-4 w-4 opacity-70" />
-                        {t('navbar.actions.leaveRoom')}
+                        {t("navbar.actions.leaveRoom")}
                       </MenubarItem>
                       <MenubarSeparator className="my-1 bg-midnight-700/50" />
                     </>
@@ -240,7 +261,7 @@ export default function Navbar({
                     data-testid="navbar-logout"
                   >
                     <Sparkles className="h-4 w-4 opacity-70" />
-                    {t('navbar.actions.logout')}
+                    {t("navbar.actions.logout")}
                   </MenubarItem>
                 </MenubarContent>
               </MenubarMenu>
@@ -255,11 +276,26 @@ export default function Navbar({
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="flex items-center justify-center rounded-lg border border-midnight-500/60 bg-midnight-800/40 p-2 text-shadow-300 transition-colors hover:border-aurora-500/30 hover:text-aurora-200"
           >
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               )}
             </svg>
           </button>
@@ -281,14 +317,19 @@ export default function Navbar({
                     setMobileMenuOpen(false);
                   }}
                   className={cn(
-                    'flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all',
+                    "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-sm font-medium transition-all",
                     active
-                      ? 'border-aurora-500/30 bg-aurora-500/10 text-aurora-100 shadow-[inset_0_0_20px_rgba(211,143,31,0.05)]'
-                      : 'border-midnight-700/30 bg-midnight-800/30 text-shadow-300 hover:bg-midnight-800/50'
+                      ? "border-aurora-500/30 bg-aurora-500/10 text-aurora-100 shadow-[inset_0_0_20px_rgba(211,143,31,0.05)]"
+                      : "border-midnight-700/30 bg-midnight-800/30 text-shadow-300 hover:bg-midnight-800/50",
                   )}
                   data-testid={`navbar-mobile-link-${link.id}`}
                 >
-                  <link.icon className={cn('h-5 w-5', active ? 'text-aurora-300' : 'text-shadow-500')} />
+                  <link.icon
+                    className={cn(
+                      "h-5 w-5",
+                      active ? "text-aurora-300" : "text-shadow-500",
+                    )}
+                  />
                   {t(link.label)}
                 </button>
               );
@@ -301,14 +342,18 @@ export default function Navbar({
                   {avatarSrc && (
                     <img
                       src={avatarSrc}
-                      alt={user.displayName || user.email || 'User'}
+                      alt={user.displayName || user.email || "User"}
                       className="h-10 w-10 rounded-full border border-aurora-500/30 object-cover"
                       loading="lazy"
                     />
                   )}
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-shadow-100">{user.displayName || user.email}</span>
-                    <span className="text-xs text-shadow-400">Logged in via Google</span>
+                    <span className="text-sm font-medium text-shadow-100">
+                      {user.displayName || user.email}
+                    </span>
+                    <span className="text-xs text-shadow-400">
+                      Logged in via Google
+                    </span>
                   </div>
                 </div>
 
@@ -329,7 +374,7 @@ export default function Navbar({
                       className="w-full rounded-xl border border-midnight-700/30 bg-midnight-800/30 px-4 py-3 text-left text-sm font-medium text-shadow-300 transition-colors hover:bg-midnight-800/50"
                       data-testid="navbar-mobile-leave-room"
                     >
-                      {t('navbar.actions.leaveRoom')}
+                      {t("navbar.actions.leaveRoom")}
                     </button>
                   )}
 
@@ -342,7 +387,7 @@ export default function Navbar({
                     className="w-full rounded-xl border border-red-900/30 bg-red-950/10 px-4 py-3 text-left text-sm font-medium text-red-300 transition-colors hover:bg-red-950/20"
                     data-testid="navbar-mobile-logout"
                   >
-                    {t('navbar.actions.logout')}
+                    {t("navbar.actions.logout")}
                   </button>
                 </div>
               </div>

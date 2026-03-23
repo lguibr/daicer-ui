@@ -1,6 +1,6 @@
-import * as THREE from 'three';
+import * as THREE from "three";
 
-import type { DieType } from '../dice-loader/types';
+import type { DieType } from "../dice-loader/types";
 
 /**
  * Get the minimum and maximum possible results for a die type
@@ -14,7 +14,7 @@ export function getDieRange(dieType: DieType): { min: number; max: number } {
     10: { min: 0, max: 9 },
     12: { min: 1, max: 12 },
     20: { min: 1, max: 20 },
-    '20-ai': { min: 1, max: 20 },
+    "20-ai": { min: 1, max: 20 },
   };
 
   return ranges[dieType] || { min: 1, max: 20 };
@@ -40,13 +40,17 @@ export function getColorForResult(dieType: DieType, result: number): string {
   const g = Math.round(darkRed.g + (brightGreen.g - darkRed.g) * normalized);
   const b = Math.round(darkRed.b + (brightGreen.b - darkRed.b) * normalized);
 
-  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
 /**
  * Smoothly interpolate between two colors
  */
-export function lerpColor(color1: THREE.Color, color2: THREE.Color, t: number): THREE.Color {
+export function lerpColor(
+  color1: THREE.Color,
+  color2: THREE.Color,
+  t: number,
+): THREE.Color {
   const result = new THREE.Color();
   result.r = color1.r + (color2.r - color1.r) * t;
   result.g = color1.g + (color2.g - color1.g) * t;

@@ -3,7 +3,7 @@
  * @description Reducer registry (frontend copy)
  */
 
-import type { Reducer } from './types';
+import type { Reducer } from "./types";
 
 export class ReducerRegistry<TState extends Record<string, any>> {
   private map = new Map<keyof TState, Reducer<any>>();
@@ -18,7 +18,10 @@ export class ReducerRegistry<TState extends Record<string, any>> {
   }
 }
 
-export const appendDedupe = <T extends { id: string; ts: number }>(curr: T[], next: T[]): T[] => {
+export const appendDedupe = <T extends { id: string; ts: number }>(
+  curr: T[],
+  next: T[],
+): T[] => {
   const byId = new Map<string, T>();
   curr.forEach((x) => byId.set(x.id, x));
   next.forEach((x) => byId.set(x.id, x));
@@ -27,7 +30,10 @@ export const appendDedupe = <T extends { id: string; ts: number }>(curr: T[], ne
   return result;
 };
 
-export const upsertById = <T extends { id: string }>(curr: T[], next: T[]): T[] => {
+export const upsertById = <T extends { id: string }>(
+  curr: T[],
+  next: T[],
+): T[] => {
   const byId = new Map<string, T>(curr.map((x) => [x.id, x]));
   next.forEach((x) => {
     const existing = byId.get(x.id);
@@ -41,7 +47,7 @@ export const replace = <V>(_curr: V, next: V): V => next;
 export function mergeWithRegistry<TState extends Record<string, any>>(
   state: TState,
   partial: Partial<TState>,
-  registry: ReducerRegistry<TState>
+  registry: ReducerRegistry<TState>,
 ): TState {
   const next: TState = { ...state };
 
@@ -50,7 +56,7 @@ export function mergeWithRegistry<TState extends Record<string, any>>(
     const current = state[key];
     const update = partial[key];
 
-    if (typeof update === 'undefined') return;
+    if (typeof update === "undefined") return;
 
     (next as any)[key] = reducer(current, update as any);
   });

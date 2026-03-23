@@ -18,7 +18,7 @@ export default function AnimatedBackground() {
             linear-gradient(90deg, rgba(40, 54, 69, 0.3) 1px, transparent 1px),
             linear-gradient(180deg, rgba(40, 54, 69, 0.3) 1px, transparent 1px)
           `,
-          backgroundSize: '140px 140px',
+          backgroundSize: "140px 140px",
         }}
       />
 
@@ -47,7 +47,7 @@ export default function AnimatedBackground() {
         style={{
           backgroundImage:
             "linear-gradient(0deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 10%), url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' fill='none'%3E%3Cpath stroke='rgba(255,255,255,0.06)' stroke-width='0.5' d='M0 80h160M80 0v160'/%3E%3C/svg%3E\")",
-          backgroundSize: '100% 100%, 320px 320px',
+          backgroundSize: "100% 100%, 320px 320px",
         }}
       />
 

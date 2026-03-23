@@ -3,11 +3,17 @@
  * Shows player list with character gating overlay
  */
 
-import { Users } from 'lucide-react';
-import type { Player } from '@/types/contracts';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Users } from "lucide-react";
+import type { Player } from "@/types/contracts";
+import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 interface PlayerListTabProps {
   players: Player[];
@@ -15,13 +21,21 @@ interface PlayerListTabProps {
   asModal?: boolean;
 }
 
-export function PlayerListTab({ players, currentUserId, asModal = false }: PlayerListTabProps) {
+export function PlayerListTab({
+  players,
+  currentUserId,
+  asModal = false,
+}: PlayerListTabProps) {
   const currentPlayer = players.find((p) => p.userId === currentUserId);
   const hasCharacter = !!currentPlayer?.character;
 
   const content = (
-    <div className={asModal ? 'space-y-3' : 'h-full overflow-y-auto p-6'}>
-      {!asModal && <h2 className="mb-4 text-xl font-semibold text-white">Players ({players.length})</h2>}
+    <div className={asModal ? "space-y-3" : "h-full overflow-y-auto p-6"}>
+      {!asModal && (
+        <h2 className="mb-4 text-xl font-semibold text-white">
+          Players ({players.length})
+        </h2>
+      )}
 
       {!hasCharacter ? (
         <div className="relative h-full">
@@ -34,11 +48,16 @@ export function PlayerListTab({ players, currentUserId, asModal = false }: Playe
                     <div className="h-10 w-10 rounded-full bg-midnight-700" />
                     <div>
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      <p className="font-semibold text-white">{(p.character as any)?.name || 'No character'}</p>
+                      <p className="font-semibold text-white">
+                        {(p.character as any)?.name || "No character"}
+                      </p>
                       <p className="text-xs text-shadow-400">
                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {(p.character as any)?.class?.name || (p.character as any)?.characterClass || 'Not created'} •
-                        Level {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {(p.character as any)?.class?.name ||
+                          (p.character as any)?.characterClass ||
+                          "Not created"}{" "}
+                        • Level{" "}
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {(p.character as any)?.level || 1}
                       </p>
                     </div>
@@ -52,8 +71,12 @@ export function PlayerListTab({ players, currentUserId, asModal = false }: Playe
           <div className="absolute inset-0 flex items-center justify-center bg-midnight-950/80 backdrop-blur-sm">
             <Card className="border-accent/30 bg-gradient-to-br from-midnight-900/95 via-midnight-800/95 to-midnight-700/95">
               <CardContent className="p-8 text-center">
-                <h3 className="mb-2 text-xl font-bold text-white">Create Your Character First</h3>
-                <p className="text-shadow-300">You must create a character before viewing other players</p>
+                <h3 className="mb-2 text-xl font-bold text-white">
+                  Create Your Character First
+                </h3>
+                <p className="text-shadow-300">
+                  You must create a character before viewing other players
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -68,16 +91,23 @@ export function PlayerListTab({ players, currentUserId, asModal = false }: Playe
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-accent/30 to-nebula/30 text-xl font-bold text-white">
-                    {p.character?.name?.[0] || '?'}
+                    {p.character?.name?.[0] || "?"}
                   </div>
                   <div className="flex-1">
                     {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                    <p className="font-semibold text-white">{(p.character as any)?.name || 'Unknown'}</p>
+                    <p className="font-semibold text-white">
+                      {(p.character as any)?.name || "Unknown"}
+                    </p>
                     <p className="text-sm text-shadow-400">
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      {(p.character as any)?.race?.name || (p.character as any)?.race || ''}{' '}
+                      {(p.character as any)?.race?.name ||
+                        (p.character as any)?.race ||
+                        ""}{" "}
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      {(p.character as any)?.class?.name || (p.character as any)?.characterClass || ''} • Level{' '}
+                      {(p.character as any)?.class?.name ||
+                        (p.character as any)?.characterClass ||
+                        ""}{" "}
+                      • Level{" "}
                       {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {(p.character as any)?.level || 1}
                     </p>

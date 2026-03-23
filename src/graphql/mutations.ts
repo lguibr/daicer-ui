@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 export const CREATE_ROOM_MUTATION = gql`
   mutation CreateRoom($data: JSON!) {
@@ -176,13 +176,26 @@ export const GENERATE_PORTRAIT_MUTATION = gql`
 `;
 
 export const GENERATE_UPPER_BODY_MUTATION = gql`
-  mutation GenerateAvatarUpperBody($payload: JSON!, $portrait: JSON!, $referenceImage: String) {
-    generateAvatarUpperBody(payload: $payload, portrait: $portrait, referenceImage: $referenceImage)
+  mutation GenerateAvatarUpperBody(
+    $payload: JSON!
+    $portrait: JSON!
+    $referenceImage: String
+  ) {
+    generateAvatarUpperBody(
+      payload: $payload
+      portrait: $portrait
+      referenceImage: $referenceImage
+    )
   }
 `;
 
 export const GENERATE_FULL_BODY_MUTATION = gql`
-  mutation GenerateAvatarFullBody($payload: JSON!, $portrait: JSON!, $upperBody: JSON!, $referenceImage: String) {
+  mutation GenerateAvatarFullBody(
+    $payload: JSON!
+    $portrait: JSON!
+    $upperBody: JSON!
+    $referenceImage: String
+  ) {
     generateAvatarFullBody(
       payload: $payload
       portrait: $portrait
@@ -199,8 +212,18 @@ export const SPAWN_CREATURE_MUTATION = gql`
 `;
 
 export const GENERATE_TERRAIN_CHUNK_MUTATION = gql`
-  mutation GenerateTerrainChunk($roomId: ID!, $chunkX: Int!, $chunkY: Int!, $chunkSize: Int) {
-    generateTerrainChunk(roomId: $roomId, chunkX: $chunkX, chunkY: $chunkY, chunkSize: $chunkSize)
+  mutation GenerateTerrainChunk(
+    $roomId: ID!
+    $chunkX: Int!
+    $chunkY: Int!
+    $chunkSize: Int
+  ) {
+    generateTerrainChunk(
+      roomId: $roomId
+      chunkX: $chunkX
+      chunkY: $chunkY
+      chunkSize: $chunkSize
+    )
   }
 `;
 

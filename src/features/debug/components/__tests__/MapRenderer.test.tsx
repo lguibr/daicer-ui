@@ -1,15 +1,15 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import React from 'react';
-import { MapRenderer } from '../MapRenderer';
-import { Coordinates } from '../../utils/types';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import React from "react";
+import { MapRenderer } from "../MapRenderer";
+import { Coordinates } from "../../utils/types";
 
 // Mock canvas context
 const mockContext = {
-  fillStyle: '',
+  fillStyle: "",
   fillRect: vi.fn(),
-  strokeStyle: '',
+  strokeStyle: "",
   strokeRect: vi.fn(),
   beginPath: vi.fn(),
   moveTo: vi.fn(),
@@ -29,7 +29,7 @@ const mockCanvas = {
   getBoundingClientRect: vi.fn(() => ({ left: 0, top: 0 })),
 };
 
-describe('MapRenderer', () => {
+describe("MapRenderer", () => {
   const defaultProps = {
     width: 800,
     height: 600,
@@ -48,7 +48,7 @@ describe('MapRenderer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Inject mock canvas ref behavior
-    vi.spyOn(React, 'useRef').mockReturnValue({ current: mockCanvas });
+    vi.spyOn(React, "useRef").mockReturnValue({ current: mockCanvas });
     // Mock useEffect to ensure render triggers immediately (though JSDOM handles this typically)
   });
 
@@ -63,7 +63,7 @@ describe('MapRenderer', () => {
   // without shallow rendering or mocking `canvas.getContext`.
   // Given we are in a monorepo with `vitest` and `jsdom`, `canvas` element exists but context is often null or stub.
 
-  it('renders without crashing', () => {
+  it("renders without crashing", () => {
     render(<MapRenderer {...defaultProps} />);
     const canvas = screen.getByLabelText(/Game Map/i);
     expect(canvas).toBeTruthy();

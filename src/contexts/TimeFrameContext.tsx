@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { TimeFrame, Room } from '@/types/contracts';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { TimeFrame, Room } from "@/types/contracts";
 
 interface TimeFrameContextType {
   currentTimeFrame: TimeFrame | null;
@@ -13,9 +13,17 @@ interface TimeFrameContextType {
   isLoading: boolean;
 }
 
-const TimeFrameContext = createContext<TimeFrameContextType | undefined>(undefined);
+const TimeFrameContext = createContext<TimeFrameContextType | undefined>(
+  undefined,
+);
 
-export function TimeFrameProvider({ room, children }: { room: Room | null; children: React.ReactNode }) {
+export function TimeFrameProvider({
+  room,
+  children,
+}: {
+  room: Room | null;
+  children: React.ReactNode;
+}) {
   const [localFrameId, setLocalFrameId] = useState<string | null>(null);
   const [injectedState, setInjectedState] = useState<unknown | null>(null);
   const [history, setHistory] = useState<TimeFrame[]>([]);
@@ -25,7 +33,9 @@ export function TimeFrameProvider({ room, children }: { room: Room | null; child
     if (room && room.timeFrames && Array.isArray(room.timeFrames)) {
       const backendHistory = room.timeFrames;
       // Sort by turn number
-      const sorted = [...backendHistory].sort((a: TimeFrame, b: TimeFrame) => a.turnNumber - b.turnNumber);
+      const sorted = [...backendHistory].sort(
+        (a: TimeFrame, b: TimeFrame) => a.turnNumber - b.turnNumber,
+      );
       setTimeout(() => setHistory(sorted), 0);
     }
   }, [room]);
@@ -37,7 +47,9 @@ export function TimeFrameProvider({ room, children }: { room: Room | null; child
   const currentTimeFrame: unknown =
     injectedState ||
     (localFrameId
-      ? history.find((f) => f.id === localFrameId || f.documentId === localFrameId) || null
+      ? history.find(
+          (f) => f.id === localFrameId || f.documentId === localFrameId,
+        ) || null
       : history[history.length - 1] || null);
 
   const isLive = !localFrameId && !injectedState;
@@ -69,16 +81,20 @@ export function TimeFrameProvider({ room, children }: { room: Room | null; child
       goLive,
       isLoading: false,
     }),
-    [currentTimeFrame, history, isLive, isReplay]
+    [currentTimeFrame, history, isLive, isReplay],
   );
 
-  return <TimeFrameContext.Provider value={contextValue}>{children}</TimeFrameContext.Provider>;
+  return (
+    <TimeFrameContext.Provider value={contextValue}>
+      {children}
+    </TimeFrameContext.Provider>
+  );
 }
 
 export const useTimeFrame = () => {
   const context = useContext(TimeFrameContext);
   if (!context) {
-    throw new Error('useTimeFrame must be used within a TimeFrameProvider');
+    throw new Error("useTimeFrame must be used within a TimeFrameProvider");
   }
   return context;
 };

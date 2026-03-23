@@ -1,11 +1,16 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
+import { useEffect, useMemo, useRef, useState } from "react";
+import * as THREE from "three";
 
-import type { Language } from '@/types/contracts';
-import { createDie } from './createDie';
-import type { DiceLoaderProps, DieType, DieVisualStyle } from './types';
-import { AVAILABLE_DIE_TYPES, generateRandomDieColor, generateRandomDieType, generateRandomVisualStyle } from './utils';
-import { useI18n } from '../../../i18n';
+import type { Language } from "@/types/contracts";
+import { createDie } from "./createDie";
+import type { DiceLoaderProps, DieType, DieVisualStyle } from "./types";
+import {
+  AVAILABLE_DIE_TYPES,
+  generateRandomDieColor,
+  generateRandomDieType,
+  generateRandomVisualStyle,
+} from "./utils";
+import { useI18n } from "../../../i18n";
 
 interface DieInstance {
   group: THREE.Group;
@@ -40,30 +45,30 @@ interface PositionedDie {
 }
 
 const MESSAGE_KEYS = [
-  'diceLoader.messages.summoning',
-  'diceLoader.messages.rattling',
-  'diceLoader.messages.focusing',
-  'diceLoader.messages.calibrating',
+  "diceLoader.messages.summoning",
+  "diceLoader.messages.rattling",
+  "diceLoader.messages.focusing",
+  "diceLoader.messages.calibrating",
 ] as const;
 
 const FALLBACK_MESSAGES: Record<Language, readonly string[]> = {
   en: [
-    'Summoning shiny math rocks...',
-    'Rattling the dice tray of destiny...',
-    'Consulting the probability spirits...',
-    'Calibrating critical hit chances...',
+    "Summoning shiny math rocks...",
+    "Rattling the dice tray of destiny...",
+    "Consulting the probability spirits...",
+    "Calibrating critical hit chances...",
   ],
   es: [
-    'Invocando dados brillantes...',
-    'Agitando la bandeja del destino...',
-    'Consultando a los espíritus de la probabilidad...',
-    'Calibrando las tiradas críticas...',
+    "Invocando dados brillantes...",
+    "Agitando la bandeja del destino...",
+    "Consultando a los espíritus de la probabilidad...",
+    "Calibrando las tiradas críticas...",
   ],
-  'pt-BR': [
-    'Invocando dados reluzentes...',
-    'Chacoalhando a bandeja do destino...',
-    'Consultando os espíritus da probabilidade...',
-    'Calibrando as chances de crítico...',
+  "pt-BR": [
+    "Invocando dados reluzentes...",
+    "Chacoalhando a bandeja do destino...",
+    "Consultando os espíritus da probabilidade...",
+    "Calibrando as chances de crítico...",
   ],
 };
 
@@ -71,13 +76,13 @@ const MIN_DICE_COUNT = 1;
 const MAX_DICE_COUNT = 6;
 const DEFAULT_MAX_DICE_COUNT = 4;
 
-const SIZE_MAP: Record<Required<DiceLoaderProps>['size'], number> = {
+const SIZE_MAP: Record<Required<DiceLoaderProps>["size"], number> = {
   small: 0.8,
   medium: 1,
   large: 1.3,
 };
 
-const CONTAINER_SIZE_MAP: Record<Required<DiceLoaderProps>['size'], number> = {
+const CONTAINER_SIZE_MAP: Record<Required<DiceLoaderProps>["size"], number> = {
   small: 200,
   medium: 280,
   large: 380,
@@ -110,16 +115,25 @@ function clampDiceCount(value?: number): number | undefined {
 function randomInt(min: number, max: number): number {
   const lower = Math.ceil(min);
   const upper = Math.floor(max);
-  return Math.max(lower, Math.floor(Math.random() * (upper - lower + 1)) + lower);
+  return Math.max(
+    lower,
+    Math.floor(Math.random() * (upper - lower + 1)) + lower,
+  );
 }
 
-const isPositionTooClose = (positions: PositionedDie[], candidate: PositionedDie): boolean =>
+const isPositionTooClose = (
+  positions: PositionedDie[],
+  candidate: PositionedDie,
+): boolean =>
   positions.some((pos) => {
     const dx = pos.x - candidate.x;
     const dy = pos.y - candidate.y;
     const dz = pos.z - candidate.z;
     const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const separation = Math.max(MIN_POSITION_SEPARATION, (pos.scale + candidate.scale) * 0.55);
+    const separation = Math.max(
+      MIN_POSITION_SEPARATION,
+      (pos.scale + candidate.scale) * 0.55,
+    );
     return distance < separation;
   });
 
@@ -128,7 +142,7 @@ function createDiceDescriptors(
   maxDiceCount: number | undefined,
   dieType: DieType | undefined,
   color: string | undefined,
-  visualStyle: DieVisualStyle | undefined
+  visualStyle: DieVisualStyle | undefined,
 ): DiceDescriptor[] {
   const exact = clampDiceCount(diceCount);
   const maxCount = clampDiceCount(maxDiceCount) ?? DEFAULT_MAX_DICE_COUNT;
@@ -177,13 +191,24 @@ function createDiceDescriptors(
     };
 
     const rotationSpeed = {
-      x: randomBetween(MIN_ROTATION_SPEED.x, MIN_ROTATION_SPEED.x + ROTATION_VARIATION.x + index * 0.01),
-      y: randomBetween(MIN_ROTATION_SPEED.y, MIN_ROTATION_SPEED.y + ROTATION_VARIATION.y + index * 0.015),
-      z: randomBetween(MIN_ROTATION_SPEED.z, MIN_ROTATION_SPEED.z + ROTATION_VARIATION.z + index * 0.008),
+      x: randomBetween(
+        MIN_ROTATION_SPEED.x,
+        MIN_ROTATION_SPEED.x + ROTATION_VARIATION.x + index * 0.01,
+      ),
+      y: randomBetween(
+        MIN_ROTATION_SPEED.y,
+        MIN_ROTATION_SPEED.y + ROTATION_VARIATION.y + index * 0.015,
+      ),
+      z: randomBetween(
+        MIN_ROTATION_SPEED.z,
+        MIN_ROTATION_SPEED.z + ROTATION_VARIATION.z + index * 0.008,
+      ),
     };
 
     const id =
-      typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `die-${Date.now()}-${index}`;
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `die-${Date.now()}-${index}`;
 
     const finalPosition = candidate;
 
@@ -228,7 +253,7 @@ function disposeDieGroup(group: THREE.Group | undefined): void {
 }
 
 export function DiceLoader({
-  size = 'medium',
+  size = "medium",
   dieType,
   color,
   visualStyle,
@@ -247,8 +272,15 @@ export function DiceLoader({
   const { t, language } = useI18n();
 
   const diceDescriptors = useMemo(
-    () => createDiceDescriptors(diceCount, maxDiceCount, dieType, color, visualStyle),
-    [color, diceCount, dieType, maxDiceCount, visualStyle]
+    () =>
+      createDiceDescriptors(
+        diceCount,
+        maxDiceCount,
+        dieType,
+        color,
+        visualStyle,
+      ),
+    [color, diceCount, dieType, maxDiceCount, visualStyle],
   );
 
   const localizedMessages = useMemo<string[]>(() => {
@@ -267,31 +299,39 @@ export function DiceLoader({
     return Array.from(FALLBACK_MESSAGES.en);
   }, [language, t]);
 
-  const [randomLocalizedMessage, setRandomLocalizedMessage] = useState('');
+  const [randomLocalizedMessage, setRandomLocalizedMessage] = useState("");
 
   useEffect(() => {
-    const options = localizedMessages.length > 0 ? localizedMessages : Array.from(FALLBACK_MESSAGES.en);
+    const options =
+      localizedMessages.length > 0
+        ? localizedMessages
+        : Array.from(FALLBACK_MESSAGES.en);
     const index = Math.floor(Math.random() * options.length);
-    setTimeout(() => setRandomLocalizedMessage(options[index] || 'Loading...'), 0);
+    setTimeout(
+      () => setRandomLocalizedMessage(options[index] || "Loading..."),
+      0,
+    );
   }, [localizedMessages]);
 
-  const displayedMessage = showMessage ? (message ?? randomLocalizedMessage) : undefined;
+  const displayedMessage = showMessage
+    ? (message ?? randomLocalizedMessage)
+    : undefined;
 
   const canvasStyle = useMemo(() => {
     const baseSize = CONTAINER_SIZE_MAP[size] ?? CONTAINER_SIZE_MAP.medium;
     return {
       width: `${baseSize}px`,
       height: `${baseSize}px`,
-      position: 'relative' as const,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      position: "relative" as const,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     };
   }, [size]);
 
   const rootClassName = className
     ? `flex flex-col items-center gap-3 ${className}`
-    : 'flex flex-col items-center gap-3';
+    : "flex flex-col items-center gap-3";
 
   useEffect(() => {
     if (!mountRef.current) {
@@ -300,12 +340,21 @@ export function DiceLoader({
 
     const mountElement = mountRef.current;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, mountElement.clientWidth / mountElement.clientHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      mountElement.clientWidth / mountElement.clientHeight,
+      0.1,
+      100,
+    );
     camera.position.set(0, 0, 7.5);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(mountElement.clientWidth, mountElement.clientHeight, false);
+    renderer.setSize(
+      mountElement.clientWidth,
+      mountElement.clientHeight,
+      false,
+    );
     mountElement.appendChild(renderer.domElement);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
@@ -320,7 +369,8 @@ export function DiceLoader({
 
     const handleResize = () => {
       if (!mountElement || !stateRef.current) return;
-      const { camera: currentCamera, renderer: currentRenderer } = stateRef.current;
+      const { camera: currentCamera, renderer: currentRenderer } =
+        stateRef.current;
       const width = mountElement.clientWidth;
       const height = mountElement.clientHeight || 1;
       currentCamera.aspect = width / height;
@@ -350,17 +400,20 @@ export function DiceLoader({
       // Dynamic mode: start animation loop
       animate();
     }
-    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => handleResize()) : null;
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => handleResize())
+        : null;
     if (resizeObserver) {
       resizeObserver.observe(mountElement);
     }
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
       if (resizeObserver) {
         resizeObserver.disconnect();
       }
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = undefined;
@@ -368,7 +421,12 @@ export function DiceLoader({
       if (!stateRef.current) {
         return;
       }
-      const { scene: currentScene, renderer: currentRenderer, diceGroup, dice } = stateRef.current;
+      const {
+        scene: currentScene,
+        renderer: currentRenderer,
+        diceGroup,
+        dice,
+      } = stateRef.current;
 
       // Dispose all dice instances
       if (dice && dice.length > 0) {
@@ -412,7 +470,7 @@ export function DiceLoader({
 
     if (!currentState.diceGroup) {
       currentState.diceGroup = new THREE.Group();
-      currentState.diceGroup.name = 'dice-collection';
+      currentState.diceGroup.name = "dice-collection";
       scene.add(currentState.diceGroup);
     }
 
@@ -427,10 +485,22 @@ export function DiceLoader({
     }
 
     const diceInstances = diceDescriptors.map((descriptor) => {
-      const die = createDie(descriptor.type, descriptor.color, descriptor.visualStyle);
+      const die = createDie(
+        descriptor.type,
+        descriptor.color,
+        descriptor.visualStyle,
+      );
       die.scale.set(descriptor.scale, descriptor.scale, descriptor.scale);
-      die.position.set(descriptor.position.x, descriptor.position.y, descriptor.position.z);
-      die.rotation.set(descriptor.rotation.x, descriptor.rotation.y, descriptor.rotation.z);
+      die.position.set(
+        descriptor.position.x,
+        descriptor.position.y,
+        descriptor.position.z,
+      );
+      die.rotation.set(
+        descriptor.rotation.x,
+        descriptor.rotation.y,
+        descriptor.rotation.z,
+      );
       currentState.diceGroup?.add(die);
 
       return {
@@ -438,7 +508,7 @@ export function DiceLoader({
         rotationSpeed: new THREE.Vector3(
           descriptor.rotationSpeed.x,
           descriptor.rotationSpeed.y,
-          descriptor.rotationSpeed.z
+          descriptor.rotationSpeed.z,
         ),
       } satisfies DieInstance;
     });
@@ -446,19 +516,30 @@ export function DiceLoader({
     currentState.dice = diceInstances;
 
     if (currentState.diceGroup) {
-      const boundingBox = new THREE.Box3().setFromObject(currentState.diceGroup);
+      const boundingBox = new THREE.Box3().setFromObject(
+        currentState.diceGroup,
+      );
       const sizeVector = boundingBox.getSize(new THREE.Vector3());
       const maxAxis = Math.max(sizeVector.x, sizeVector.y, sizeVector.z, 1);
       const baseMultiplier = SIZE_MAP[size] ?? SIZE_MAP.medium;
       const desiredMax = baseMultiplier * 2.6;
       const uniformScale = Math.min(baseMultiplier, desiredMax / maxAxis);
-      currentState.diceGroup.scale.set(uniformScale, uniformScale, uniformScale);
+      currentState.diceGroup.scale.set(
+        uniformScale,
+        uniformScale,
+        uniformScale,
+      );
       const center = boundingBox.getCenter(new THREE.Vector3());
       currentState.diceGroup.position.set(-center.x, -center.y, -center.z);
     }
 
     // Re-render after dice update (important for static mode)
-    if (isStatic && currentState.renderer && currentState.scene && currentState.camera) {
+    if (
+      isStatic &&
+      currentState.renderer &&
+      currentState.scene &&
+      currentState.camera
+    ) {
       currentState.renderer.render(currentState.scene, currentState.camera);
     }
   }, [diceDescriptors, size, isStatic]);
@@ -476,11 +557,16 @@ export function DiceLoader({
         style={canvasStyle}
         data-dice-count={diceDescriptors.length}
         data-dice-types={
-          diceDescriptors.map((descriptor) => descriptor.type).join(',') || AVAILABLE_DIE_TYPES.join(',')
+          diceDescriptors.map((descriptor) => descriptor.type).join(",") ||
+          AVAILABLE_DIE_TYPES.join(",")
         }
       />
       {displayedMessage ? (
-        <div className="text-center text-sm text-shadow-300" role="status" aria-live="polite">
+        <div
+          className="text-center text-sm text-shadow-300"
+          role="status"
+          aria-live="polite"
+        >
           {displayedMessage}
         </div>
       ) : null}

@@ -2,22 +2,29 @@
  * UI components barrel export
  */
 
-export { Button } from './button';
-export type { ButtonProps } from './button';
-export { buttonVariants } from './button-variants';
-export type { ButtonVariantProps } from './button-variants';
+export { Button } from "./button";
+export type { ButtonProps } from "./button";
+export { buttonVariants } from "./button-variants";
+export type { ButtonVariantProps } from "./button-variants";
 
-export { Badge, badgeVariants } from './badge';
-export type { BadgeProps, BadgeVariantProps } from './badge';
+export { Badge, badgeVariants } from "./badge";
+export type { BadgeProps, BadgeVariantProps } from "./badge";
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card';
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "./card";
 
-export { AspectRatio } from './aspect-ratio';
+export { AspectRatio } from "./aspect-ratio";
 
-export { default as Input } from './input';
-export { default as Label } from './label';
-export { default as Textarea } from './textarea';
-export { default as NumericStepper } from './NumericStepper';
+export { default as Input } from "./input";
+export { default as Label } from "./label";
+export { default as Textarea } from "./textarea";
+export { default as NumericStepper } from "./NumericStepper";
 
 export {
   Select,
@@ -30,16 +37,16 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-} from './select';
+} from "./select";
 
-export { default as AnimatedBackground } from './AnimatedBackground';
-export { default as LanguageSelector } from './LanguageSelector';
-export { default as ImageThumbnail } from './ImageThumbnail';
-export * from './dice-loader';
-export * from './dice-roll-animation';
-export * from './LoadingOverlay';
-export * from './Carousel';
-export * from './spotlight-carousel';
+export { default as AnimatedBackground } from "./AnimatedBackground";
+export { default as LanguageSelector } from "./LanguageSelector";
+export { default as ImageThumbnail } from "./ImageThumbnail";
+export * from "./dice-loader";
+export * from "./dice-roll-animation";
+export * from "./LoadingOverlay";
+export * from "./Carousel";
+export * from "./spotlight-carousel";
 
 export {
   Command,
@@ -50,13 +57,22 @@ export {
   CommandItem,
   CommandInput,
   CommandShortcut,
-} from './command';
+} from "./command";
 
-export { Popover, PopoverTrigger, PopoverContent } from './popover';
+export { Popover, PopoverTrigger, PopoverContent } from "./popover";
 
-export { RandomItem } from './RandomItem';
+export { RandomItem } from "./RandomItem";
 
-export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from './table';
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table";
 
 export {
   DropdownMenu,
@@ -74,9 +90,9 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
   DropdownMenuRadioGroup,
-} from './dropdown-menu';
+} from "./dropdown-menu";
 
-export * from './data-table';
+export * from "./data-table";
 
 export {
   TypographyBlockquote,
@@ -93,4 +109,4 @@ export {
   TypographySmall,
   TypographyTable,
   TypographyTableContainer,
-} from './typography';
+} from "./typography";

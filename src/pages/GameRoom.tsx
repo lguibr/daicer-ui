@@ -2,32 +2,32 @@
  * Game room page - handles all phases: world gen, terrain, character creation, and gameplay
  */
 
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
-import { Room as SharedRoom, Player, GamePhase } from '@/types/contracts';
-import type { ToolCall } from '@/types/contracts';
-import { getRoomState, startGame } from '../services/api';
+import { Room as SharedRoom, Player, GamePhase } from "@/types/contracts";
+import type { ToolCall } from "@/types/contracts";
+import { getRoomState, startGame } from "../services/api";
 
-import useGamePolling from '../hooks/useGamePolling';
-import CharacterCreation from '../components/room/CharacterCreation';
-import { LobbyScreen } from '../components/room/LobbyScreen';
-import GameplayScreen from '../components/game/GameplayScreen';
+import useGamePolling from "../hooks/useGamePolling";
+import CharacterCreation from "../components/room/CharacterCreation";
+import { LobbyScreen } from "../components/room/LobbyScreen";
+import GameplayScreen from "../components/game/GameplayScreen";
 
-import { DynamicLayout } from '../components/layout';
-import { ToolNotificationContainer } from '../components/ui/ToolNotificationToast';
-import { DiceLoader } from '../components/ui/dice-loader';
-import { Card } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import ToolCallCard from '../components/chat/ToolCallCard';
+import { DynamicLayout } from "../components/layout";
+import { ToolNotificationContainer } from "../components/ui/ToolNotificationToast";
+import { DiceLoader } from "../components/ui/dice-loader";
+import { Card } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import ToolCallCard from "../components/chat/ToolCallCard";
 
 // import { auth } from '../services/firebase';
-import useAuth from '../hooks/useAuth';
-import { useAgentActivity } from '../hooks/useAgentActivity';
-import { TimeFrameProvider } from '../contexts/TimeFrameContext';
-import { useWakeLock } from '../hooks/useWakeLock';
+import useAuth from "../hooks/useAuth";
+import { useAgentActivity } from "../hooks/useAgentActivity";
+import { TimeFrameProvider } from "../contexts/TimeFrameContext";
+import { useWakeLock } from "../hooks/useWakeLock";
 
-import { useI18n } from '../i18n';
+import { useI18n } from "../i18n";
 
 /**
  * Game room page component
@@ -49,18 +49,28 @@ export default function GameRoomPage() {
 
   useWakeLock();
 
-  const { room: polledRoom, players: polledPlayers, creatures, toolCalls } = useGamePolling(room?.documentId || roomId);
+  const {
+    room: polledRoom,
+    players: polledPlayers,
+    creatures,
+    toolCalls,
+  } = useGamePolling(room?.documentId || roomId);
 
   // Listen to all streams in the room
   const streams = useAgentActivity(undefined, null);
   // Find any active stream to display
-  const activeStream = Object.values(streams).find((s) => s.status === 'active');
+  const activeStream = Object.values(streams).find(
+    (s) => s.status === "active",
+  );
 
   // Auto-redirect to character creation if user has no character
   useEffect(() => {
     if (!loading && players.length > 0 && user?.uid) {
       // Only redirect if we are in the correct phase
-      if (room?.phase === GamePhase.CHARACTER_CREATION || room?.phase === GamePhase.SETUP) {
+      if (
+        room?.phase === GamePhase.CHARACTER_CREATION ||
+        room?.phase === GamePhase.SETUP
+      ) {
         const me = players.find((p) => p.userId === user.uid);
         if (me) {
           if (!me.character && !hasAutoRedirected) {
@@ -74,7 +84,14 @@ export default function GameRoomPage() {
         }
       }
     }
-  }, [loading, players, user?.uid, hasAutoRedirected, room?.phase, isCreatingCharacter]);
+  }, [
+    loading,
+    players,
+    user?.uid,
+    hasAutoRedirected,
+    room?.phase,
+    isCreatingCharacter,
+  ]);
 
   const [streamEvents, setStreamEvents] = useState<
     Array<{
@@ -107,20 +124,22 @@ export default function GameRoomPage() {
 
   useEffect(() => {
     if (!roomId) {
-      navigate('/');
+      navigate("/");
       return;
     }
 
     const loadRoom = async () => {
-      console.info('[GameRoom] Loading room:', roomId);
+      console.info("[GameRoom] Loading room:", roomId);
       try {
-        const roomData = (await getRoomState(roomId)) as SharedRoom & { players: Player[] };
+        const roomData = (await getRoomState(roomId)) as SharedRoom & {
+          players: Player[];
+        };
 
         if (!roomData) {
-          throw new Error(t('gameRoom.errors.notFound'));
+          throw new Error(t("gameRoom.errors.notFound"));
         }
 
-        console.info('[GameRoom] Loaded room data:', {
+        console.info("[GameRoom] Loaded room data:", {
           id: roomData.id,
           phase: roomData.phase,
           players: roomData.players?.length,
@@ -128,8 +147,10 @@ export default function GameRoomPage() {
         setRoom(roomData);
         setPlayers(roomData.players || []);
       } catch (err) {
-        console.error('[GameRoom] Load failed:', err);
-        setError(err instanceof Error ? err.message : t('gameRoom.errors.loadFailed'));
+        console.error("[GameRoom] Load failed:", err);
+        setError(
+          err instanceof Error ? err.message : t("gameRoom.errors.loadFailed"),
+        );
       } finally {
         setLoading(false);
       }
@@ -141,11 +162,15 @@ export default function GameRoomPage() {
   // Update state from polling
   useEffect(() => {
     if (polledRoom) {
-      console.info('[GameRoom] Polled room update:', polledRoom.phase);
+      console.info("[GameRoom] Polled room update:", polledRoom.phase);
       setRoom(polledRoom as SharedRoom);
 
       // If room has generation events, restore them to streamEvents
-      if (polledRoom.generationEvents && streamEvents.length === 0 && polledRoom.phase === GamePhase.SETUP) {
+      if (
+        polledRoom.generationEvents &&
+        streamEvents.length === 0 &&
+        polledRoom.phase === GamePhase.SETUP
+      ) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setStreamEvents((polledRoom.generationEvents as any[]) || []);
       }
@@ -167,7 +192,7 @@ export default function GameRoomPage() {
       return;
     }
 
-    console.info('[GameRoom] Starting world generation SSE listeners');
+    console.info("[GameRoom] Starting world generation SSE listeners");
 
     // Clear previous events once on mount
     setStreamEvents([]);
@@ -179,8 +204,8 @@ export default function GameRoomPage() {
     const connectToSSE = async () => {
       if (isCleanedUp) return;
 
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
-      const token = localStorage.getItem('strapi_jwt');
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
+      const token = localStorage.getItem("strapi_jwt");
       if (!token) return;
 
       // Start with Section 1 (dm-story)
@@ -190,15 +215,15 @@ export default function GameRoomPage() {
 
       // Listen for all event types and add to streamEvents
       const eventTypes = [
-        'connected',
-        'node_start',
-        'node_complete',
-        'period_start',
-        'period_complete',
-        'period_text_start',
-        'period_text_complete',
-        'world_lore_chunk',
-        'node_error',
+        "connected",
+        "node_start",
+        "node_complete",
+        "period_start",
+        "period_complete",
+        "period_text_start",
+        "period_text_complete",
+        "world_lore_chunk",
+        "node_error",
       ];
 
       eventTypes.forEach((type) => {
@@ -208,17 +233,17 @@ export default function GameRoomPage() {
             const data = JSON.parse(event.data);
             setStreamEvents((prev) => [...prev, { ...data, type }]);
           } catch (err) {
-            console.warn('[SSE] Failed to parse event:', err);
+            console.warn("[SSE] Failed to parse event:", err);
           }
         });
       });
 
       // When Section 1 completes, switch to Section 2
-      eventSource.addEventListener('node_complete', (event) => {
+      eventSource.addEventListener("node_complete", (event) => {
         if (isCleanedUp) return;
         try {
           const data = JSON.parse(event.data);
-          if (data.node === 'synthesize_history' && currentSection === 1) {
+          if (data.node === "synthesize_history" && currentSection === 1) {
             // Section 1 done, upgrade to Section 2
             currentSection = 2;
 
@@ -228,9 +253,11 @@ export default function GameRoomPage() {
             // Connect to Section 2 stream
             setTimeout(async () => {
               if (isCleanedUp) return;
-              const token2 = localStorage.getItem('strapi_jwt');
-              const endpoint2 = `${API_URL}/api/graph/world-config/stream?roomId=${roomId}&token=${encodeURIComponent(token2 || '')}`;
-              eventSource = new EventSource(endpoint2, { withCredentials: true });
+              const token2 = localStorage.getItem("strapi_jwt");
+              const endpoint2 = `${API_URL}/api/graph/world-config/stream?roomId=${roomId}&token=${encodeURIComponent(token2 || "")}`;
+              eventSource = new EventSource(endpoint2, {
+                withCredentials: true,
+              });
 
               // Re-register listeners for Section 2
               eventTypes.forEach((type) => {
@@ -238,16 +265,19 @@ export default function GameRoomPage() {
                   if (isCleanedUp) return;
                   try {
                     const innerData = JSON.parse(innerEvent.data);
-                    setStreamEvents((prev) => [...prev, { ...innerData, type }]);
+                    setStreamEvents((prev) => [
+                      ...prev,
+                      { ...innerData, type },
+                    ]);
                   } catch (err) {
-                    console.warn('[SSE] Failed to parse event:', err);
+                    console.warn("[SSE] Failed to parse event:", err);
                   }
                 });
               });
             }, 500);
           }
         } catch (err) {
-          console.warn('[SSE] Error handling node_complete:', err);
+          console.warn("[SSE] Error handling node_complete:", err);
         }
       });
     };
@@ -269,10 +299,14 @@ export default function GameRoomPage() {
         <div className="flex min-h-screen items-center justify-center">
           {error ? (
             <Card className="max-w-md border-red-500/30 bg-midnight-800/95 p-8 text-center">
-              <h2 className="mb-4 text-xl font-semibold text-red-400">{t('gameRoom.errors.title')}</h2>
-              <p className="text-shadow-300">{error || t('gameRoom.errors.notFound')}</p>
-              <Button onClick={() => navigate('/')} className="mt-6">
-                {t('gameRoom.actions.returnToLobby')}
+              <h2 className="mb-4 text-xl font-semibold text-red-400">
+                {t("gameRoom.errors.title")}
+              </h2>
+              <p className="text-shadow-300">
+                {error || t("gameRoom.errors.notFound")}
+              </p>
+              <Button onClick={() => navigate("/")} className="mt-6">
+                {t("gameRoom.actions.returnToLobby")}
               </Button>
             </Card>
           ) : (
@@ -292,55 +326,64 @@ export default function GameRoomPage() {
           <div className="w-full max-w-4xl space-y-6">
             <div className="text-center space-y-4">
               <h1 className="font-display text-3xl uppercase tracking-[0.35em] text-aurora-300">
-                {t('gameRoom.generating.title')}
+                {t("gameRoom.generating.title")}
               </h1>
-              <p className="text-shadow-300">{t('gameRoom.generating.subtitle')}</p>
+              <p className="text-shadow-300">
+                {t("gameRoom.generating.subtitle")}
+              </p>
             </div>
 
             <div className="card p-6">
               <h3 className="text-sm font-semibold uppercase tracking-[0.3em] text-shadow-400 mb-4">
-                {t('gameRoom.generating.logTitle')}
+                {t("gameRoom.generating.logTitle")}
               </h3>
               <div className="max-h-[70vh] space-y-2 overflow-y-auto">
                 {streamEvents.map((event, index) => {
                   // Filter out LangChain internal noise
                   const isNoise =
-                    event.name === '  start  ' ||
-                    event.name === '  return  ' ||
-                    event.name === 'LangGraph' ||
-                    (event.name || '').includes('ChannelWrite') ||
-                    (event.name || '').includes('ChatGoogle') ||
-                    event.name === 'generateStructured';
+                    event.name === "  start  " ||
+                    event.name === "  return  " ||
+                    event.name === "LangGraph" ||
+                    (event.name || "").includes("ChannelWrite") ||
+                    (event.name || "").includes("ChatGoogle") ||
+                    event.name === "generateStructured";
 
-                  if (isNoise && event.type !== 'progress') {
+                  if (isNoise && event.type !== "progress") {
                     return null;
                   }
 
                   // Tool calls
-                  if (event.type === 'tool_call') {
+                  if (event.type === "tool_call") {
                     const toolCall: ToolCall = {
                       id: `tool-${index}`,
-                      toolName: event.tool || 'unknown',
+                      toolName: event.tool || "unknown",
                       parameters: event.args || {},
                       result: event.output,
                       timestamp: Date.now(),
-                      status: 'completed',
+                      status: "completed",
                     };
                     return (
-                      <ToolCallCard key={index} toolCall={toolCall} status={event.output ? 'complete' : 'running'} />
+                      <ToolCallCard
+                        key={index}
+                        toolCall={toolCall}
+                        status={event.output ? "complete" : "running"}
+                      />
                     );
                   }
 
                   // Period events
-                  if (event.type === 'period_start') {
+                  if (event.type === "period_start") {
                     return (
-                      <div key={index} className="rounded-lg border border-aurora-500/40 bg-aurora-900/20 px-4 py-3">
+                      <div
+                        key={index}
+                        className="rounded-lg border border-aurora-500/40 bg-aurora-900/20 px-4 py-3"
+                      >
                         <div className="flex items-center gap-2">
                           <span className="text-aurora-400">📜</span>
                           <span className="text-sm font-semibold text-aurora-200">
-                            {t('gameRoom.stream.creatingEra', {
-                              current: event.periodNumber ?? '?',
-                              total: event.totalPeriods ?? '?',
+                            {t("gameRoom.stream.creatingEra", {
+                              current: event.periodNumber ?? "?",
+                              total: event.totalPeriods ?? "?",
                             })}
                           </span>
                         </div>
@@ -349,7 +392,10 @@ export default function GameRoomPage() {
                   }
 
                   // Period narrative - complete
-                  if (event.type === 'period_text_complete' && event.narrative) {
+                  if (
+                    event.type === "period_text_complete" &&
+                    event.narrative
+                  ) {
                     return (
                       <div
                         key={index}
@@ -360,7 +406,9 @@ export default function GameRoomPage() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="text-base font-semibold text-nebula-200">
-                                {t('gameRoom.stream.eraNarrative', { era: event.periodNumber ?? '?' })}
+                                {t("gameRoom.stream.eraNarrative", {
+                                  era: event.periodNumber ?? "?",
+                                })}
                               </span>
                             </div>
                           </div>
@@ -386,7 +434,11 @@ export default function GameRoomPage() {
   // Also show this for SETUP phase to skip the streaming intro
   // PHASE 3: CHARACTER_CREATION - Lobby and Character Creation
   // Also show this for SETUP phase to skip the streaming intro
-  if (room.phase === GamePhase.CHARACTER_CREATION || room.phase === GamePhase.SETUP || room.phase === GamePhase.LOBBY) {
+  if (
+    room.phase === GamePhase.CHARACTER_CREATION ||
+    room.phase === GamePhase.SETUP ||
+    room.phase === GamePhase.LOBBY
+  ) {
     // If user has no character, default to creation mode (optional, can be just lobby)
     // But let's start in Lobby to see everyone
 
@@ -398,7 +450,7 @@ export default function GameRoomPage() {
       try {
         // await setReady(room.documentId || room.roomId || room.id, isReady); // Socket removed
       } catch (err) {
-        console.error('Failed to toggle ready:', err);
+        console.error("Failed to toggle ready:", err);
       }
     };
 
@@ -407,19 +459,28 @@ export default function GameRoomPage() {
       try {
         setLoading(true);
         const streamId = crypto.randomUUID();
-        console.info('GameRoom DEBUG: Calling startGame...');
-        await startGame(room.documentId || room.roomId || room.id, room.settings?.language || 'en', streamId);
-        console.info('GameRoom DEBUG: startGame returned.');
+        console.info("GameRoom DEBUG: Calling startGame...");
+        await startGame(
+          room.documentId || room.roomId || room.id,
+          room.settings?.language || "en",
+          streamId,
+        );
+        console.info("GameRoom DEBUG: startGame returned.");
 
         // Force refresh room state to ensure phase change is reflected immediately
         // This handles cases where socket event might be delayed or missed
-        const updatedRoom = (await getRoomState(room.documentId || room.roomId || room.id)) as SharedRoom & {
+        const updatedRoom = (await getRoomState(
+          room.documentId || room.roomId || room.id,
+        )) as SharedRoom & {
           players: Player[];
         };
-        console.info('GameRoom DEBUG: Refetched room phase:', updatedRoom.phase);
+        console.info(
+          "GameRoom DEBUG: Refetched room phase:",
+          updatedRoom.phase,
+        );
         setRoom(updatedRoom);
       } catch (err) {
-        console.error('Failed to start game:', err);
+        console.error("Failed to start game:", err);
         // Optional: show error toast
       } finally {
         setLoading(false);
@@ -437,7 +498,9 @@ export default function GameRoomPage() {
               if (player) {
                 // Optimistic update using returned player (with correct ID)
                 setPlayers((current) => {
-                  const idx = current.findIndex((p) => p.userId === player.userId);
+                  const idx = current.findIndex(
+                    (p) => p.userId === player.userId,
+                  );
                   if (idx >= 0) {
                     const newPlayers = [...current];
                     newPlayers[idx] = player;
@@ -466,7 +529,10 @@ export default function GameRoomPage() {
           players={players}
           onCreateCharacter={() => setIsCreatingCharacter(true)}
           onReadyToggle={handleReadyToggle}
-          isOwner={room.owner?.documentId === user?.documentId || room.ownerId === user?.uid}
+          isOwner={
+            room.owner?.documentId === user?.documentId ||
+            room.ownerId === user?.uid
+          }
           onStartGame={handleStartGame}
         />
       </DynamicLayout>
@@ -475,7 +541,11 @@ export default function GameRoomPage() {
 
   // PHASE 5: GAMEPLAY - Active gameplay with chat, turns, etc.
   return (
-    <DynamicLayout showRoomInfo className="h-dvh overflow-hidden" mainClassName="min-h-0">
+    <DynamicLayout
+      showRoomInfo
+      className="h-dvh overflow-hidden"
+      mainClassName="min-h-0"
+    >
       <TimeFrameProvider room={room}>
         <GameplayScreen
           room={room}
@@ -485,24 +555,34 @@ export default function GameRoomPage() {
             if (roomId) {
               getRoomState(roomId).then((roomData) => {
                 setRoom(roomData as SharedRoom & { players: Player[] });
-                setPlayers((roomData as SharedRoom & { players: Player[] }).players || []);
+                setPlayers(
+                  (roomData as SharedRoom & { players: Player[] }).players ||
+                    [],
+                );
               });
             }
           }}
         />
       </TimeFrameProvider>
-      {activeStream && activeStream.status === 'active' && (
+      {activeStream && activeStream.status === "active" && (
         <div className="fixed bottom-20 right-6 z-50 w-96 rounded-lg border border-aurora-500/30 bg-midnight-900/95 p-4 shadow-xl backdrop-blur-md">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-aurora-300">{t('gameRoom.stream.title')}</h3>
-            <span className="animate-pulse text-xs text-aurora-400">● {t('gameRoom.stream.live')}</span>
+            <h3 className="text-sm font-bold text-aurora-300">
+              {t("gameRoom.stream.title")}
+            </h3>
+            <span className="animate-pulse text-xs text-aurora-400">
+              ● {t("gameRoom.stream.live")}
+            </span>
           </div>
           <div className="max-h-60 overflow-y-auto whitespace-pre-wrap text-sm text-aurora-100/90">
             {activeStream.content}
           </div>
         </div>
       )}
-      <ToolNotificationContainer toolCalls={recentToolCalls} onDismiss={() => {}} />
+      <ToolNotificationContainer
+        toolCalls={recentToolCalls}
+        onDismiss={() => {}}
+      />
     </DynamicLayout>
   );
 }

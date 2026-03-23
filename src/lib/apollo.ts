@@ -1,7 +1,7 @@
-import { ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:1337';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:1337";
 
 const httpLink = createHttpLink({
   uri: `${API_URL}/graphql`,
@@ -10,11 +10,11 @@ const httpLink = createHttpLink({
 const authLink = setContext(async (_, { headers }) => {
   // TODO: Retrieve token from auth provider (Firebase or Strapi)
   // For now, we assume public access or token will be added later
-  const token = localStorage.getItem('strapi_jwt');
+  const token = localStorage.getItem("strapi_jwt");
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });

@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import type { Message, ToolCall as SocketToolCall } from '@/types/contracts';
-import useAuth from '../../hooks/useAuth';
+import { useMemo } from "react";
+import type { Message, ToolCall as SocketToolCall } from "@/types/contracts";
+import useAuth from "../../hooks/useAuth";
 // import { useI18n } from '../../i18n';
-import { UnifiedChatArea } from '../chat/UnifiedChatArea';
+import { UnifiedChatArea } from "../chat/UnifiedChatArea";
 
 export interface PresenceData {
   userId: string;
-  type: 'viewing' | 'typing' | 'generating' | 'tool_executing';
+  type: "viewing" | "typing" | "generating" | "tool_executing";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data?: any;
 }
@@ -80,9 +80,9 @@ export default function GameplayChatArea({
       if (!exists) {
         combined.push({
           id: messageId,
-          sender: 'DM',
+          sender: "DM",
           content, // Map content to satisfy StreamingMessage type
-          text: '',
+          text: "",
           timestamp: 0, // Placeholder stable timestamp for streaming logic
           isStreaming: true,
           streamContent: content,
@@ -100,13 +100,17 @@ export default function GameplayChatArea({
         const recipient = msg.recipientId || msg.targetPlayer;
         // Check either provided ID (Strapi Document ID) or Auth UID (Firebase)
         // Backend usually sends Document ID in recipient field.
-        return !recipient || recipient === currentUserId || recipient === user?.uid;
+        return (
+          !recipient || recipient === currentUserId || recipient === user?.uid
+        );
       }),
-    [displayMessages, user?.uid, currentUserId]
+    [displayMessages, user?.uid, currentUserId],
   );
 
   // Get DM presence
-  const dmPresence = presence.find((p) => p.type === 'generating' || p.type === 'tool_executing');
+  const dmPresence = presence.find(
+    (p) => p.type === "generating" || p.type === "tool_executing",
+  );
 
   return (
     <UnifiedChatArea

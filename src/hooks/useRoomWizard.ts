@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import type { WorldSettings, DMStyle } from '@/types/contracts';
-import { useI18n } from '../i18n';
+import { useState, useMemo } from "react";
+import type { WorldSettings, DMStyle } from "@/types/contracts";
+import { useI18n } from "../i18n";
 import {
   VERBOSITY_MARK_KEYS,
   VERBOSITY_FALLBACK,
@@ -12,7 +12,7 @@ import {
   NARRATIVE_FALLBACK,
   SPECIAL_MODE_KEYS,
   SPECIAL_MODE_FALLBACK,
-} from '../constants/dmStyleConfig';
+} from "../constants/dmStyleConfig";
 import {
   ADVENTURE_LENGTH_VALUES,
   ADVENTURE_LENGTH_FALLBACK,
@@ -22,42 +22,50 @@ import {
   WORLD_SIZE_FALLBACK,
   PARTY_SIZE_VALUES,
   STARTING_LEVEL_VALUES,
-} from '../constants/adventureConfig';
-import type { SliderMark } from '../components/forms/DiscreteSlider';
+} from "../constants/adventureConfig";
+import type { SliderMark } from "../components/forms/DiscreteSlider";
 
-export type WizardStepId = 'world' | 'story' | 'scope' | 'dm' | 'preview';
+export type WizardStepId = "world" | "story" | "scope" | "dm" | "preview";
 
-export const WIZARD_STEPS: WizardStepId[] = ['world', 'story', 'scope', 'dm', 'preview'];
+export const WIZARD_STEPS: WizardStepId[] = [
+  "world",
+  "story",
+  "scope",
+  "dm",
+  "preview",
+];
 
 const DEFAULT_WORLD_SETTINGS: WorldSettings = {
-  worldType: 'terra',
+  worldType: "terra",
   playerCount: 4,
   startingLevel: 3,
   attributePointBudget: 27,
-  adventureLength: 'medium',
-  worldSize: 'medium',
-  difficulty: 'medium',
-  tone: '',
-  theme: '',
-  setting: '',
-  worldBackground: '',
+  adventureLength: "medium",
+  worldSize: "medium",
+  difficulty: "medium",
+  tone: "",
+  theme: "",
+  setting: "",
+  worldBackground: "",
   dmStyle: {
     verbosity: 3,
     detail: 3,
     engagement: 3,
     narrative: 3,
-    customDirectives: '',
+    customDirectives: "",
   },
-  dmSystemPrompt: '',
-  language: 'en',
+  dmSystemPrompt: "",
+  language: "en",
 };
 
 export function useRoomWizard() {
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
-  const [settings, setSettings] = useState<WorldSettings>(DEFAULT_WORLD_SETTINGS);
-  const [archetype, setArchetype] = useState('mountain');
-  const [worldDescription, setWorldDescription] = useState('');
+  const [settings, setSettings] = useState<WorldSettings>(
+    DEFAULT_WORLD_SETTINGS,
+  );
+  const [archetype, setArchetype] = useState("mountain");
+  const [worldDescription, setWorldDescription] = useState("");
   const [worldLoading, setWorldLoading] = useState(false);
 
   const verbosityMarks = useMemo<SliderMark[]>(
@@ -67,15 +75,19 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.marks.verbosity.${key}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? VERBOSITY_FALLBACK[key].label : translated;
+          return translated === labelKey
+            ? VERBOSITY_FALLBACK[key].label
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.marks.verbosity.${key}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? VERBOSITY_FALLBACK[key].description : translated;
+          return translated === descriptionKey
+            ? VERBOSITY_FALLBACK[key].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const detailMarks = useMemo<SliderMark[]>(
@@ -85,15 +97,19 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.marks.detail.${key}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? DETAIL_FALLBACK[key].label : translated;
+          return translated === labelKey
+            ? DETAIL_FALLBACK[key].label
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.marks.detail.${key}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? DETAIL_FALLBACK[key].description : translated;
+          return translated === descriptionKey
+            ? DETAIL_FALLBACK[key].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const engagementMarks = useMemo<SliderMark[]>(
@@ -103,15 +119,19 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.marks.engagement.${key}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? ENGAGEMENT_FALLBACK[key].label : translated;
+          return translated === labelKey
+            ? ENGAGEMENT_FALLBACK[key].label
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.marks.engagement.${key}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? ENGAGEMENT_FALLBACK[key].description : translated;
+          return translated === descriptionKey
+            ? ENGAGEMENT_FALLBACK[key].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const narrativeMarks = useMemo<SliderMark[]>(
@@ -121,15 +141,19 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.marks.narrative.${key}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? NARRATIVE_FALLBACK[key].label : translated;
+          return translated === labelKey
+            ? NARRATIVE_FALLBACK[key].label
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.marks.narrative.${key}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? NARRATIVE_FALLBACK[key].description : translated;
+          return translated === descriptionKey
+            ? NARRATIVE_FALLBACK[key].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const specialModeOptions = useMemo(
@@ -139,15 +163,19 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.specialModes.${key}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? (SPECIAL_MODE_FALLBACK[key]?.label ?? key) : translated;
+          return translated === labelKey
+            ? (SPECIAL_MODE_FALLBACK[key]?.label ?? key)
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.specialModes.${key}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? (SPECIAL_MODE_FALLBACK[key]?.description ?? '') : translated;
+          return translated === descriptionKey
+            ? (SPECIAL_MODE_FALLBACK[key]?.description ?? "")
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const adventureLengthOptions = useMemo(
@@ -157,20 +185,26 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.adventureLength.${value}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? ADVENTURE_LENGTH_FALLBACK[value].label : translated;
+          return translated === labelKey
+            ? ADVENTURE_LENGTH_FALLBACK[value].label
+            : translated;
         })(),
         detail: (() => {
           const detailKey = `createWizard.adventureLength.${value}.detail`;
           const translated = t(detailKey);
-          return translated === detailKey ? ADVENTURE_LENGTH_FALLBACK[value].detail : translated;
+          return translated === detailKey
+            ? ADVENTURE_LENGTH_FALLBACK[value].detail
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.adventureLength.${value}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? ADVENTURE_LENGTH_FALLBACK[value].description : translated;
+          return translated === descriptionKey
+            ? ADVENTURE_LENGTH_FALLBACK[value].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const difficultyOptions = useMemo(
@@ -180,20 +214,26 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.difficulty.${value}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? DIFFICULTY_FALLBACK[value].label : translated;
+          return translated === labelKey
+            ? DIFFICULTY_FALLBACK[value].label
+            : translated;
         })(),
         detail: (() => {
           const detailKey = `createWizard.difficulty.${value}.detail`;
           const translated = t(detailKey);
-          return translated === detailKey ? DIFFICULTY_FALLBACK[value].detail : translated;
+          return translated === detailKey
+            ? DIFFICULTY_FALLBACK[value].detail
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.difficulty.${value}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? DIFFICULTY_FALLBACK[value].description : translated;
+          return translated === descriptionKey
+            ? DIFFICULTY_FALLBACK[value].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const worldSizeOptions = useMemo(
@@ -203,20 +243,26 @@ export function useRoomWizard() {
         label: (() => {
           const labelKey = `createWizard.worldSize.${value}.label`;
           const translated = t(labelKey);
-          return translated === labelKey ? WORLD_SIZE_FALLBACK[value].label : translated;
+          return translated === labelKey
+            ? WORLD_SIZE_FALLBACK[value].label
+            : translated;
         })(),
         detail: (() => {
           const detailKey = `createWizard.worldSize.${value}.detail`;
           const translated = t(detailKey);
-          return translated === detailKey ? WORLD_SIZE_FALLBACK[value].detail : translated;
+          return translated === detailKey
+            ? WORLD_SIZE_FALLBACK[value].detail
+            : translated;
         })(),
         description: (() => {
           const descriptionKey = `createWizard.worldSize.${value}.description`;
           const translated = t(descriptionKey);
-          return translated === descriptionKey ? WORLD_SIZE_FALLBACK[value].description : translated;
+          return translated === descriptionKey
+            ? WORLD_SIZE_FALLBACK[value].description
+            : translated;
         })(),
       })),
-    [t]
+    [t],
   );
 
   const updateSettings = (updates: Partial<WorldSettings>) => {
@@ -226,7 +272,10 @@ export function useRoomWizard() {
   const updateDMStyle = (updates: Partial<DMStyle>) => {
     setSettings((prev) => ({
       ...prev,
-      dmStyle: { ...(prev.dmStyle || DEFAULT_WORLD_SETTINGS.dmStyle), ...updates },
+      dmStyle: {
+        ...(prev.dmStyle || DEFAULT_WORLD_SETTINGS.dmStyle),
+        ...updates,
+      },
     }));
   };
 

@@ -1,11 +1,22 @@
-'use client';
+"use client";
 
-import type { Table as DataTable } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import type { Table as DataTable } from "@tanstack/react-table";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 
-import { useI18n } from '../../../i18n';
-import { Button } from '../button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select';
+import { useI18n } from "../../../i18n";
+import { Button } from "../button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../select";
 
 const PAGE_SIZES = [10, 20, 30, 40, 50] as const;
 
@@ -13,7 +24,9 @@ interface DataTablePaginationProps<TData> {
   table: DataTable<TData>;
 }
 
-export function DataTablePagination<TData>({ table }: DataTablePaginationProps<TData>) {
+export function DataTablePagination<TData>({
+  table,
+}: DataTablePaginationProps<TData>) {
   const { t } = useI18n();
   const { pageIndex } = table.getState().pagination;
   const currentPage = pageIndex + 1;
@@ -24,18 +37,23 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
   return (
     <div className="flex flex-col gap-3 px-2 py-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-muted-foreground text-xs sm:text-sm">
-        {t('ui.dataTable.selection').replace('{{selected}}', String(selected)).replace('{{total}}', String(total))}
+        {t("ui.dataTable.selection")
+          .replace("{{selected}}", String(selected))
+          .replace("{{total}}", String(total))}
       </div>
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-6">
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground sm:text-sm">
-            {t('ui.dataTable.pagination.rowsPerPage')}
+            {t("ui.dataTable.pagination.rowsPerPage")}
           </span>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <SelectTrigger className="h-8 w-[72px]" data-testid="dataTable-rowsPerPage">
+            <SelectTrigger
+              className="h-8 w-[72px]"
+              data-testid="dataTable-rowsPerPage"
+            >
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
             <SelectContent align="end">
@@ -48,9 +66,10 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
           </Select>
         </div>
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground sm:text-sm">
-          <span>{t('ui.dataTable.pagination.page')}</span>
+          <span>{t("ui.dataTable.pagination.page")}</span>
           <span>
-            {currentPage} {t('ui.dataTable.pagination.of')} {Math.max(pageCount, 1)}
+            {currentPage} {t("ui.dataTable.pagination.of")}{" "}
+            {Math.max(pageCount, 1)}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -63,7 +82,9 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             data-testid="dataTable-firstPage"
           >
             <ChevronsLeft className="size-4" />
-            <span className="sr-only">{t('ui.dataTable.pagination.first')}</span>
+            <span className="sr-only">
+              {t("ui.dataTable.pagination.first")}
+            </span>
           </Button>
           <Button
             variant="outline"
@@ -74,7 +95,9 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             data-testid="dataTable-prevPage"
           >
             <ChevronLeft className="size-4" />
-            <span className="sr-only">{t('ui.dataTable.pagination.previous')}</span>
+            <span className="sr-only">
+              {t("ui.dataTable.pagination.previous")}
+            </span>
           </Button>
           <Button
             variant="outline"
@@ -85,7 +108,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             data-testid="dataTable-nextPage"
           >
             <ChevronRight className="size-4" />
-            <span className="sr-only">{t('ui.dataTable.pagination.next')}</span>
+            <span className="sr-only">{t("ui.dataTable.pagination.next")}</span>
           </Button>
           <Button
             variant="outline"
@@ -96,7 +119,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             data-testid="dataTable-lastPage"
           >
             <ChevronsRight className="size-4" />
-            <span className="sr-only">{t('ui.dataTable.pagination.last')}</span>
+            <span className="sr-only">{t("ui.dataTable.pagination.last")}</span>
           </Button>
         </div>
       </div>

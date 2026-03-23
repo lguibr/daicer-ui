@@ -3,8 +3,8 @@
  * Displays combat events and dice rolls
  */
 
-import { useRef, useEffect, useState, type ReactNode } from 'react';
-import type { CombatLogEntry, DiceRollResult } from '../../types/combat';
+import { useRef, useEffect, useState, type ReactNode } from "react";
+import type { CombatLogEntry, DiceRollResult } from "../../types/combat";
 
 interface CombatLogProps {
   log: CombatLogEntry[];
@@ -16,7 +16,7 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
   const [expandedRolls, setExpandedRolls] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    logEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [log]);
 
   const toggleRollExpanded = (rollId: string) => {
@@ -31,63 +31,64 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
     });
   };
 
-  const getRoll = (rollId: string): DiceRollResult | undefined => diceHistory.find((r) => r.id === rollId);
+  const getRoll = (rollId: string): DiceRollResult | undefined =>
+    diceHistory.find((r) => r.id === rollId);
 
   const formatRoll = (roll: DiceRollResult): string => {
     const advantageText =
-      roll.advantageType === 'advantage'
-        ? ' (Advantage)'
-        : roll.advantageType === 'disadvantage'
-          ? ' (Disadvantage)'
-          : '';
+      roll.advantageType === "advantage"
+        ? " (Advantage)"
+        : roll.advantageType === "disadvantage"
+          ? " (Disadvantage)"
+          : "";
 
     const rawRollsText =
-      roll.rawRolls.length > 1 && roll.diceType === 'd20'
-        ? ` [${roll.rawRolls.join(', ')}]`
+      roll.rawRolls.length > 1 && roll.diceType === "d20"
+        ? ` [${roll.rawRolls.join(", ")}]`
         : roll.rawRolls.length > 1
-          ? ` [${roll.rawRolls.join(' + ')}]`
+          ? ` [${roll.rawRolls.join(" + ")}]`
           : ` [${roll.rawRolls[0]}]`;
 
-    const modifierText = roll.modifier !== 0 ? ` + ${roll.modifier}` : '';
+    const modifierText = roll.modifier !== 0 ? ` + ${roll.modifier}` : "";
 
     return `${roll.description}${advantageText}: ${rawRollsText}${modifierText} = **${roll.finalResult}**`;
   };
 
   const getLogTypeIcon = (type: string): string => {
     switch (type) {
-      case 'attack':
-        return '⚔️';
-      case 'damage':
-        return '💥';
-      case 'move':
-        return '🏃';
-      case 'turn':
-        return '▶️';
-      case 'round':
-        return '🔄';
-      case 'victory':
-        return '🏆';
+      case "attack":
+        return "⚔️";
+      case "damage":
+        return "💥";
+      case "move":
+        return "🏃";
+      case "turn":
+        return "▶️";
+      case "round":
+        return "🔄";
+      case "victory":
+        return "🏆";
       default:
-        return '•';
+        return "•";
     }
   };
 
   const getLogTypeColor = (type: string): string => {
     switch (type) {
-      case 'attack':
-        return 'text-orange-400';
-      case 'damage':
-        return 'text-red-400';
-      case 'move':
-        return 'text-sky-300';
-      case 'turn':
-        return 'text-shadow-200';
-      case 'round':
-        return 'text-aurora-200';
-      case 'victory':
-        return 'text-emerald-300';
+      case "attack":
+        return "text-orange-400";
+      case "damage":
+        return "text-red-400";
+      case "move":
+        return "text-sky-300";
+      case "turn":
+        return "text-shadow-200";
+      case "round":
+        return "text-aurora-200";
+      case "victory":
+        return "text-emerald-300";
       default:
-        return 'text-shadow-300';
+        return "text-shadow-300";
     }
   };
 
@@ -100,7 +101,11 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
     while (match !== null) {
       if (match.index > lastIndex) {
         const plainSegment = text.slice(lastIndex, match.index);
-        nodes.push(<span key={`text-${match.index}-${nodes.length}`}>{plainSegment}</span>);
+        nodes.push(
+          <span key={`text-${match.index}-${nodes.length}`}>
+            {plainSegment}
+          </span>,
+        );
       }
 
       nodes.push(<strong key={`bold-${match.index}`}>{match[1]}</strong>);
@@ -109,7 +114,9 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
     }
 
     if (lastIndex < text.length) {
-      nodes.push(<span key={`text-${lastIndex}-end`}>{text.slice(lastIndex)}</span>);
+      nodes.push(
+        <span key={`text-${lastIndex}-end`}>{text.slice(lastIndex)}</span>,
+      );
     }
 
     return nodes.length > 0 ? nodes : [text];
@@ -124,10 +131,14 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {log.map((entry) => (
           <div key={entry.id} className="text-sm">
-            <div className={`flex items-start gap-2 ${getLogTypeColor(entry.type)}`}>
+            <div
+              className={`flex items-start gap-2 ${getLogTypeColor(entry.type)}`}
+            >
               <span className="text-base">{getLogTypeIcon(entry.type)}</span>
               <div className="flex-1">
-                <div className="text-shadow-50 leading-relaxed">{formatMarkdownToNodes(entry.message)}</div>
+                <div className="text-shadow-50 leading-relaxed">
+                  {formatMarkdownToNodes(entry.message)}
+                </div>
 
                 {/* Show related rolls */}
                 {entry.relatedRolls.length > 0 && (
@@ -145,13 +156,17 @@ export function CombatLog({ log, diceHistory }: CombatLogProps) {
                             onClick={() => toggleRollExpanded(rollId)}
                             className="text-shadow-400 hover:text-aurora-300 transition-colors"
                           >
-                            {isExpanded ? '▼' : '▶'} {roll.rollType} roll:{' '}
-                            <span className="font-bold">{roll.finalResult}</span>
+                            {isExpanded ? "▼" : "▶"} {roll.rollType} roll:{" "}
+                            <span className="font-bold">
+                              {roll.finalResult}
+                            </span>
                           </button>
 
                           {isExpanded && (
                             <div className="ml-4 mt-1 p-2 bg-midnight-800/60 rounded text-shadow-300">
-                              <div className="space-x-1">{formatMarkdownToNodes(formatRoll(roll))}</div>
+                              <div className="space-x-1">
+                                {formatMarkdownToNodes(formatRoll(roll))}
+                              </div>
                             </div>
                           )}
                         </div>

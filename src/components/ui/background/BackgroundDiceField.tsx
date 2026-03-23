@@ -1,12 +1,12 @@
 /* eslint-disable react/no-unknown-property, no-param-reassign */
-import { useRef, useMemo, useEffect, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
-import { createDie } from '../dice-loader/createDie';
+import { useRef, useMemo, useEffect, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { createDie } from "../dice-loader/createDie";
 
 // --- Types ---
 
-import { DieType, DieVisualStyle } from '../dice-loader/types';
+import { DieType, DieVisualStyle } from "../dice-loader/types";
 
 interface FallingDieProps {
   initialSpeed: number;
@@ -58,16 +58,25 @@ function FallingDie({
         // Clone material to ensure unique instance properties
         if (child.material) {
           child.material = child.material.clone();
-          const m = child.material as THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial;
+          const m = child.material as
+            | THREE.MeshStandardMaterial
+            | THREE.MeshPhysicalMaterial;
 
           // Apply overrides if present (deterministic)
           if (visualOverrides) {
-            if (visualOverrides.opacity !== undefined) m.opacity = visualOverrides.opacity;
-            if (visualOverrides.roughness !== undefined) m.roughness = visualOverrides.roughness;
-            if (visualOverrides.transmission !== undefined && 'transmission' in m) {
-              (m as THREE.MeshPhysicalMaterial).transmission = visualOverrides.transmission;
+            if (visualOverrides.opacity !== undefined)
+              m.opacity = visualOverrides.opacity;
+            if (visualOverrides.roughness !== undefined)
+              m.roughness = visualOverrides.roughness;
+            if (
+              visualOverrides.transmission !== undefined &&
+              "transmission" in m
+            ) {
+              (m as THREE.MeshPhysicalMaterial).transmission =
+                visualOverrides.transmission;
             }
-            if (visualOverrides.metalness !== undefined) m.metalness = visualOverrides.metalness;
+            if (visualOverrides.metalness !== undefined)
+              m.metalness = visualOverrides.metalness;
             if (visualOverrides.emissiveIntensity !== undefined) {
               m.emissiveIntensity = visualOverrides.emissiveIntensity;
             }
@@ -114,7 +123,11 @@ function FallingDie({
     y: initialY,
     z: zPos,
     velocity: initialSpeed,
-    rotation: new THREE.Euler((randomSeed * 0.1) % Math.PI, (randomSeed * 0.2) % Math.PI, (randomSeed * 0.3) % Math.PI),
+    rotation: new THREE.Euler(
+      (randomSeed * 0.1) % Math.PI,
+      (randomSeed * 0.2) % Math.PI,
+      (randomSeed * 0.3) % Math.PI,
+    ),
   });
 
   const { viewport } = useThree();
@@ -157,10 +170,21 @@ function FallingDie({
     }
 
     // Apply
-    groupRef.current.position.set(physicsState.current.x, physicsState.current.y, physicsState.current.z);
+    groupRef.current.position.set(
+      physicsState.current.x,
+      physicsState.current.y,
+      physicsState.current.z,
+    );
   });
 
-  return <group ref={groupRef} position={[xPos, initialY, zPos]} scale={scale} dispose={null} />;
+  return (
+    <group
+      ref={groupRef}
+      position={[xPos, initialY, zPos]}
+      scale={scale}
+      dispose={null}
+    />
+  );
 }
 
 function Scene() {
@@ -171,29 +195,35 @@ function Scene() {
     const count = 35;
     const items: FallingDieProps[] = [];
 
-    const types: DieType[] = [2, 4, 6, 8, 10, 12, 20, '20-ai'];
-    const styles: DieVisualStyle[] = ['acrylic', 'metallic', 'glowing', 'stone', 'standard'];
+    const types: DieType[] = [2, 4, 6, 8, 10, 12, 20, "20-ai"];
+    const styles: DieVisualStyle[] = [
+      "acrylic",
+      "metallic",
+      "glowing",
+      "stone",
+      "standard",
+    ];
 
     const colors = [
-      '#d4af37', // Gold
-      '#7a49d9', // Soft Purple
-      '#d88416', // Orange/Amber
-      '#2e1065', // Deep Indigo
-      '#4c1d95', // Violet
-      '#a855f7', // Bright Purple
-      '#fbbf24', // Amber
-      '#e0115f', // Ruby
-      '#0f52ba', // Sapphire
-      '#50c878', // Emerald
-      '#9966cc', // Amethyst
-      '#c0c0c0', // Silver
-      '#cd7f32', // Bronze
-      '#00ffff', // Neon Cyan
-      '#ff00ff', // Neon Magenta
-      '#4b0082', // Indigo
-      '#008080', // Teal
-      '#10b981', // Green
-      '#f43f5e', // Rose
+      "#d4af37", // Gold
+      "#7a49d9", // Soft Purple
+      "#d88416", // Orange/Amber
+      "#2e1065", // Deep Indigo
+      "#4c1d95", // Violet
+      "#a855f7", // Bright Purple
+      "#fbbf24", // Amber
+      "#e0115f", // Ruby
+      "#0f52ba", // Sapphire
+      "#50c878", // Emerald
+      "#9966cc", // Amethyst
+      "#c0c0c0", // Silver
+      "#cd7f32", // Bronze
+      "#00ffff", // Neon Cyan
+      "#ff00ff", // Neon Magenta
+      "#4b0082", // Indigo
+      "#008080", // Teal
+      "#10b981", // Green
+      "#f43f5e", // Rose
     ];
 
     for (let i = 0; i < count; i++) {
@@ -202,17 +232,17 @@ function Scene() {
       const material = styles[Math.floor(Math.random() * styles.length)]!;
 
       const overrides: Record<string, number> = {};
-      if (material === 'acrylic') {
+      if (material === "acrylic") {
         overrides.opacity = 0.6 + Math.random() * 0.35;
         overrides.roughness = 0.05 + Math.random() * 0.1;
         overrides.transmission = 0.8 + Math.random() * 0.15;
-      } else if (material === 'metallic') {
+      } else if (material === "metallic") {
         overrides.metalness = 0.8 + Math.random() * 0.2;
         overrides.roughness = 0.1 + Math.random() * 0.2;
-      } else if (material === 'stone') {
+      } else if (material === "stone") {
         overrides.roughness = 0.8 + Math.random() * 0.2;
         overrides.colorOffset = (Math.random() - 0.5) * 0.1;
-      } else if (material === 'glowing') {
+      } else if (material === "glowing") {
         overrides.emissiveIntensity = 1.0 + Math.random() * 1.5;
       } else {
         overrides.roughness = 0.3 + Math.random() * 0.3;
@@ -223,7 +253,11 @@ function Scene() {
         xPos: (Math.random() - 0.5) * spread * 2.5,
         zPos: z,
         initialSpeed: 4 + Math.random() * 4,
-        rotationSpeed: [(Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15],
+        rotationSpeed: [
+          (Math.random() - 0.5) * 15,
+          (Math.random() - 0.5) * 15,
+          (Math.random() - 0.5) * 15,
+        ],
         scale: 0.3 + Math.random() * 0.4,
         dieType: types[Math.floor(Math.random() * types.length)]!,
         material,
@@ -238,7 +272,11 @@ function Scene() {
   return (
     <>
       <ambientLight intensity={0.5} />
-      <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffd700" />
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={1.5}
+        color="#ffd700"
+      />
       <pointLight position={[-10, 0, -10]} intensity={1} color="#7a49d9" />
 
       {diceConfig.map((props, i) => (
@@ -246,7 +284,7 @@ function Scene() {
       ))}
 
       {/* Stronger Fog to fade distant dice */}
-      <fog attach="fog" args={['#050205', 15, 50]} />
+      <fog attach="fog" args={["#050205", 15, 50]} />
     </>
   );
 }

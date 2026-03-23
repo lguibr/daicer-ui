@@ -3,14 +3,20 @@
  * Full-screen overlay for creating character before entering room
  */
 
-import { useState } from 'react';
-import { X } from 'lucide-react';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import Input from '../ui/input';
-import Textarea from '../ui/textarea';
-import Label from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useState } from "react";
+import { X } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
+import { Button } from "../ui/button";
+import Input from "../ui/input";
+import Textarea from "../ui/textarea";
+import Label from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 export interface CharacterCreationData {
   name: string;
@@ -26,26 +32,50 @@ interface CharacterCreationModalProps {
   onCancel: () => void;
 }
 
-const CLASSES = ['Fighter', 'Wizard', 'Rogue', 'Cleric', 'Ranger', 'Paladin', 'Barbarian', 'Bard', 'Druid', 'Monk'];
-const RACES = ['Human', 'Elf', 'Dwarf', 'Halfling', 'Dragonborn', 'Gnome', 'Half-Elf', 'Half-Orc', 'Tiefling'];
+const CLASSES = [
+  "Fighter",
+  "Wizard",
+  "Rogue",
+  "Cleric",
+  "Ranger",
+  "Paladin",
+  "Barbarian",
+  "Bard",
+  "Druid",
+  "Monk",
+];
+const RACES = [
+  "Human",
+  "Elf",
+  "Dwarf",
+  "Halfling",
+  "Dragonborn",
+  "Gnome",
+  "Half-Elf",
+  "Half-Orc",
+  "Tiefling",
+];
 const ALIGNMENTS = [
-  'Lawful Good',
-  'Neutral Good',
-  'Chaotic Good',
-  'Lawful Neutral',
-  'True Neutral',
-  'Chaotic Neutral',
-  'Lawful Evil',
-  'Neutral Evil',
-  'Chaotic Evil',
+  "Lawful Good",
+  "Neutral Good",
+  "Chaotic Good",
+  "Lawful Neutral",
+  "True Neutral",
+  "Chaotic Neutral",
+  "Lawful Evil",
+  "Neutral Evil",
+  "Chaotic Evil",
 ];
 
-export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreationModalProps) {
-  const [name, setName] = useState('');
-  const [race, setRace] = useState('Human');
-  const [characterClass, setCharacterClass] = useState('Fighter');
-  const [alignment, setAlignment] = useState('Neutral Good');
-  const [background, setBackground] = useState('');
+export function CharacterCreationModal({
+  onSubmit,
+  onCancel,
+}: CharacterCreationModalProps) {
+  const [name, setName] = useState("");
+  const [race, setRace] = useState("Human");
+  const [characterClass, setCharacterClass] = useState("Fighter");
+  const [alignment, setAlignment] = useState("Neutral Good");
+  const [background, setBackground] = useState("");
 
   const [attributes, setAttributes] = useState({
     Strength: 10,
@@ -57,22 +87,28 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const pointsUsed = Object.values(attributes).reduce((sum, val) => sum + Math.max(0, val - 8), 0);
+  const pointsUsed = Object.values(attributes).reduce(
+    (sum, val) => sum + Math.max(0, val - 8),
+    0,
+  );
   const pointsRemaining = 27 - pointsUsed;
 
-  const handleAttributeChange = (attr: keyof typeof attributes, value: number) => {
+  const handleAttributeChange = (
+    attr: keyof typeof attributes,
+    value: number,
+  ) => {
     const newValue = Math.max(8, Math.min(15, value));
     setAttributes((prev) => ({ ...prev, [attr]: newValue }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!name.trim()) {
-      setError('Character name is required');
+      setError("Character name is required");
       return;
     }
 
@@ -95,7 +131,9 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
 
       await onSubmit(character);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create character');
+      setError(
+        err instanceof Error ? err.message : "Failed to create character",
+      );
       setLoading(false);
     }
   };
@@ -110,7 +148,9 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
               <h2 className="font-display text-2xl uppercase tracking-[0.3em] text-aurora-300">
                 Create Your Character
               </h2>
-              <p className="mt-1 text-sm text-shadow-400">Build your hero for the adventure ahead</p>
+              <p className="mt-1 text-sm text-shadow-400">
+                Build your hero for the adventure ahead
+              </p>
             </div>
             <button
               type="button"
@@ -162,7 +202,11 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
                 <Label htmlFor="char-class" className="text-shadow-200">
                   Class *
                 </Label>
-                <Select value={characterClass} onValueChange={setCharacterClass} disabled={loading}>
+                <Select
+                  value={characterClass}
+                  onValueChange={setCharacterClass}
+                  disabled={loading}
+                >
                   <SelectTrigger className="mt-1 border-midnight-500 bg-midnight-800/50 text-white">
                     <SelectValue />
                   </SelectTrigger>
@@ -180,7 +224,11 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
                 <Label htmlFor="char-alignment" className="text-shadow-200">
                   Alignment *
                 </Label>
-                <Select value={alignment} onValueChange={setAlignment} disabled={loading}>
+                <Select
+                  value={alignment}
+                  onValueChange={setAlignment}
+                  disabled={loading}
+                >
                   <SelectTrigger className="mt-1 border-midnight-500 bg-midnight-800/50 text-white">
                     <SelectValue />
                   </SelectTrigger>
@@ -214,8 +262,12 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
             {/* Attributes */}
             <div>
               <div className="mb-3 flex items-center justify-between">
-                <Label className="text-shadow-200">Attributes (Point-Buy)</Label>
-                <span className={`text-sm font-semibold ${pointsRemaining < 0 ? 'text-red-400' : 'text-aurora-300'}`}>
+                <Label className="text-shadow-200">
+                  Attributes (Point-Buy)
+                </Label>
+                <span
+                  className={`text-sm font-semibold ${pointsRemaining < 0 ? "text-red-400" : "text-aurora-300"}`}
+                >
                   {pointsRemaining} / 27 points remaining
                 </span>
               </div>
@@ -223,13 +275,21 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {Object.entries(attributes).map(([attr, value]) => (
                   <div key={attr} className="space-y-1">
-                    <Label htmlFor={`attr-${attr}`} className="text-xs text-shadow-400">
+                    <Label
+                      htmlFor={`attr-${attr}`}
+                      className="text-xs text-shadow-400"
+                    >
                       {attr}
                     </Label>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleAttributeChange(attr as keyof typeof attributes, value - 1)}
+                        onClick={() =>
+                          handleAttributeChange(
+                            attr as keyof typeof attributes,
+                            value - 1,
+                          )
+                        }
                         disabled={value <= 8 || loading}
                         className="rounded bg-midnight-700 px-2 py-1 text-white disabled:opacity-30"
                       >
@@ -244,14 +304,21 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
                       />
                       <button
                         type="button"
-                        onClick={() => handleAttributeChange(attr as keyof typeof attributes, value + 1)}
-                        disabled={value >= 15 || pointsRemaining <= 0 || loading}
+                        onClick={() =>
+                          handleAttributeChange(
+                            attr as keyof typeof attributes,
+                            value + 1,
+                          )
+                        }
+                        disabled={
+                          value >= 15 || pointsRemaining <= 0 || loading
+                        }
                         className="rounded bg-midnight-700 px-2 py-1 text-white disabled:opacity-30"
                       >
                         +
                       </button>
                       <span className="text-xs text-shadow-500">
-                        {Math.floor((value - 10) / 2) >= 0 ? '+' : ''}
+                        {Math.floor((value - 10) / 2) >= 0 ? "+" : ""}
                         {Math.floor((value - 10) / 2)}
                       </span>
                     </div>
@@ -262,7 +329,9 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
 
             {/* Error */}
             {error && (
-              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-400">{error}</div>
+              <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-400">
+                {error}
+              </div>
             )}
 
             {/* Actions */}
@@ -282,7 +351,7 @@ export function CharacterCreationModal({ onSubmit, onCancel }: CharacterCreation
                 disabled={loading || pointsRemaining < 0}
                 data-testid="character-submit-button"
               >
-                {loading ? 'Creating...' : 'Create Character & Enter Room'}
+                {loading ? "Creating..." : "Create Character & Enter Room"}
               </Button>
             </div>
           </form>

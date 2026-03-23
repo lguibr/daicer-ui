@@ -3,8 +3,8 @@
  * Renders 3D voxel models using Three.js in OffscreenCanvas
  */
 
-import './utils/threeShim';
-import * as THREE from 'three';
+import "./utils/threeShim";
+import * as THREE from "three";
 
 let scene: THREE.Scene | null = null;
 let camera: THREE.PerspectiveCamera | null = null;
@@ -23,9 +23,15 @@ const VOXEL_SIZE = 0.5;
  */
 function updateCameraPosition() {
   if (!camera) return;
-  camera.position.x = cameraDistance * Math.sin(cameraRotation.phi) * Math.cos(cameraRotation.theta);
+  camera.position.x =
+    cameraDistance *
+    Math.sin(cameraRotation.phi) *
+    Math.cos(cameraRotation.theta);
   camera.position.y = cameraDistance * Math.cos(cameraRotation.phi);
-  camera.position.z = cameraDistance * Math.sin(cameraRotation.phi) * Math.sin(cameraRotation.theta);
+  camera.position.z =
+    cameraDistance *
+    Math.sin(cameraRotation.phi) *
+    Math.sin(cameraRotation.theta);
   camera.lookAt(0, 0, 0);
 }
 
@@ -54,13 +60,15 @@ function initScene(canvas: OffscreenCanvas, width: number, height: number) {
   directionalLight.position.set(10, 10, 5);
   scene.add(directionalLight);
 
-  console.info('[VoxelWorker] Scene initialized');
+  console.info("[VoxelWorker] Scene initialized");
 }
 
 /**
  * Create voxel model from voxel data
  */
-function createVoxelModel(voxels: Array<{ x: number; y: number; z: number; color: string }>) {
+function createVoxelModel(
+  voxels: Array<{ x: number; y: number; z: number; color: string }>,
+) {
   if (!scene) return;
 
   // Remove existing model
@@ -80,7 +88,10 @@ function createVoxelModel(voxels: Array<{ x: number; y: number; z: number; color
   const geometry = new THREE.BoxGeometry(VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE);
 
   // Group voxels by color for instancing
-  const voxelsByColor = new Map<string, Array<{ x: number; y: number; z: number }>>();
+  const voxelsByColor = new Map<
+    string,
+    Array<{ x: number; y: number; z: number }>
+  >();
 
   voxels.forEach((voxel) => {
     if (!voxelsByColor.has(voxel.color)) {
@@ -97,11 +108,19 @@ function createVoxelModel(voxels: Array<{ x: number; y: number; z: number; color
       roughness: 0.6,
     });
 
-    const instancedMesh = new THREE.InstancedMesh(geometry, material, positions.length);
+    const instancedMesh = new THREE.InstancedMesh(
+      geometry,
+      material,
+      positions.length,
+    );
 
     positions.forEach((pos, index) => {
       const matrix = new THREE.Matrix4();
-      matrix.setPosition(pos.x * VOXEL_SIZE, pos.y * VOXEL_SIZE, pos.z * VOXEL_SIZE);
+      matrix.setPosition(
+        pos.x * VOXEL_SIZE,
+        pos.y * VOXEL_SIZE,
+        pos.z * VOXEL_SIZE,
+      );
       instancedMesh.setMatrixAt(index, matrix);
     });
 
@@ -137,12 +156,19 @@ function animate() {
 /**
  * Handle camera control updates from main thread
  */
-function updateCamera(delta: { theta?: number; phi?: number; distance?: number }) {
+function updateCamera(delta: {
+  theta?: number;
+  phi?: number;
+  distance?: number;
+}) {
   if (delta.theta !== undefined) {
     cameraRotation.theta += delta.theta;
   }
   if (delta.phi !== undefined) {
-    cameraRotation.phi = Math.max(0.1, Math.min(Math.PI - 0.1, cameraRotation.phi + delta.phi));
+    cameraRotation.phi = Math.max(
+      0.1,
+      Math.min(Math.PI - 0.1, cameraRotation.phi + delta.phi),
+    );
   }
   if (delta.distance !== undefined) {
     cameraDistance = Math.max(2, Math.min(50, cameraDistance + delta.distance));
@@ -197,7 +223,7 @@ function dispose() {
   scene = null;
   camera = null;
 
-  console.info('[VoxelWorker] Resources disposed');
+  console.info("[VoxelWorker] Resources disposed");
 }
 
 // Message handler
@@ -205,39 +231,39 @@ self.onmessage = (e: MessageEvent) => {
   const { type, data } = e.data;
 
   switch (type) {
-    case 'init':
+    case "init":
       initScene(data.canvas, data.width, data.height);
       if (data.autoStart) {
         animate();
       }
       break;
 
-    case 'load-model':
+    case "load-model":
       createVoxelModel(data.voxels);
       break;
 
-    case 'update-camera':
+    case "update-camera":
       updateCamera(data);
       break;
 
-    case 'start-animation':
+    case "start-animation":
       animate();
       break;
 
-    case 'stop-animation':
+    case "stop-animation":
       stopAnimation();
       break;
 
-    case 'resize':
+    case "resize":
       resize(data.width, data.height);
       break;
 
-    case 'dispose':
+    case "dispose":
       dispose();
       break;
 
     default:
-      console.warn('[VoxelWorker] Unknown message type:', type);
+      console.warn("[VoxelWorker] Unknown message type:", type);
   }
 };
 

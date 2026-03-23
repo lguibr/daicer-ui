@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 
 const PAGINATION_FRAGMENT = gql`
   fragment PaginationFragment on Pagination {
@@ -10,8 +10,16 @@ const PAGINATION_FRAGMENT = gql`
 `;
 
 export const EXPLORER_GET_CLASSES = gql`
-  query ExplorerGetClasses($pagination: PaginationArg, $filters: ClassFiltersInput, $locale: I18NLocaleCode) {
-    classes_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetClasses(
+    $pagination: PaginationArg
+    $filters: ClassFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    classes_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -31,8 +39,16 @@ export const EXPLORER_GET_CLASSES = gql`
 `;
 
 export const EXPLORER_GET_DAMAGE_TYPES = gql`
-  query ExplorerGetDamageTypes($pagination: PaginationArg, $filters: DamageTypeFiltersInput, $locale: I18NLocaleCode) {
-    damageTypes_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetDamageTypes(
+    $pagination: PaginationArg
+    $filters: DamageTypeFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    damageTypes_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -52,8 +68,16 @@ export const EXPLORER_GET_DAMAGE_TYPES = gql`
 `;
 
 export const EXPLORER_GET_FEATURES = gql`
-  query ExplorerGetFeatures($pagination: PaginationArg, $filters: FeatureFiltersInput, $locale: I18NLocaleCode) {
-    features_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetFeatures(
+    $pagination: PaginationArg
+    $filters: FeatureFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    features_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         name
@@ -73,8 +97,16 @@ export const EXPLORER_GET_FEATURES = gql`
 `;
 
 export const EXPLORER_GET_LANGUAGES = gql`
-  query ExplorerGetLanguages($pagination: PaginationArg, $filters: LanguageFiltersInput, $locale: I18NLocaleCode) {
-    languages_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetLanguages(
+    $pagination: PaginationArg
+    $filters: LanguageFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    languages_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         name
@@ -98,7 +130,11 @@ export const EXPLORER_GET_MAGIC_SCHOOLS = gql`
     $filters: MagicSchoolFiltersInput
     $locale: I18NLocaleCode
   ) {
-    magicSchools_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+    magicSchools_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         name
@@ -117,7 +153,10 @@ export const EXPLORER_GET_MAGIC_SCHOOLS = gql`
 `;
 
 export const EXPLORER_GET_MONSTERS = gql`
-  query ExplorerGetMonsters($pagination: PaginationArg, $filters: EntitySheetFiltersInput) {
+  query ExplorerGetMonsters(
+    $pagination: PaginationArg
+    $filters: EntitySheetFiltersInput
+  ) {
     entitySheets_connection(pagination: $pagination, filters: $filters) {
       nodes {
         documentId
@@ -141,7 +180,11 @@ export const EXPLORER_GET_PROFICIENCIES = gql`
     $filters: ProficiencyFiltersInput
     $locale: I18NLocaleCode
   ) {
-    proficiencies_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+    proficiencies_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         name
@@ -160,8 +203,16 @@ export const EXPLORER_GET_PROFICIENCIES = gql`
 `;
 
 export const EXPLORER_GET_RACES = gql`
-  query ExplorerGetRaces($pagination: PaginationArg, $filters: RaceFiltersInput, $locale: I18NLocaleCode) {
-    races_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetRaces(
+    $pagination: PaginationArg
+    $filters: RaceFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    races_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -183,8 +234,16 @@ export const EXPLORER_GET_RACES = gql`
 `;
 
 export const EXPLORER_GET_SPELLS = gql`
-  query ExplorerGetSpells($pagination: PaginationArg, $filters: SpellFiltersInput, $locale: I18NLocaleCode) {
-    spells_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetSpells(
+    $pagination: PaginationArg
+    $filters: SpellFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    spells_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -206,8 +265,16 @@ export const EXPLORER_GET_SPELLS = gql`
 `;
 
 export const EXPLORER_GET_SUBCLASSES = gql`
-  query ExplorerGetSubclasses($pagination: PaginationArg, $filters: SubclassFiltersInput, $locale: I18NLocaleCode) {
-    subclasses_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetSubclasses(
+    $pagination: PaginationArg
+    $filters: SubclassFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    subclasses_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -228,8 +295,16 @@ export const EXPLORER_GET_SUBCLASSES = gql`
 `;
 
 export const EXPLORER_GET_TRAITS = gql`
-  query ExplorerGetTraits($pagination: PaginationArg, $filters: TraitFiltersInput, $locale: I18NLocaleCode) {
-    traits_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+  query ExplorerGetTraits(
+    $pagination: PaginationArg
+    $filters: TraitFiltersInput
+    $locale: I18NLocaleCode
+  ) {
+    traits_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug
@@ -254,7 +329,11 @@ export const EXPLORER_GET_WEAPON_PROPERTIES = gql`
     $filters: WeaponPropertyFiltersInput
     $locale: I18NLocaleCode
   ) {
-    weaponProperties_connection(pagination: $pagination, filters: $filters, locale: $locale) {
+    weaponProperties_connection(
+      pagination: $pagination
+      filters: $filters
+      locale: $locale
+    ) {
       nodes {
         documentId
         slug

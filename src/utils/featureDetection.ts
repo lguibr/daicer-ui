@@ -8,10 +8,13 @@
  * Safari/iOS have limited or no support currently
  */
 export const supportsOffscreenCanvas = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   try {
-    return typeof OffscreenCanvas !== 'undefined' && typeof OffscreenCanvas.prototype.getContext === 'function';
+    return (
+      typeof OffscreenCanvas !== "undefined" &&
+      typeof OffscreenCanvas.prototype.getContext === "function"
+    );
   } catch {
     return false;
   }
@@ -26,7 +29,7 @@ export const supportsWebGLInWorkers = (): boolean => {
 
   try {
     const canvas = new OffscreenCanvas(1, 1);
-    const gl = canvas.getContext('webgl') || canvas.getContext('webgl2');
+    const gl = canvas.getContext("webgl") || canvas.getContext("webgl2");
     return gl !== null;
   } catch {
     return false;
@@ -37,7 +40,7 @@ export const supportsWebGLInWorkers = (): boolean => {
  * Detect Safari browser (often lacks OffscreenCanvas support)
  */
 export const isSafari = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   const ua = window.navigator.userAgent;
   return /^((?!chrome|android).)*safari/i.test(ua);
@@ -46,29 +49,34 @@ export const isSafari = (): boolean => {
 /**
  * Get recommended rendering mode based on browser capabilities
  */
-export const getRecommendedRenderingMode = (): 'worker' | 'main-thread' => {
+export const getRecommendedRenderingMode = (): "worker" | "main-thread" => {
   if (supportsWebGLInWorkers()) {
-    return 'worker';
+    return "worker";
   }
 
   if (isSafari()) {
-    console.warn('[FeatureDetection] Safari detected: using main thread rendering');
+    console.warn(
+      "[FeatureDetection] Safari detected: using main thread rendering",
+    );
   } else {
-    console.warn('[FeatureDetection] OffscreenCanvas not supported: using main thread rendering');
+    console.warn(
+      "[FeatureDetection] OffscreenCanvas not supported: using main thread rendering",
+    );
   }
 
-  return 'main-thread';
+  return "main-thread";
 };
 
 /**
  * Log browser capabilities for debugging
  */
 export const logBrowserCapabilities = (): void => {
-  console.info('[FeatureDetection] Browser Capabilities:', {
+  console.info("[FeatureDetection] Browser Capabilities:", {
     offscreenCanvas: supportsOffscreenCanvas(),
     webglInWorkers: supportsWebGLInWorkers(),
     isSafari: isSafari(),
     recommendedMode: getRecommendedRenderingMode(),
-    userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'N/A',
+    userAgent:
+      typeof window !== "undefined" ? window.navigator.userAgent : "N/A",
   });
 };
