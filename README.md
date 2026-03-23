@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🎲 Daicer Frontend
+<img width="800" alt="Daicer Logo" src="./public/logo.png" />
+
+# Daicer Frontend
 
 **The Face of the Simulation.**
 
