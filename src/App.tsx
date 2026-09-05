@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/Landing";
 import GoogleAuthCallback from "./pages/GoogleAuthCallback";
-import GameRoomPage from "./pages/GameRoom";
-import RoomsPage from "./pages/Rooms";
+import GameRoomPage from "./features/play/PlayerRoomPage";
+import RoomsPage from "./features/play/PlayerRoomsPage";
 
 import { RulesExplorerLayout } from "./pages/RulesExplorer/Layout";
 import { RulesDashboard } from "./pages/RulesExplorer/RulesDashboard";
@@ -17,10 +17,9 @@ import { NavigateToPlay } from "./components/common/NavigateToPlay";
 import AuthEventHandler from "./components/auth/AuthEventHandler";
 
 // New Create Room Flow
-import CreateRoomLayout from "./features/create-room/layout/CreateRoomLayout";
-import DmSettingsPage from "./features/create-room/pages/DmSettingsPage";
+import CreateRoomLayout, { WorldConfigRedirect } from "./features/create-room/layout/CreateRoomLayout";
 import WorldConfigPage from "./features/create-room/pages/WorldConfigPage";
-import CharacterSelectionPage from "./features/create-room/pages/CharacterSelectionPage";
+import CharacterSelectionPage from "./features/play/PlayerCharacterPage";
 
 export default function App() {
   return (
@@ -42,8 +41,8 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="dm-settings" replace />} />
-          <Route path="dm-settings" element={<DmSettingsPage />} />
+          <Route index element={<Navigate to="world-generation" replace />} />
+          <Route path="dm-settings" element={<WorldConfigRedirect />} />
           <Route path="world-generation" element={<WorldConfigPage />} />
           <Route
             path="character-selection/:roomId"

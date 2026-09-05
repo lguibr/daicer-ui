@@ -1,10 +1,16 @@
 # Hooks
 
+## World preview loading
+
+`useChunkLoader` serves creation/debug previews, never authoritative gameplay terrain. It serializes batches of at most 16 chunks to match the authenticated `voxelPreview` resolver, caches by returned coordinates, rejects incomplete or unexpected response identities, and isolates configuration generations synchronously. Reset, configuration changes and unmount abort/discard old work. Failed chunks wait for explicit retry instead of retrying on every Canvas redraw. The retained generated operation uses a JSON tile scalar; layer shape is checked, but this is not full runtime tile validation.
+
+Active player polling lives in `features/play/useRoomView`; it replaces the legacy game/socket hooks on the play route.
+
 ## Custom Domain Hooks
 
 ### useAuth
 
-Firebase authentication state management.
+Strapi session lookup and Google sign-in redirect.
 
 ### useCombat
 
@@ -12,7 +18,7 @@ Real-time combat state synchronization for a room.
 
 ### useSocket
 
-Socket.io connection management for rooms.
+Legacy local socket imitation; it does not establish a server connection and is not used by the active player route.
 
 ### useRoomWizard
 

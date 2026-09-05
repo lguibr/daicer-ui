@@ -156,14 +156,14 @@ export function GameDebugMap({
   );
 
   const getTileAt = (x: number, y: number, z: number) => {
-    const chunkX = Math.floor(x / 32);
-    const chunkY = Math.floor(y / 32);
+    const chunkX = Math.floor(x / config.chunkSize);
+    const chunkY = Math.floor(y / config.chunkSize);
     const chunk = chunkCache[getChunkId(chunkX, chunkY)];
 
     if (!chunk) return null;
 
-    const lx = ((x % 32) + 32) % 32;
-    const ly = ((y % 32) + 32) % 32;
+    const lx = ((x % config.chunkSize) + config.chunkSize) % config.chunkSize;
+    const ly = ((y % config.chunkSize) + config.chunkSize) % config.chunkSize;
     const lz = z + 3;
 
     if (!chunk.tiles || lz < 0 || lz >= chunk.tiles.length) return null;
@@ -353,6 +353,10 @@ export function GameDebugMap({
           />
         ) : (
           <MapRenderer
+            key={roomId}
+            interactionKey={roomId}
+            chunkSize={config.chunkSize}
+            visibilityKeyFormat="xy"
             width={mapSize.w}
             height={mapSize.h}
             center={cameraPosition}

@@ -4,6 +4,7 @@
     "src",
     "e2e",
     "codegen.ts",
+    "codegen.game.ts",
     "vite.config.ts",
     ".storybook/**/*",
     "scripts/**/*",

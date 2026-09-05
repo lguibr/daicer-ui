@@ -1,201 +1,107 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useApolloClient } from "@apollo/client/react";
-import { gql } from "@apollo/client";
+import { VoxelPreviewDocument } from "../gql/graphql";
 import type { Chunk, WorldConfig } from "../features/debug/utils/types";
 
-interface UseChunkLoaderProps {
-  config: WorldConfig;
-}
+const PREVIEW_BATCH_SIZE = 16;
+const PREVIEW_BATCH_DELAY_MS = 50;
+const PREVIEW_LAYER_COUNT = 7;
+type ChunkRequest = { x: number; y: number };
+type PreviewScope = {
+  configKey: string;
+  cache: Record<string, Chunk>; queued: Map<string, ChunkRequest>; inflight: Set<string>; failed: Set<string>;
+  generation: number; disposed: boolean; active: boolean; error: string | null;
+  controller: AbortController | null; timeout: ReturnType<typeof setTimeout> | null;
+};
+type PreviewResult = { chunkCache: Record<string, Chunk>; isLoading: boolean; error: string | null;
+  getChunk: (x: number, y: number) => Chunk | null; resetCache: () => void };
 
-const VOXEL_PREVIEW_QUERY = gql`
-  query VoxelPreview(
-    $chunks: [ChunkRequestInput]!
-    $config: WorldConfigInput!
-  ) {
-    voxelPreview(chunks: $chunks, config: $config) {
-      x
-      y
-      tiles
-    }
-  }
-`;
-
-export function useChunkLoader({ config }: UseChunkLoaderProps) {
+/** Pure preview only: bounded serial batches, response-coordinate identity, explicit retry. */
+export function useChunkLoader({ config }: { config: WorldConfig }): PreviewResult {
   const client = useApolloClient();
-  const [chunkCache, setChunkCache] = useState<Record<string, Chunk>>({});
-  const [loadingChunks, setLoadingChunks] = useState<Set<string>>(new Set());
-  const [isRegenerating, setIsRegenerating] = useState(false);
-
-  const batchQueue = useRef<Set<string>>(new Set());
-  const batchTimeout = useRef<NodeJS.Timeout | null>(null);
-  const generationId = useRef(0);
-
-  const getChunkId = useCallback((cx: number, cy: number) => `${cx},${cy}`, []);
-
-  // Clear cache when critical config changes
   const configKey = JSON.stringify(config);
+  const scope = useMemo<PreviewScope>(() => ({
+    configKey,
+    cache: {}, queued: new Map(), inflight: new Set(), failed: new Set(), generation: 0,
+    disposed: true, active: false, error: null, controller: null, timeout: null,
+  }), [configKey]);
+  const [, redraw] = useState(0);
+  const refresh = useCallback((): void => redraw((revision) => revision + 1), []);
+  const cancel = useCallback((): void => {
+    scope.generation += 1;
+    scope.controller?.abort();
+    if (scope.timeout) clearTimeout(scope.timeout);
+    scope.timeout = null;
+    scope.queued.clear();
+    scope.inflight.clear();
+    scope.active = false;
+  }, [scope]);
   useEffect(() => {
-    console.log("[useChunkLoader] Config changed!", configKey);
-    generationId.current += 1; // Increment generation ID
-    setChunkCache({});
-    setLoadingChunks(new Set());
-    batchQueue.current.clear();
-    setIsRegenerating(true);
+    scope.disposed = false;
+    // Initial child effects and StrictMode replay may have observed an inactive scope.
+    refresh();
+    return () => { scope.disposed = true; cancel(); };
+  }, [scope, cancel, refresh]);
 
-    if (batchTimeout.current) {
-      clearTimeout(batchTimeout.current);
-      batchTimeout.current = null;
-    }
-
-    // Allow a small tick for the reset to propagate before considered "done" if nothing is fetched
-    const t = setTimeout(() => setIsRegenerating(false), 100);
-    return () => clearTimeout(t);
-  }, [configKey]);
-
-  const processBatch = useCallback(async () => {
-    if (batchQueue.current.size === 0) return;
-
-    const queuedIds = Array.from(batchQueue.current);
-    batchQueue.current.clear();
-    batchTimeout.current = null;
-
-    const currentGen = generationId.current; // Capture current generation ID
-    console.log(
-      `[useChunkLoader] Processing batch for Gen ${currentGen}. chunks: ${queuedIds.join(", ")}`,
-    );
-
-    const chunksToFetch = queuedIds
-      .map((id) => {
-        const [x, y] = id.split(",").map(Number);
-        if (x === undefined || y === undefined || isNaN(x) || isNaN(y))
-          return null;
-        return { x, y };
-      })
-      .filter((c): c is { x: number; y: number } => c !== null);
-
-    if (chunksToFetch.length === 0) {
-      setLoadingChunks((prev) => {
-        const next = new Set(prev);
-        queuedIds.forEach((id) => next.delete(id));
-        return next;
-      });
-      return;
-    }
-
+  const processBatch = useCallback(async (): Promise<void> => {
+    if (scope.disposed || scope.active || !scope.queued.size) return;
+    scope.timeout = null;
+    scope.active = true;
+    const { generation } = scope;
+    const entries = [...scope.queued.entries()].slice(0, PREVIEW_BATCH_SIZE);
+    entries.forEach(([key]) => { scope.queued.delete(key); scope.inflight.add(key); });
+    scope.controller = new AbortController();
+    refresh();
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await client.query<any>({
-        query: VOXEL_PREVIEW_QUERY,
-        variables: {
-          chunks: chunksToFetch,
-          config,
-        },
-        fetchPolicy: "network-only",
+      const { data } = await client.query({ query: VoxelPreviewDocument,
+        variables: { chunks: entries.map(([, coordinates]) => coordinates), config }, fetchPolicy: "no-cache",
+        context: { queryDeduplication: false, fetchOptions: { signal: scope.controller.signal } },
       });
-
-      // Check if generation ID has changed during fetch
-      if (generationId.current !== currentGen) {
-        console.warn(
-          "useChunkLoader: Discarding stale chunks from Gen",
-          currentGen,
-          "Current:",
-          generationId.current,
-        );
-        return;
+      if (scope.disposed || scope.generation !== generation) return;
+      if (!data || !Array.isArray(data.voxelPreview)) throw new Error("Preview response is missing.");
+      const received = new Map<string, Chunk>();
+      for (const chunk of data.voxelPreview) {
+        if (!chunk || !Number.isSafeInteger(chunk.x) || !Number.isSafeInteger(chunk.y)) throw new Error("Invalid preview chunk identity.");
+        const key = `${chunk.x},${chunk.y}`;
+        if (!scope.inflight.has(key) || received.has(key)) throw new Error("Unexpected preview chunk identity.");
+        // The retained legacy operation has a JSON tile scalar; this is a shape check, not full tile validation.
+        if (!Array.isArray(chunk.tiles) || chunk.tiles.length !== PREVIEW_LAYER_COUNT) throw new Error("Invalid preview tile layers.");
+        received.set(key, { x: chunk.x, y: chunk.y, tiles: chunk.tiles });
       }
-
-      const results = data?.voxelPreview;
-      console.log(
-        `[useChunkLoader] Gen ${currentGen} received ${results?.length} chunks. Sample tile:`,
-        results?.[0]?.tiles?.[0],
-      );
-
-      if (Array.isArray(results)) {
-        setChunkCache((prev) => {
-          const next = { ...prev };
-          results.forEach((chunk: Chunk, index: number) => {
-            const req = chunksToFetch[index];
-            if (req) {
-              const id = getChunkId(req.x, req.y);
-              console.info(
-                "useChunkLoader: Caching chunk",
-                id,
-                chunk ? "FOUND" : "NULL",
-              );
-              next[id] = chunk;
-            }
-          });
-          return next;
-        });
-      }
-    } catch (e) {
-      console.error("Batch Chunk Fetch Failed:", e);
+      if (received.size !== entries.length) throw new Error("Some preview chunks are missing. Please retry.");
+      received.forEach((chunk, key) => { scope.cache[key] = chunk; });
+    } catch (error) {
+      if (scope.disposed || scope.generation !== generation) return;
+      entries.forEach(([key]) => scope.failed.add(key));
+      scope.error = error instanceof Error ? error.message : "Preview unavailable. Please retry.";
     } finally {
-      // Only update loading state if we correspond to current generation
-      if (generationId.current === currentGen) {
-        setLoadingChunks((prev) => {
-          const next = new Set(prev);
-          queuedIds.forEach((id) => next.delete(id));
-          return next;
-        });
-        // Simple heuristic: if queue empty, regeneration is settled for now
-        if (batchQueue.current.size === 0) {
-          setIsRegenerating(false);
-        }
+      if (!scope.disposed && scope.generation === generation) {
+        entries.forEach(([key]) => scope.inflight.delete(key));
+        scope.active = false;
+        if (scope.queued.size) scope.timeout = setTimeout(() => { processBatch(); }, PREVIEW_BATCH_DELAY_MS);
+        refresh();
       }
     }
-  }, [client, config, getChunkId]);
+  }, [client, config, refresh, scope]);
 
-  const fetchChunk = useCallback(
-    (cx: number, cy: number) => {
-      const id = getChunkId(cx, cy);
-      // Warning: Check current state in ref or functional update to avoid closures?
-      // Actually standard check is fine IF dependencies are correct.
-      // We can't easily check chunkCache here without adding it to dependency (causing re-creation).
-      // Instead, we rely on the component using this hook to check cache BEFORE calling fetchChunk,
-      // OR we check loadingChunks/batchQueue here which are refs/state.
-
-      // Ideally, getChunk should check cache.
-      // fetchChunk is the *action* to fetch.
-
-      batchQueue.current.add(id);
-      setLoadingChunks((prev) => new Set(prev).add(id));
-      setIsRegenerating(true);
-
-      if (batchTimeout.current) {
-        clearTimeout(batchTimeout.current);
-      }
-      batchTimeout.current = setTimeout(processBatch, 50);
-    },
-    // We remove config from dependency array to prevent fetchChunk recreation on every keystroke
-    // processBatch needs to be fresh, but that is defined in render scope.
-    // Wait, processBatch captures render scope variables.
-    // fetchChunk captures processBatch.
-    // So if config changes -> component re-renders -> processBatch recreated (capturing NEW config) -> fetchChunk recreated -> good.
-    // With Debounce, this happens less often.
-    [getChunkId, processBatch],
-  );
-
-  const getChunk = useCallback(
-    (x: number, y: number) => {
-      const id = getChunkId(x, y);
-      if (chunkCache[id]) return chunkCache[id];
-
-      // Note: We don't verify if it's already loading here to keep 'get' pure-ish,
-      // but the consumer usually calls fetch if null.
-      // To make this easier:
-      if (!loadingChunks.has(id) && !batchQueue.current.has(id)) {
-        fetchChunk(x, y);
-      }
-      return null;
-    },
-    [chunkCache, fetchChunk, getChunkId, loadingChunks],
-  );
-
-  return {
-    chunkCache,
-    isLoading: loadingChunks.size > 0 || isRegenerating,
-    getChunk,
-    resetCache: () => setChunkCache({}),
+  // A fresh provider callback lets the retained 3D preview rebuild after cache updates too.
+  const getChunk = (x: number, y: number): Chunk | null => {
+    if (scope.disposed || !Number.isSafeInteger(x) || !Number.isSafeInteger(y)) return null;
+    const key = `${x},${y}`;
+    if (scope.cache[key]) return scope.cache[key];
+    if (!scope.failed.has(key) && !scope.inflight.has(key) && !scope.queued.has(key)) {
+      scope.queued.set(key, { x, y });
+      if (!scope.active && !scope.timeout) scope.timeout = setTimeout(() => { processBatch(); }, PREVIEW_BATCH_DELAY_MS);
+    }
+    return null;
   };
+  const resetCache = useCallback((): void => {
+    cancel();
+    scope.cache = {};
+    scope.failed.clear();
+    scope.error = null;
+    refresh();
+  }, [cancel, refresh, scope]);
+  return { chunkCache: scope.cache, isLoading: scope.active || scope.queued.size > 0,
+    error: scope.error, getChunk, resetCache };
 }

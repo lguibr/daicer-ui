@@ -1,48 +1,55 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import type { ReactElement } from "react";
+import { useApolloClient } from "@apollo/client/react";
+import useAuth from "@/hooks/useAuth";
+import { PlayerCreateRoomDocument } from "@/features/play/generated";
+import { useRoomMutation } from "@/features/play/useRoomMutation";
 import { useNavigate, useLocation } from "react-router-dom";
 import { WorldConfigForm } from "@/features/debug/components/WorldConfigForm";
 import type { WorldConfig } from "@/features/debug/utils/types";
 import type { WorldSettings } from "@/types/contracts";
-import { createRoom } from "@/services/api";
 import { LoadingOverlay } from "@/components/ui/LoadingOverlay";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useWizard } from "../context/WizardContext";
 import { WorldPreview } from "../components/WorldPreview";
 
-export default function WorldConfigPage() {
+export default function WorldConfigPage(): ReactElement {
   const { settings, setSettings } = useWizard();
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useAuth();
+  const client = useApolloClient();
+  const mutation = useRoomMutation(user?.documentId ? JSON.stringify([user.documentId, "create"]) : "");
+  const { pending: isSubmitting } = mutation;
 
-  const config: WorldConfig = {
-    seed: settings.seed || "default-seed",
-    chunkSize: (settings.generationParams as WorldConfig)?.chunkSize ?? 32,
+  const config = useMemo<WorldConfig>(() => ({
+    seed: typeof settings.seed === "string" && settings.seed ? settings.seed : "default-seed",
+    chunkSize: settings.generationParams?.chunkSize ?? 32,
     globalScale:
-      (settings.generationParams as WorldConfig)?.globalScale ?? 0.01,
-    seaLevel: (settings.generationParams as WorldConfig)?.seaLevel ?? 0,
+      settings.generationParams?.globalScale ?? 0.01,
+    seaLevel: settings.generationParams?.seaLevel ?? 0,
     elevationScale:
-      (settings.generationParams as WorldConfig)?.elevationScale ?? 1,
-    roughness: (settings.generationParams as WorldConfig)?.roughness ?? 0.5,
-    detail: (settings.generationParams as WorldConfig)?.detail ?? 4,
+      settings.generationParams?.elevationScale ?? 1,
+    roughness: settings.generationParams?.roughness ?? 0.5,
+    detail: settings.generationParams?.detail ?? 4,
     moistureScale:
-      (settings.generationParams as WorldConfig)?.moistureScale ?? 1,
+      settings.generationParams?.moistureScale ?? 1,
     temperatureOffset:
-      (settings.generationParams as WorldConfig)?.temperatureOffset ?? 0,
+      settings.generationParams?.temperatureOffset ?? 0,
     structureChance:
-      (settings.generationParams as WorldConfig)?.structureChance ?? 0.1,
+      settings.generationParams?.structureChance ?? 0.1,
     structureSpacing:
-      (settings.generationParams as WorldConfig)?.structureSpacing ?? 10,
+      settings.generationParams?.structureSpacing ?? 10,
     structureSizeAvg:
-      (settings.generationParams as WorldConfig)?.structureSizeAvg ?? 10,
-    roadDensity: (settings.generationParams as WorldConfig)?.roadDensity ?? 0.5,
-    fogRadius: (settings.generationParams as WorldConfig)?.fogRadius ?? 10,
-  };
+      settings.generationParams?.structureSizeAvg ?? 10,
+    roadDensity: settings.generationParams?.roadDensity ?? 0.5,
+    fogRadius: settings.generationParams?.fogRadius ?? 10,
+  }), [settings.seed, settings.generationParams]);
 
   // Debounce config updates to prevent excessive re-fetching during slider dragging
   const debouncedConfig = useDebounce(config, 500);
 
-  const handleConfigChange = (newConfig: WorldConfig) => {
+  const handleConfigChange = (newConfig: WorldConfig): void => {
     setSettings((prev: WorldSettings) => ({
       ...prev,
       seed: newConfig.seed, // Sync top level
@@ -53,40 +60,17 @@ export default function WorldConfigPage() {
     }));
   };
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    try {
-      const room = await createRoom({
-        settings,
-        structures: [],
-      });
-
-      // Check for debug target
-      const searchParams = new URLSearchParams(location.search);
-      const isDebug = searchParams.get("target") === "debug";
-
-      if (isDebug) {
-        navigate(`/debug/${room.code || room.documentId || room.id}`);
-      } else {
-        // Proceed to Character Selection
-        navigate(
-          `/create/character-selection/${room.code || room.documentId || room.id}`,
-          {
-            state: {
-              initialSeed: settings.seed,
-              initialStructures: [],
-              initialSettings: settings,
-            },
-          },
-        );
-      }
-    } catch (err) {
-      console.error(err);
-      console.error(
-        `Failed to create room: ${err instanceof Error ? err.message : "Unknown error"}`,
-      );
-      setIsSubmitting(false);
-    }
+  const handleSubmit = async (): Promise<void> => {
+    const input = { language: typeof settings.language === "string" ? settings.language : "en",
+      worldConfig: { ...config, worldSize: settings.worldSize, worldType: settings.worldType } };
+    const room = await mutation.run(JSON.stringify(["create", input]), async (requestId) => {
+      const response = await client.mutate({ mutation: PlayerCreateRoomDocument,
+        variables: { input: { ...input, requestId } }, fetchPolicy: "no-cache" });
+      if (!response.data?.createRoom.roomId) throw new Error("The server did not return a room.");
+      return response.data.createRoom;
+    });
+    if (room) navigate(new URLSearchParams(location.search).get("target") === "debug"
+      ? `/debug/${room.roomId}` : `/create/character-selection/${room.roomId}`);
   };
 
   return (
@@ -100,6 +84,7 @@ export default function WorldConfigPage() {
         </p>
       </div>
 
+      {mutation.error && <p role="alert">{mutation.error}</p>}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
         {/* Preview */}
         <div className="lg:col-span-8 order-2 lg:order-1 h-[400px] lg:h-[500px] bg-midnight-950/30 rounded-2xl border border-midnight-700/50 backdrop-blur-sm p-1 shadow-2xl relative">
@@ -131,7 +116,7 @@ export default function WorldConfigPage() {
           type="button"
           onClick={() =>
             navigate({
-              pathname: "/create/dm-settings",
+              pathname: "/room",
               search: location.search,
             })
           }
@@ -142,10 +127,10 @@ export default function WorldConfigPage() {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !user}
           className="btn-primary min-w-[200px]"
         >
-          Forging World
+          Create room
         </button>
       </div>
 

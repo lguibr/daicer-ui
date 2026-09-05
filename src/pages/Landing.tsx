@@ -6,8 +6,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shield, Sparkles } from "lucide-react";
 
+import { useApolloClient } from "@apollo/client/react";
 import useAuth from "../hooks/useAuth";
-import { joinRoom } from "../services/api";
+import { PlayerJoinRoomDocument } from "../features/play/generated";
+import { useRoomMutation } from "../features/play/useRoomMutation";
 import { useI18n } from "../i18n";
 import { DynamicLayout } from "../components/layout";
 import Logo from "../components/ui/Logo";
@@ -30,8 +32,9 @@ export default function LandingPage() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [roomCode, setRoomCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const client = useApolloClient();
+  const mutation = useRoomMutation(user?.documentId ? JSON.stringify([user.documentId, "join"]) : "");
+  const { pending: loading, error } = mutation;
 
   const handleCreateRoom = () => {
     navigate("/create");
@@ -40,23 +43,14 @@ export default function LandingPage() {
   const handleJoinRoom = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!roomCode.trim()) {
-      setError(t("landing.errors.missingCode"));
-      return;
-    }
-
-    try {
-      setLoading(true);
-      setError(null);
-      const room = await joinRoom(roomCode.toUpperCase());
-      navigate(`/room/${room.id}`);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t("landing.errors.joinFailed"),
-      );
-    } finally {
-      setLoading(false);
-    }
+    if (!roomCode.trim()) return;
+    const result = await mutation.run(JSON.stringify(["join", roomCode]), async (requestId) => {
+      const response = await client.mutate({ mutation: PlayerJoinRoomDocument,
+        variables: { input: { requestId, code: roomCode } }, fetchPolicy: "no-cache" });
+      if (!response.data?.joinRoom.roomId) throw new Error("The server did not return a room.");
+      return response.data.joinRoom;
+    });
+    if (result) navigate(`/play/${result.roomId}`);
   };
 
   // Unauthenticated view - Login screen
@@ -249,9 +243,9 @@ export default function LandingPage() {
                   <input
                     type="text"
                     value={roomCode}
-                    onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
+                    onChange={(e) => setRoomCode(e.target.value)}
                     placeholder={t("lobby.joinHero.codePlaceholder")}
-                    maxLength={6}
+                    aria-label="Room code"
                     className={`${gildedTokens.monoInput} !bg-midnight-900/60 !border-aurora-500/20 !text-3xl !py-5 !text-center !tracking-[0.5em] placeholder:tracking-[0.2em] placeholder:text-2xl placeholder:text-aurora-500/30 hover:!border-aurora-400/40 focus:!border-aurora-400/60 focus:!ring-1 focus:!ring-aurora-400/30 transition-all shadow-lg backdrop-blur-md`}
                   />
                   <button

@@ -439,6 +439,9 @@ export default function GameplayScreen({
       </div>
 
       <MapRenderer
+        key={room.documentId}
+        interactionKey={room.documentId}
+        chunkSize={mapConfig.chunkSize}
         width={mapSize.w}
         height={mapSize.h}
         center={cameraPosition}
@@ -448,9 +451,9 @@ export default function GameplayScreen({
         visibleTiles={new Set()} // TODO: Implement FOV
         exploredTiles={new Set()}
         entities={mapEntities}
-        onTileClick={(col, row) => {
+        onTileClick={(coordinates) => {
           // Submit Move Action
-          handleSubmitAction(`MOVE:${col},${row},${viewZ}`);
+          handleSubmitAction(`MOVE:${coordinates.x},${coordinates.y},${coordinates.z}`);
         }}
         onTileHover={() => {}}
         onZoom={(delta, mouseX, mouseY) => {

@@ -26,10 +26,10 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
   });
   const [zoom, setZoom] = useState<number>(0.5);
   const [viewZ, setViewZ] = useState<number>(0);
-  const [is3D, setIs3D] = useState<boolean>(true);
+  const [is3D, setIs3D] = useState<boolean>(false);
 
   // Chunk Loader
-  const { getChunk, isLoading } = useChunkLoader({ config });
+  const { getChunk, isLoading, error, resetCache } = useChunkLoader({ config });
 
   // Reset cache when config changes (handled by hook mostly, but if we need explicit reset on mount/unmount or special triggers)
   // The hook handles config dependency reset.
@@ -78,6 +78,10 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
           </p>
         </div>
       )}
+
+      {error && <div role="alert" className="absolute top-4 left-4 z-30 bg-midnight-900 p-3 text-red-200">
+        {error} <button type="button" onClick={resetCache}>Retry preview</button>
+      </div>}
 
       {/* Controls Overlay */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 transition-opacity opacity-0 group-hover:opacity-100 duration-300">
@@ -158,6 +162,7 @@ export function WorldPreview({ config, className }: WorldPreviewProps) {
         />
       ) : (
         <MapRenderer
+          chunkSize={config.chunkSize}
           width={mapSize.w}
           height={mapSize.h}
           center={cameraPosition}

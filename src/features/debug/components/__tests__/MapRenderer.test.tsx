@@ -1,74 +1,140 @@
-// @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import React from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MapRenderer } from "../MapRenderer";
-import { Coordinates } from "../../utils/types";
+import type { MapRendererProps } from "../map/types";
+import { BiomeType, BlockType } from "../../utils/types";
+import type { Chunk, Tile } from "../../utils/types";
 
-// Mock canvas context
-const mockContext = {
-  fillStyle: "",
-  fillRect: vi.fn(),
-  strokeStyle: "",
-  strokeRect: vi.fn(),
-  beginPath: vi.fn(),
-  moveTo: vi.fn(),
-  lineTo: vi.fn(),
-  stroke: vi.fn(),
-  arc: vi.fn(),
-  fill: vi.fn(),
-  save: vi.fn(),
-  restore: vi.fn(),
-  setLineDash: vi.fn(),
-  clearRect: vi.fn(),
-};
-
-// Mock canvas element
-const mockCanvas = {
-  getContext: vi.fn(() => mockContext),
-  getBoundingClientRect: vi.fn(() => ({ left: 0, top: 0 })),
-};
-
-describe("MapRenderer", () => {
-  const defaultProps = {
-    width: 800,
-    height: 600,
-    center: { x: 0, y: 0, z: 0 } as Coordinates,
-    viewZ: 0,
-    scale: 1,
-    chunkProvider: { getChunk: vi.fn() },
-    visibleTiles: new Set<string>(),
-    exploredTiles: new Set<string>(),
-    entities: [],
-    onTileClick: vi.fn(),
-    onTileHover: vi.fn(),
-    restrictView: false,
+function props(overrides: Partial<MapRendererProps> = {}): MapRendererProps {
+  return {
+    width: 800, height: 600, center: { x: 0, y: 0, z: 0 }, viewZ: 0, scale: 1,
+    chunkProvider: { getChunk: vi.fn(() => null) }, visibleTiles: new Set(),
+    exploredTiles: new Set(), entities: [], onTileClick: vi.fn(), onTileHover: vi.fn(),
+    ...overrides,
   };
+}
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-    // Inject mock canvas ref behavior
-    vi.spyOn(React, "useRef").mockReturnValue({ current: mockCanvas });
-    // Mock useEffect to ensure render triggers immediately (though JSDOM handles this typically)
+function chunk(size: number, x = 0, y = 0): Chunk {
+  const tile: Tile = { x: 0, y: 0, z: 0, block: BlockType.GRASS,
+    biome: BiomeType.PLAINS, isWalkable: true, isTransparent: true };
+  return { x, y, tiles: Array.from({ length: 7 }, () =>
+    Array.from({ length: size }, () => Array.from({ length: size }, () => tile))) };
+}
+
+let context: CanvasRenderingContext2D;
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.clearAllMocks();
+  const canvasContext = document.createElement("canvas").getContext("2d");
+  if (!canvasContext) throw new Error("Canvas test context unavailable");
+  context = canvasContext;
+  context.setLineDash = vi.fn();
+  const canvasPrototype: { getContext: (kind: "2d") => CanvasRenderingContext2D | null } = HTMLCanvasElement.prototype;
+  vi.spyOn(canvasPrototype, "getContext").mockReturnValue(context);
+  vi.spyOn(HTMLCanvasElement.prototype, "getBoundingClientRect")
+    .mockReturnValue(new DOMRect(10, 20, 400, 300));
+});
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.useRealTimers(); });
+
+describe("MapRenderer input", () => {
+  it("emits numeric coordinates from CSS-scaled input without delaying single clicks", () => {
+    const properties = props();
+    render(<MapRenderer {...properties} />);
+    fireEvent.click(screen.getByLabelText("Game Map"), { clientX: 242, clientY: 186 });
+    expect(properties.onTileClick).toHaveBeenCalledWith({ x: 2, y: 1, z: 0 }, expect.anything());
+    fireEvent.click(screen.getByLabelText("Game Map"), { clientX: 242, clientY: 186 });
+    expect(properties.onTileClick).toHaveBeenCalledTimes(2);
   });
-
-  // Since we are mocking useRef which is tricky in React function components tested with RTL,
-  // we might rely on the fact that MapRenderer uses `useRef<HTMLCanvasElement>(null)` initially.
-  // Instead of mocking React.useRef (which breaks internal refs), let's rely on checking the logic
-  // embedded in the component or basic prop acceptance.
-  // BUT: MapRenderer logic is inside a `useEffect`. We need to verify that conditional logic:
-  // "if restrictView && !isExplored && !isVisible, continue"
-
-  // NOTE: Testing canvas rendering logic via RTL is hard because we can't easily inspect the canvas context calls
-  // without shallow rendering or mocking `canvas.getContext`.
-  // Given we are in a monorepo with `vitest` and `jsdom`, `canvas` element exists but context is often null or stub.
-
-  it("renders without crashing", () => {
-    render(<MapRenderer {...defaultProps} />);
-    const canvas = screen.getByLabelText(/Game Map/i);
-    expect(canvas).toBeTruthy();
+  it("distinguishes double clicks and delayed singles", () => {
+    const properties = props({ onTileDoubleClick: vi.fn() });
+    render(<MapRenderer {...properties} />);
+    const canvas = screen.getByLabelText("Game Map");
+    fireEvent.click(canvas, { clientX: 210, clientY: 170 });
+    fireEvent.click(canvas, { clientX: 210, clientY: 170 });
+    act(() => vi.advanceTimersByTime(300));
+    expect(properties.onTileDoubleClick).toHaveBeenCalledWith({ x: 0, y: 0, z: 0 });
+    expect(properties.onTileClick).not.toHaveBeenCalled();
+    fireEvent.click(canvas, { clientX: 210, clientY: 170 });
+    act(() => vi.advanceTimersByTime(300));
+    expect(properties.onTileClick).toHaveBeenCalledTimes(1);
   });
+  it("cancels delayed clicks on room changes, layer changes, and unmount", () => {
+    const properties = props({ interactionKey: "room-a", onTileDoubleClick: vi.fn() });
+    const { rerender, unmount } = render(<MapRenderer {...properties} />);
+    const click = (): void => { fireEvent.click(screen.getByLabelText("Game Map"), { clientX: 210, clientY: 170 }); };
+    click(); rerender(<MapRenderer {...properties} interactionKey="room-b" />);
+    act(() => vi.advanceTimersByTime(300));
+    click(); rerender(<MapRenderer {...properties} interactionKey="room-b" viewZ={1} />);
+    act(() => vi.advanceTimersByTime(300));
+    click(); unmount(); act(() => vi.advanceTimersByTime(300));
+    expect(properties.onTileClick).not.toHaveBeenCalled();
+  });
+  it("pans in canvas pixels and suppresses the drag's click", () => {
+    const properties = props({ onPan: vi.fn(), onZoom: vi.fn() });
+    render(<MapRenderer {...properties} />);
+    const canvas = screen.getByLabelText("Game Map");
+    fireEvent.mouseDown(canvas, { clientX: 210, clientY: 170 });
+    fireEvent.mouseMove(canvas, { clientX: 230, clientY: 180 });
+    fireEvent.mouseUp(canvas);
+    fireEvent.click(canvas, { clientX: 230, clientY: 180 });
+    expect(properties.onPan).toHaveBeenCalledWith(40, 20);
+    expect(properties.onTileClick).not.toHaveBeenCalled();
+    fireEvent.wheel(canvas, { clientX: 210, clientY: 170, deltaY: -1 });
+    expect(properties.onZoom).toHaveBeenCalledWith(-1, 400, 300);
+  });
+});
 
-  // Given limits of testing canvas imperative code in this environment without heavy setup,
-  // ensure regression test compilation and prop passing is correct.
+describe("MapRenderer drawing", () => {
+  it.each([16, 32])("uses %i-tile chunks including negative coordinates", (size) => {
+    const getChunk = vi.fn((x: number, y: number) => chunk(size, x, y));
+    render(<MapRenderer {...props({ width: 32, height: 32, center: { x: -1, y: -1, z: 0 },
+      chunkSize: size, chunkProvider: { getChunk }, restrictView: true,
+      visibleTiles: new Set(["-1,-1,0"]) })} />);
+    expect(getChunk).toHaveBeenCalledWith(-1, -1);
+    expect(context.fillRect).toHaveBeenCalledWith(0, 0, 32, 32);
+    expect(context.fillRect).toHaveBeenCalledTimes(2);
+  });
+  it.each([16, 32])("crosses the positive %i-tile chunk boundary", (size) => {
+    const getChunk = vi.fn((x: number, y: number) => chunk(size, x, y));
+    render(<MapRenderer {...props({ width: 32, height: 32, center: { x: size, y: size, z: 0 },
+      chunkSize: size, chunkProvider: { getChunk }, restrictView: true,
+      visibleTiles: new Set([`${size},${size},0`]) })} />);
+    expect(getChunk).toHaveBeenCalledWith(1, 1);
+    expect(context.fillRect).toHaveBeenCalledTimes(2);
+  });
+  it("hides unknown terrain and overlays in a restricted empty projection", () => {
+    const getChunk = vi.fn(() => chunk(16));
+    render(<MapRenderer {...props({ restrictView: true, chunkProvider: { getChunk },
+      entities: [{ position: { x: 0, y: 0, z: 0 } }],
+      ghostEntities: [{ position: { x: 0, y: 0, z: 0 } }] })} />);
+    expect(getChunk).not.toHaveBeenCalled();
+    expect(context.arc).not.toHaveBeenCalled();
+  });
+  it("does not join visible path sections through hidden tiles", () => {
+    render(<MapRenderer {...props({ restrictView: true, visibleTiles: new Set(["0,0,0", "2,0,0"]),
+      previewPath: [{ x: 0, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }, { x: 2, y: 0, z: 0 }] })} />);
+    expect(context.moveTo).toHaveBeenCalledTimes(2);
+    expect(context.lineTo).not.toHaveBeenCalled();
+  });
+  it("redraws god mode and lighting while retaining explicit legacy XY visibility", () => {
+    const properties = props({ width: 32, height: 32, chunkProvider: { getChunk: () => chunk(32) },
+      restrictView: true, visibilityKeyFormat: "xy", visibleTiles: new Set(["0,0"]),
+      entities: [{ position: { x: 0, y: 0, z: 0 } }, { position: { x: 1, y: 0, z: 0 } }] });
+    const { rerender } = render(<MapRenderer {...properties} />);
+    expect(context.arc).toHaveBeenCalledTimes(1);
+    vi.mocked(context.arc).mockClear();
+    rerender(<MapRenderer {...properties} godMode />);
+    expect(context.arc).toHaveBeenCalledTimes(2);
+    vi.mocked(context.fillRect).mockClear();
+    rerender(<MapRenderer {...properties} lightLevel={0} />);
+    expect(context.fillRect).toHaveBeenCalledTimes(3);
+  });
+  it("uses historical entities and safely falls back for missing history", () => {
+    const properties = props({ entities: [{ position: { x: 0, y: 0, z: 0 } }], isLive: false });
+    const { rerender } = render(<MapRenderer {...properties} currentTimeFrame={{ gameState: {
+      entities: [{ position: { x: 2, y: 0, z: 0 } }] } }} />);
+    expect(context.arc).toHaveBeenLastCalledWith(464, 300, 12.8, 0, Math.PI * 2);
+    rerender(<MapRenderer {...properties} currentTimeFrame={{}} />);
+    expect(context.arc).toHaveBeenLastCalledWith(400, 300, 12.8, 0, Math.PI * 2);
+  });
 });

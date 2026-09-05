@@ -1,0 +1,49 @@
+fragment PlayerEntity on GameEntityView {
+  characterSheetId blueprintId name type currentHp maxHp ac
+  position { x y z }
+  stats { strength dexterity constitution intelligence wisdom charisma }
+}
+fragment PlayerRoom on RoomView {
+  roomId code phase revision ownerUserId
+  world {
+    worldId language description
+    config {
+      seed chunkSize detail fogRadius globalScale seaLevel elevationScale roughness
+      moistureScale temperatureOffset roadDensity structureChance structureSpacing
+      structureSizeAvg worldSize worldType
+    }
+  }
+  players { userId name characterSheetId characterName ready submitted }
+  myself { ...PlayerEntity }
+  turn { number status lastResolvedNumber submittedCount requiredCount }
+  mySubmission { submissionId turnNumber kind text status feedback }
+  visibleEntities { ...PlayerEntity }
+  terrain { worldId revision chunkSize minZ maxZ tiles { x y z block biome isWalkable isTransparent } }
+  messages {
+    nodes { messageId turnNumber audience content senderName senderType timestamp }
+    pageInfo { hasPreviousPage startCursor }
+  }
+  capabilities { canStart canSubmit canResolve }
+}
+query PlayerRoom($roomId: ID!) { gameView(roomId: $roomId) { ...PlayerRoom } }
+query PlayerRooms { myRooms { roomId code phase ownerUserId } }
+query PlayerBlueprints { characterBlueprints { blueprintId name description } }
+query PlayerMessages($roomId: ID!, $before: String, $last: Int) {
+  gameMessages(roomId: $roomId, before: $before, last: $last) {
+    nodes { messageId turnNumber audience content senderName senderType timestamp }
+    pageInfo { hasPreviousPage startCursor }
+  }
+}
+mutation PlayerCreateRoom($input: CreateRoomInput!) { createRoom(input: $input) { ...PlayerRoom } }
+mutation PlayerJoinRoom($input: JoinRoomInput!) { joinRoom(input: $input) { ...PlayerRoom } }
+mutation PlayerSelectCharacter($input: SelectCharacterInput!) { selectCharacter(input: $input) { ...PlayerRoom } }
+mutation PlayerSetReady($input: SetReadyInput!) { setReady(input: $input) { ...PlayerRoom } }
+mutation PlayerStartGame($input: RoomOperationInput!) {
+  startGame(input: $input) { operationId roomId phase turnNumber status }
+}
+mutation PlayerSubmitAction($input: SubmitActionInput!) {
+  submitAction(input: $input) { submissionId turnNumber status submittedCount requiredCount }
+}
+mutation PlayerResolveTurn($input: ResolveTurnInput!) {
+  resolveTurn(input: $input) { operationId roomId phase turnNumber status }
+}

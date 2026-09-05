@@ -1,14 +1,19 @@
 import { Outlet, Navigate, useLocation, Link } from "react-router-dom";
+import type { ReactElement } from "react";
 import clsx from "clsx";
 import JuicyLayout from "@/components/layout/JuicyLayout";
 import { WizardProvider } from "../context/WizardContext";
 // import { StepsHeader } from '../components/StepsHeader'; // We will create this or inline it
 
 const STEPS = [
-  { path: "dm-settings", label: "DM & Scope" },
   { path: "world-generation", label: "World Config" },
   // { path: 'finalize', label: 'Review' }, // Optional, maybe just submit from world-gen?
 ];
+
+export function WorldConfigRedirect(): ReactElement {
+  const location = useLocation();
+  return <Navigate to={{ pathname: "/create/world-generation", search: location.search }} replace />;
+}
 
 export default function CreateRoomLayout() {
   const location = useLocation();
@@ -19,7 +24,7 @@ export default function CreateRoomLayout() {
   if (location.pathname === "/create" || location.pathname === "/create/") {
     return (
       <Navigate
-        to={{ pathname: "dm-settings", search: location.search }}
+        to={{ pathname: "world-generation", search: location.search }}
         replace
       />
     );
@@ -37,7 +42,7 @@ export default function CreateRoomLayout() {
               Create Your Campaign
             </h1>
             <p className="mx-auto max-w-2xl text-sm text-shadow-300">
-              Configure your AI Dungeon Master and world
+              Configure your world and choose your character
             </p>
           </header>
 
